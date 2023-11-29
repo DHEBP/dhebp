@@ -1,15 +1,41 @@
 {
-  "index": "Introduction",
-  "another": "Another Page",
-  "advanced": "Advanced (A Folder)",
+  "index":{
+    "display": "hidden",
+    "title": "What is Monero",
+    "theme": {
+      "breadcrumb": false
+    }
+  },
+  "quickstart":{
+    "title": "Quick Start Guide",
+    "theme": {
+      "breadcrumb": false
+    }      
+    },
+  "technology": "Technology",
+  "features": "Features",
+  "tutorials": "Tutorials",
+  "wallets":{
+    "title": "Wallets",
+    "theme": {
+      "breadcrumb": false
+    }      
+    },
+  
   "about": {
     "title": "About",
     "type": "page"
   },
-  "contact": {
-    "title": "Contact ↗",
+"Monero (official)": {
+  "title": "Monero",
+  "type": "page",
+  "href": "https://getmonero.org",
+  "newWindow": true
+},
+  "LocalMonero": {
+    "title": "LocalMonero",
     "type": "page",
-    "href": "https://twitter.com/shuding_",
+    "href": "https://localmonero.co/?rc=roa9",
     "newWindow": true
   }
 }

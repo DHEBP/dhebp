@@ -1,0 +1,22 @@
+## Stealth Addresses in Monero
+
+Stealth addresses are an important privacy feature in Monero that enhance the confidentiality of transactions. They allow the recipient to share a single public address while maintaining privacy and preventing linkability between transactions.
+
+### How Stealth Addresses Work
+
+1. **Recipient's Public Address Generation**: When a recipient wants to receive funds, they generate a public address as usual. However, in Monero, this public address is not directly linked to the recipient's identity or previous transactions.
+
+2. **One-Time Public Spend Key**: For every transaction, the sender generates a unique one-time public spend key. This key is derived from the recipient's public address and the transaction details.
+
+3. **Derivation of Unique Payment Address**: Using the recipient's public address and the one-time public spend key, a unique payment address is derived. This address is used by the sender to send funds to the recipient.
+
+4. **Transaction Output Detection**: When the Monero blockchain is scanned, the recipient's wallet looks for transactions that contain outputs associated with their one-time public spend key. This allows the recipient to identify the incoming funds without compromising their privacy.
+
+### Privacy and Unlinkability
+
+Stealth addresses provide privacy and unlinkability by ensuring that each transaction has a unique payment address derived from the recipient's public address and a one-time public spend key. This means that the payment address used for each transaction is different, making it difficult to link multiple transactions to the same recipient.
+
+Additionally, since the one-time public spend key is derived from the recipient's public address and transaction details, only the recipient's wallet possesses the necessary information to detect the incoming funds associated with that transaction. External observers cannot easily link the recipient's public address to the one-time payment address or associate multiple transactions with the same recipient.
+
+By using stealth addresses, Monero enhances the privacy and confidentiality of transactions, making it difficult to trace the flow of funds or identify the parties involved.
+
