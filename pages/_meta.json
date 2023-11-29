@@ -1,17 +1,12 @@
 {
   "index":{
     "display": "hidden",
-    "title": "What is Monero",
+    "title": "What is Dero",
     "theme": {
       "breadcrumb": false
     }
   },
-  "quickstart":{
-    "title": "Quick Start Guide",
-    "theme": {
-      "breadcrumb": false
-    }      
-    },
+  
   "technology": "Technology",
   "features": "Features",
   "tutorials": "Tutorials",
@@ -27,15 +22,15 @@
     "type": "page"
   },
 "Monero (official)": {
-  "title": "Monero",
+  "title": "Official Website",
   "type": "page",
-  "href": "https://getmonero.org",
+  "href": "https://dero.io",
   "newWindow": true
 },
-  "LocalMonero": {
-    "title": "LocalMonero",
+  "Trade Ogre": {
+    "title": "Exchange",
     "type": "page",
-    "href": "https://localmonero.co/?rc=roa9",
+    "href": "https://tradeogre.com/markets",
     "newWindow": true
   }
 }

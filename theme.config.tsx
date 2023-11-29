@@ -45,9 +45,9 @@ const logo = (
 
 const config: DocsThemeConfig = {
   project: {
-    link: 'https://bitmonero.org'
+    link: 'https://dero.io'
   },
-  docsRepositoryBase: 'https://bitmonero.org',
+  docsRepositoryBase: 'https://dero.io',
   useNextSeoProps() {
     const { asPath } = useRouter()
     if (asPath !== '/') {
@@ -73,11 +73,11 @@ const config: DocsThemeConfig = {
         <meta httpEquiv="Content-Language" content="en" />
         <meta
           name="description"
-          content="What is Monero?"
+          content="Dero Homomorphic Encryption Blockchain Protocol"
         />
         <meta
           name="og:description"
-          content="What is Monero?"
+          content="What is Dero?"
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={socialCard} />
@@ -137,7 +137,7 @@ const config: DocsThemeConfig = {
           <span>Powered by</span>
             
         <p className="mt-6 text-xs">
-          © {new Date().getFullYear()} bitmonero.org
+          © {new Date().getFullYear()} DHEBP
         </p>
       </div>
     )
