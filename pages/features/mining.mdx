@@ -1,0 +1,16 @@
+import { Callout } from 'nextra/components';
+
+## Dero Mining
+
+**Mining** has been completely reworked to vastly decentralize mining rewards with the introduction of Σ-blocks (Sigma blocks), which are simply smaller blocks that are constantly emitted every 1 second and converge into the final 18 second block. Even more plainly, the Σ-Blocks allow on-chain storage of mining data, which effectively turns DERO into one large mining pool. Every miner on the entire network will receive mining rewards based on the amount of work that was contributed, thus creating a truly decentralized network and distribution of rewards. It also greatly improves handling of massive network traffic, where each daemon can support over 10,000 connected devices, acting as a way to pool all of your devices.
+
+The current configuration of Σ Mining is that all Σ-blocks settle every main block (~18 seconds) and settles all mining rewards every 18 blocks. There are ~86,400 reward blocks daily.
+
+If a miner has 1/86400 (total daily emitted Σ-Blocks) of the total network hashrate, the miner will get probabilistically averaged rewards daily based on shares contributed. For example, 100K miners will get rewards daily. Similarly, if a miner has mining power amounting to half of 1/86400 (or 1/172800), the miner will get rewards every 2 days. 
+<Callout type="info" emoji="ℹ️">
+  For a list of hardware benchmarks please visit our community created benchmark website [here](https://benchmark.dero.network/).
+</Callout>
+In addition, each daemon essentially functions as it’s own mining pool, which tracks mining shares from devices connected to it. The daemon itself will retain a fixed fee of 1.6% for the daemon operator, the rest will be distributed to all miners that contributed shares to that daemon. For most miners, they will be mining using their own daemon, so all rewards and fees will be credited. 
+
+###  We encourage everyone to mine and run their own node! 
+

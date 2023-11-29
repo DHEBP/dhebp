@@ -1,0 +1,7 @@
+## TLS-Secured UDP P2P Netwrok
+
+The DERO Project has built a blockchain network that can be used by millions of users around the globe. This makes the security of the network highly important. Unencrypted network communication posses a risk for privacy, security and data integrity. DERO is the first blockchain project to use self signed TLS encryption for its network communication, which protects the network participants from eavesdropping and tampering of network data. 
+
+DERO also utilizes UDP for peer to peer communication instead of TCP. This allows node software to run and listen to network events while reducing exposure to the operating system's kernel and also lowers network overhead. 
+
+The DERO team also keeps future large scale applications in mind, e.g. enterprise services which handle thousands of clients per second. They are continuously improving the network in order to accomplish this goal. For example, with the encrypted network, after performing benchmarks they chose ECDSA instead of RSA as method for key generation as it allows for a higher number of handshakes per second. 

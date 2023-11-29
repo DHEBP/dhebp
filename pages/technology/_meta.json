@@ -1,10 +1,8 @@
 {
-    "CryptoNote": "CryptoNote",
-    "Bulletproofs": "Bullet Proofs",
-    "RingCT": "RingCT",
-    "RandomX": "RandomX",
-    "Ring-Signatures": "Ring Signatures",
-    "dynamic-block-scaling": "Dynamic Block Scaling",
-    "Stealth-Addresses": "Stealth Addresses"
+  "derohe": "Homomorphic Encryption",
+  "scalability": "Scalable and Secure",
+  "smart-contracts": "Private Smart Contracts",
+  "dvm": "DERO Virtual Machine",
+  "encrypted-network": "Encrypted Network"
     
   }

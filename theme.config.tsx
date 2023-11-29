@@ -44,6 +44,8 @@ const logo = (
 
 
 const config: DocsThemeConfig = {
+  primaryHue: { dark: 193, light: 193 }, // Adjust the hue value to get the desired shade of purple
+  primarySaturation: { dark: 63, light: 63 }, // Adjust the saturation value for the desired intensity
   project: {
     link: 'https://dero.io'
   },
@@ -52,7 +54,7 @@ const config: DocsThemeConfig = {
     const { asPath } = useRouter()
     if (asPath !== '/') {
       return {
-        titleTemplate: 'Monero – %s'
+        titleTemplate: 'Dero – %s'
       }
     }
   },
@@ -106,15 +108,7 @@ const config: DocsThemeConfig = {
       </>
     )
   },
-  banner: {
-     key: 'New Mangement',
-     text: (
-       <a href="https://bitmonero.org" target="_blank" rel="noreferrer">
-         🎉 Bitmonero.org is under new management. Read more →
-       </a>
-     )
-   },
-   editLink: {
+    editLink: {
     text: 'Edit this page on GitHub →'
   },
   feedback: {
