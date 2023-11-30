@@ -52,11 +52,16 @@ const config: DocsThemeConfig = {
   docsRepositoryBase: 'https://dero.io',
   useNextSeoProps() {
     const { asPath } = useRouter()
-    if (asPath !== '/') {
+    if (asPath === '/') {
       return {
         titleTemplate: 'DHEBP'
+      };
+    } else {
+      return {
+        titleTemplate: '%s – DHEBP'
       }
     }
+    
   },
   logo,
   head: function useHead() {
@@ -83,25 +88,25 @@ const config: DocsThemeConfig = {
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={socialCard} />
-        <meta name="twitter:site:domain" content="nextra.site" />
-        <meta name="twitter:url" content="https://nextra.site" />
+        <meta name="twitter:site:domain" content="deroproject/" />
+        <meta name="twitter:url" content="https://deroproject/" />
         <meta
           name="og:title"
-          content={title ? title + ' – Nextra' : 'Nextra'}
+          content={title ? title + ' – Dero' : 'Dero'}
         />
         <meta name="og:image" content={socialCard} />
-        <meta name="apple-mobile-web-app-title" content="Nextra" />
+        <meta name="apple-mobile-web-app-title" content="Dero" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="icon" href="/favicon.png" type="image/png" />
         <link
           rel="icon"
-          href="/favicon-dark.svg"
+          href="/favicon.svg"
           type="image/svg+xml"
           media="(prefers-color-scheme: dark)"
         />
         <link
           rel="icon"
-          href="/favicon-dark.png"
+          href="/favicon.png"
           type="image/png"
           media="(prefers-color-scheme: dark)"
         />
