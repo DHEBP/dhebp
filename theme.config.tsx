@@ -47,14 +47,14 @@ const config: DocsThemeConfig = {
   primaryHue: { dark: 193, light: 193 }, // Adjust the hue value to get the desired shade of purple
   primarySaturation: { dark: 63, light: 63 }, // Adjust the saturation value for the desired intensity
   project: {
-    link: 'https://dero.io'
+    link: 'https://github.com/deroproject/derohe'
   },
   docsRepositoryBase: 'https://dero.io',
   useNextSeoProps() {
     const { asPath } = useRouter()
     if (asPath !== '/') {
       return {
-        titleTemplate: 'Dero – %s'
+        titleTemplate: 'DHEBP'
       }
     }
   },
@@ -64,8 +64,8 @@ const config: DocsThemeConfig = {
     const { route } = useRouter()
     const socialCard =
       route === '/' || !title
-        ? 'https://nextra.site/og.jpeg'
-        : `https://nextra.site/api/og?title=${title}`
+        ? 'https://deroproject/og.jpeg'
+        : `https://deroproject/api/og?title=${title}`
 
     return (
       <>
@@ -108,14 +108,7 @@ const config: DocsThemeConfig = {
       </>
     )
   },
-    editLink: {
-    text: 'Edit this page on GitHub →'
-  },
-  feedback: {
-    content: 'Question? Give us feedback →',
-    labels: 'feedback'
-  },
-    sidebar: {
+  sidebar: {
     titleComponent({ title, type }) {
       if (type === 'separator') {
         return <span className="cursor-default">{title}</span>
@@ -123,12 +116,26 @@ const config: DocsThemeConfig = {
       return <>{title}</>
     },
     defaultMenuCollapseLevel: 1,
-    toggleButton: true
+    toggleButton: false
   },
-  footer: {
+     toc:{
+      float:true,
+     },
+     feedback: {
+      content: null, // Set to null or an empty value to disable the feedback link
+     },
+     editLink: {
+        text: null,
+       },
+       navigation: {
+          prev: false,
+          next: false
+        },
+        gitTimestamp: null,
+        footer: {
     text: (
       <div className="flex w-full flex-col items-center sm:items-start">
-          <span>Powered by</span>
+          <span>.deroproject/</span>
             
         <p className="mt-6 text-xs">
           © {new Date().getFullYear()} DHEBP
