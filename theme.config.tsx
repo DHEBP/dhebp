@@ -2,11 +2,12 @@ import { useRouter } from 'next/router'
 import type { DocsThemeConfig } from 'nextra-theme-docs'
 import { useConfig } from 'nextra-theme-docs'
 
+
 const logo = (
   <svg
     height="50"
     viewBox="0 0 330.99 382.2"
-    fill="none"
+    fill="curentColor"
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
@@ -54,66 +55,55 @@ const config: DocsThemeConfig = {
     const { asPath } = useRouter()
     if (asPath === '/') {
       return {
-        titleTemplate: 'DHEBP'
+        titleTemplate: 'DERO'
       };
     } else {
       return {
-        titleTemplate: '%s – DHEBP'
+        titleTemplate: '%s – DERO'
       }
     }
-    
   },
   logo,
   head: function useHead() {
     const { title } = useConfig()
-    const { route } = useRouter()
-    const socialCard =
-      route === '/' || !title
-        ? 'https://deroproject/og.jpeg'
-        : `https://deroproject/api/og?title=${title}`
-
+    const socialCard = '/og.jpeg'
     return (
       <>
         <meta name="msapplication-TileColor" content="#fff" />
         <meta name="theme-color" content="#fff" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta property="og:title" content="Rollkit" />
+        <meta property="og:description" content="Dero Homomorphic Encryption Blockchain Protocol" />
+        <meta property="description" content="Dero Homomorphic Encryption Blockchain Protocol" />
         <meta httpEquiv="Content-Language" content="en" />
-        <meta
-          name="description"
-          content="Dero Homomorphic Encryption Blockchain Protocol"
-        />
-        <meta
-          name="og:description"
-          content="What is Dero?"
-        />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={socialCard} />
         <meta name="twitter:site:domain" content="deroproject/" />
-        <meta name="twitter:url" content="https://deroproject/" />
+        <meta name="twitter:url" content="deroproject/" />
         <meta
           name="og:title"
           content={title ? title + ' – Dero' : 'Dero'}
         />
         <meta name="og:image" content={socialCard} />
         <meta name="apple-mobile-web-app-title" content="Dero" />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="icon" href="/favicon.png" type="image/png" />
+        <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/assets/favicon.png" type="image/png" />
         <link
           rel="icon"
-          href="/favicon.svg"
+          href="/assets/favicon-dark.svg"
           type="image/svg+xml"
           media="(prefers-color-scheme: dark)"
         />
         <link
           rel="icon"
-          href="/favicon.png"
+          href="/assets/favicon-dark.png"
           type="image/png"
           media="(prefers-color-scheme: dark)"
         />
       </>
     )
   },
-  sidebar: {
+    sidebar: {
     titleComponent({ title, type }) {
       if (type === 'separator') {
         return <span className="cursor-default">{title}</span>
@@ -137,6 +127,17 @@ const config: DocsThemeConfig = {
           next: false
         },
         gitTimestamp: null,
+        darkMode:true,
+        themeSwitch: {
+          component:null,
+          useOptions() {
+            return {
+              light: 'Light',
+              dark: 'Dark',
+              system: 'System'
+            }
+          }
+      },
         footer: {
     text: (
       <div className="flex w-full flex-col items-center sm:items-start">
