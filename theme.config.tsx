@@ -6,22 +6,67 @@ import { useConfig } from 'nextra-theme-docs'
 const logo = (
   <svg
     height="50"
-    viewBox="0 0 330.99 382.2"
-    fill="curentColor"
+    viewBox="0 0 1685.95 487.8"
+    fill="currentColor"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <path
-      d="m330.99,95.55v191.1l-165.5,95.55L0,286.65V95.55L165.49,0l165.5,95.55Zm-61.74,155.46v-119.82l-103.76-59.9-103.76,59.9v119.82l103.76,59.9,103.76-59.9Z"
-      fill="#ffffff"
-    />
-    <path
-      d="m254.78,139.55v103.1l-51.6,29.79c-.29-1.78-6.2-39.56-6.96-44.89l16.21-9.35v-54.2l-46.94-27.1-46.93,27.1v54.2l15.93,9.2c-.76,5.38-6.67,43.16-6.96,44.89l-51.33-29.64v-103.1l89.29-51.55,89.29,51.55Z"
-      fill="#ffffff"
-    />
-    <path
-      d="m197.56,172.58v37.04l-17.5,10.1c.74,5.28,8.97,58.11,9.39,60.65l-23.96,13.83-23.61-13.63c.51-2.99,8.67-55.36,9.41-60.64l-17.87-10.31v-37.04l32.07-18.51,32.07,18.51Z"
-      fill="#ffffff"
-    />
+<defs>
+        <linearGradient
+          id="linear-gradient"
+          x1="1040.85"
+          y1="45.15"
+          x2="1040.85"
+          y2="414.71"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0" stopColor="#b2b3b3" />
+          <stop offset="1" stopColor="#686868" />
+        </linearGradient>
+        <linearGradient
+          id="linear-gradient-2"
+          x1="642.69"
+          y1="45.15"
+          x2="642.69"
+          y2="414.71"
+          xlinkHref="#linear-gradient"
+        />
+        <linearGradient
+          id="linear-gradient-3"
+          x1="244.5"
+          y1="45.15"
+          x2="244.5"
+          y2="414.71"
+          xlinkHref="#linear-gradient"
+        />
+        <linearGradient
+          id="linear-gradient-4"
+          x1="1439.2"
+          y1="45.15"
+          x2="1439.2"
+          y2="414.71"
+          xlinkHref="#linear-gradient"
+        />
+      </defs>
+      <path
+        className="cls-1"
+        fill="url(#linear-gradient)"
+        d="m1161.9,81.21l41.73,42.17v101.32l-41.84,42.1h-92.62v4.82c1.35.18,134.42,134.93,134.42,134.93h-64.29l-135.63-139.28h-78.62v139.28h-46.97V81.21h283.83Zm-236.76,139.03h218.1l13.96-13.78v-64.88l-13.87-13.63h-218.19v92.29Z"
+      />
+      <path
+        className="cls-4"
+        fill="url(#linear-gradient)"
+        d="m538.48,127.19l-9.63,10.09v73.45l9.94,9.84h268.75v46.27h-269.02l-9.63,9.93v73.8l9.97,9.36h268.78v46.43h-283.3l-46.59-46.5v-92.64l22.74-18.93v-8.64l-22.74-19.27v-92.55l46.55-46.6h283.12v45.96h-268.93Z"
+      />
+      <path
+        className="cls-2"
+        fill="url(#linear-gradient)"
+        d="m365.32,81.32l41.91,42.28v240.78l-41.94,41.96H81.76V81.32h283.56Zm-236.84,46.42v231.86h218.29l14.07-13.77v-204.06l-13.92-14.04h-218.44Z"
+      />
+      <path
+        className="cls-3"
+        fill="url(#linear-gradient)"
+        d="m1604.19,127.82v231.98l-46.42,46.8h-237.05l-46.51-46.97v-231.61l46.31-46.75h237.33l46.33,46.55Zm-268.52,231.71h207.59l10.06-9.01v-213.26l-9.76-9.44h-208.57l-9.41,9.62v213l10.08,9.08Z"
+      />
     <style jsx>{`
       svg {
         mask-image: linear-gradient(
