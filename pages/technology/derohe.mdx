@@ -1,18 +1,32 @@
+## Homomorphic Encryption
+Homomorphic encryption is a game-changer for data security, enabling calculations on encrypted data while keeping it private. It's pivotal for secure cloud computing, compliance with regulations, and fostering secure data collaboration, ensuring both privacy and enhanced security.
+
+Dero merges homomorphic encryption with an account-based model, ensuring instant transactions, robust security, and privacy. Σ mining and Σ blocks employ a network-wide consensus, rewarding all miners and confirming transactions instantly within the same block.
+
+What sets DERO apart is its encrypted blockchain and account-based model, offering true privacy on-chain. This unique system not only ensures security but also allows users to check balances without syncing the entire chain, making balance inquiries homomorphically encrypted and easily accessible.
+
+Homomorphic encryption enables operations on encrypted data without decryption, preserving data confidentiality. DERO's encrypted blockchain, coupled with this encryption, guarantees top-notch privacy, security, instant transactions, settlement, and balance inquiries.
+
 ## DHEBP
+The DERO Homomorphic Encryption Blockchain Protocol (DHEBP) demonstrates Fully Homomorphic Encryption (FHE) in blockchain transactions. Each transaction consists of two main parts:
 
-DERO Homomorphic Encryption Blockchain Protocol (DHEBP) combines homomorphic encryption and an account based model to provide instant transactions as well as security and privacy.
+1. **Statement:** Contains ring member keys, commitments, and encrypted balances. The size grows linearly and consists of 4 curve points per ring member.
+2. **Proof:** This part's size grows logarithmically concerning ring members. For example, a proof for an 8-ring size transaction is 1997 bytes, and for a 512-ring size, it's 3965 bytes.
 
-DERO Σ (Sigma) mining and Σ blocks create utilize a network wide consensus for mining as well as rewarding all miners for effort vs a winner take all block reward system. All Transactions are settled in the same block in which they occur, allowing for instant full confirmation. 
-### DHEBP is decentralized, private and scaleable.
+The data breakdown for various ring sizes and transaction sizes (in bytes) is outlined as follows:
 
-DERO wallets can only have one open spending transaction at a time to one or many addresses this prevents any sending account from double spending. These transactions are settled on the same block they are sent so subsequent transactions can be made immediately.
+| Ring Size | Tx Size   | Statement Bytes | Proof Bytes |
+|-----------|-----------|-----------------|-------------|
+| 2         | 1669      | 328             | 1341        |
+| 4         | 2261      | 592             | 1669        |
+| 8         | 3117      | 1120            | 1997        |
+| 16        | 4501      | 2176            | 2325        |
+| 32        | 6941      | 4288            | 2653        |
+| 64        | 11493     | 8512            | 2981        |
+| 128       | 20269     | 16960           | 3309        |
+| 256       | 37493     | 33856           | 3637        |
+| 512       | 71613     | 67648           | 3965        |
 
-## True privacy on chain.
-While a typical blockchain stores all information on chain in clear text and use a UTXO model, DERO uses a unique encrypted blockchain with an account based model.
+The build process involves switching to the directory containing the readme file, setting the GOPATH, and running the code using Go (version 1.12.7). The output sample illustrates the creation and successful execution of transactions, showcasing the transfer of funds between sender and receiver accounts, along with the changes in account balances.
 
-Not only does this create a secure and private network, it also gives users the ability to check their balance without syncing the entire chain. Wallets only need to query the most recent block in order to obtain their balance information all while being homomorphically encrypted. 
-
-Homomorphic Encryption is a type of encryption that allows operations to be performed on encrypted data without decrypting it first. In essence, operations can be performed without revealing the underlying data. 
-
-This account based encrypted blockchain model not only provides superior privacy and security but it also allows for instant transactions, transactions settlement and balance information. 
-
+DHEBP stands out for its decentralization, privacy, and scalability. Wallets in DERO can execute one spending transaction at a time, preventing double spending and allowing immediate subsequent transactions settled within the same block for instant confirmation.

@@ -1,19 +1,16 @@
-## RandomX Algorithm
+## Dero Virtual Machine (DVM)
+The Dero Virtual Machine (DVM) is a critical component within the DERO blockchain ecosystem. It serves as the execution environment for DERO smart contracts. Similar to other blockchain virtual machines (such as Ethereum's EVM), the DVM enables the deployment and execution of decentralized applications (dApps) by processing smart contracts written in DVM Basic, a custom BASIC-style language specific to DERO.
 
-The RandomX algorithm is a proof-of-work (PoW) algorithm that was developed to address the issue of specialized mining hardware, particularly ASICs, in cryptocurrencies like Monero. It was introduced in October 2019 as a replacement for the previous CryptoNight algorithm.
+Key aspects of the Dero Virtual Machine include:
 
-The primary objective of RandomX is to create a mining algorithm that is efficient for general-purpose CPUs while remaining resistant to ASIC mining. The idea behind this is to ensure a more decentralized mining process and prevent the concentration of mining power in the hands of a few entities with access to specialized hardware.
+1. **Smart Contract Execution:** The DVM executes smart contracts written in DVM Basic, allowing users to deploy and execute decentralized applications on the DERO blockchain.
 
-RandomX achieves its goals by making use of random code execution and memory-intensive operations. It requires miners to perform a large number of random calculations, which utilize a significant amount of CPU cache memory. By design, the algorithm is optimized for CPUs and takes advantage of their ability to handle complex computational tasks.
+2. **DVM Basic Language:** Smart contracts are written in DVM Basic, a custom BASIC-style language that resembles traditional BASIC but tailored for blockchain-based operations, featuring line numbers, basic arithmetic, conditionals, and storage manipulation.
 
-One of the key components of RandomX is the use of a virtual machine called RandomXVM. This virtual machine executes a set of randomly generated programs, which consist of a mix of integer and floating-point instructions. The use of random code execution helps create a more CPU-dependent mining process, making it difficult for ASICs to gain an advantage.
+3. **State Management:** The DVM manages the state changes of the blockchain through smart contract execution, including updating data in the blockchain, managing tokens, and executing logic according to predefined rules.
 
-Additionally, RandomX incorporates several memory-hard operations to further discourage ASIC mining. These memory-bound operations require miners to access and manipulate a large amount of memory, which is not easily accelerated by specialized hardware.
+4. **Security and Consistency:** It ensures secure and consistent execution of smart contracts by providing deterministic behavior across all nodes in the network.
 
-By favoring CPUs over ASICs, RandomX promotes decentralization in the mining process. It allows a wider range of devices, including consumer-grade CPUs, to participate effectively in mining. This broadens the pool of potential miners and helps prevent mining power from becoming centralized in the hands of a few entities with access to specialized hardware.
+5. **Integration with Blockchain Operations:** The DVM interacts with the blockchain's consensus algorithm and verifies transactions, ensuring that the code is executed correctly and the state changes are applied uniformly across the network.
 
-The use of RandomX also enhances the security of the network. With a more decentralized mining process, the risk of a 51% attack (where a single entity gains control of the majority of mining power) is reduced. This adds an additional layer of protection to the integrity and stability of the cryptocurrency network.
-
-## Significance
-
-In summary, the RandomX algorithm is a PoW algorithm designed to make mining more accessible and decentralized by favoring CPUs over ASICs. It achieves this by incorporating random code execution, memory-intensive operations, and a focus on CPU efficiency. By mitigating the advantage of specialized mining hardware, RandomX helps promote a fair and secure mining environment for cryptocurrencies like Monero.
+DVM serves as the execution environment for smart contracts, enabling developers to build decentralized applications on the DERO blockchain while ensuring security, consistency, and interoperability within the network.
