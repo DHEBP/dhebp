@@ -1,10 +1,7 @@
 {
-    "decentralization": "Decentralization",
     "mining": "Mining",
     "privacy": "Privacy",
-    "tail-emission": "Tail Emission",
     "astroBWT": "AstroBWT",
     "golang": "Golang",
-    "graviton": "Graviton",
-    "untraceability": "Untraceability"
+    "graviton": "Graviton"
   }
