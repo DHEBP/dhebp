@@ -1,0 +1,88 @@
+## Echo
+
+Test endpoint to verify that the RPC server is enabled and working well on the daemon side.
+
+#### Available parameters
+
+| Name | Type      | Mandatory | Comment                  |
+|------|-----------|-----------|--------------------------|
+| | []string  | true      | Array of strings         |
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "DERO.Echo",
+    "params": ["Hello", "World", "!"]
+}
+```
+
+#### cURL Request
+
+```bash
+curl -X POST \
+    http://127.0.0.1:40402/json_rpc \
+    -H 'content-type: application/json' \
+    -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "DERO.Echo",
+    "params": ["Hello", "World", "!"]
+}'
+```
+
+#### Result
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "result": "DERO Hello World !"
+}
+```
+
+------
+The section you've shown demonstrates a basic example of using the `DERO.Echo` method, which is a test endpoint used to verify that the RPC server is enabled and functioning correctly on the daemon side.
+
+Break down:
+
+### Purpose:
+Test endpoint to verify the RPC server is working.
+
+### Available parameters:
+- JSON-RPC version (`"jsonrpc": "2.0"`)
+- Request ID (`"id": "1"`)
+- Method to be called (`"method": "DERO.Echo"`)
+- Parameters for the method (in this case, an array of strings: `["Hello", "World", "!"]`)
+
+### cURL Request:
+A cURL request is provided as an example of how to interact with the RPC server:
+
+```bash
+curl -X POST \
+    http://127.0.0.1:40402/json_rpc \
+    -H 'content-type: application/json' \
+    -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "DERO.Echo",
+    "params": ["Hello", "World", "!"]
+}'
+```
+
+This cURL request sends a POST request to `http://127.0.0.1:40402/json_rpc` with the specified JSON payload in the request body. It sets the appropriate headers (`content-type: application/json`) and includes the necessary JSON structure for the method call (`DERO.Echo`) with the parameters (`["Hello", "World", "!"]`).
+
+### Result:
+Upon making the request, the response from the server should be similar to the following:
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "result": "DERO Hello World !"
+}
+```
+
+This response confirms that the Dero daemon received the request, processed the `DERO.Echo` method with the provided parameters, and returned the result `"DERO Hello World !"`, echoing the input strings passed in.
+
+This example serves as an introduction to interacting with Dero's RPC API. You can explore further methods and functionalities available within the documentation to build more complex applications or automate specific blockchain-related tasks.

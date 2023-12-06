@@ -3,5 +3,10 @@
     "how-to-mine-dero": "How to Mine Dero",
     "wallet": "Create a Wallet",
     "stargate-rpc-api": "RPC API",
+    "echo": "Echo",
+    "ping": "Ping",
+    "get-info": "Get Info",
+    "get-block": "Get Block",
+    "get-block-header-topo": "Get Block Header by Topo Height",
     "how-to-sell-dero": "How to Sell Dero"
   }
