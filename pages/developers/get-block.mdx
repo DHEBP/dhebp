@@ -1,0 +1,76 @@
+## Get Block
+
+Returns all the information of the requested block.
+
+#### Available parameters
+
+Certainly! Here's a Markdown table based on your specifications:
+
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| hash   | Hash    | false     | Block hash    |
+| height | uint64  | false     | Block Height  |
+
+#### Body
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "DERO.GetBlock",
+    "params": {
+        "height": 420
+    }
+}
+```
+
+#### cURL Request
+
+```bash
+curl -X POST \
+  http://127.0.0.1:40402/json_rpc \
+  -H 'content-type: application/json' \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "DERO.GetBlock",
+    "params": {
+        "height": 420
+    }
+}'
+```
+
+#### Result
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "result": {
+        "blob": "01010000017e9e872cb1a403010000021f9bcc1208dee302769931ad378a4c0c4b2c21b0cfb3e752629c8e02712cb100000001a46a6856b500000000a063e24bc973c78fd057fec97cacd720000000006bb830fa72959300eff8080400",
+        "json": "{\"major_version\":1,\"minor_version\":1,\"timestamp\":1643337166001,\"height\":420,\"miner_tx\":{\"version\":1,\"source_network\":0,\"dest_network\":0,\"txtype\":2,\"value\":0,\"miner_address\":[31,155,204,18,8,222,227,2,118,153,49,173,55,138,76,12,75,44,33,176,207,179,231,82,96,126,18,210,182,250,100,37,0],\"c\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"s\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"height\":0,\"blid\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"scdata\":null,\"Payloads\":null},\"tips\":[\"6a6856b51e9ffd5b07c6c33ca635d984910f3b7fbbaaaebbb61a99780629e449\"],\"miniblocks\":[{\"Version\":1,\"HighDiff\":false,\"Final\":false,\"PastCount\":1,\"Timestamp\":60980,\"Height\":420,\"Past\":[1785222837,0],\"KeyHash\":\"eec07ce3efc1425bc0ad7e8c72d13b0500000000000000000000000000000000\",\"Flags\":0,\"Nonce\":[2483889374,676653056,2732216833]},{\"Version\":1,\"HighDiff\":false,\"Final\":false,\"PastCount\":1,\"Timestamp\":62337,\"Height\":420,\"Past\":[1785222837,0],\"KeyHash\":\"c3443540c243d11f706b6836d516a95500000000000000000000000000000000\",\"Flags\":0,\"Nonce\":[3502056072,2514737664,4017572356]},{\"Version\":1,\"HighDiff\":false,\"Final\":false,\"PastCount\":1,\"Timestamp\":62614,\"Height\":420,\"Past\":[1785222837,0],\"KeyHash\":\"eec07ce3efc1425bc0ad7e8c72d13b0500000000000000000000000000000000\",\"Flags\":0,\"Nonce\":[1690173257,17121537,3807488]},{\"Version\":1,\"HighDiff\":false,\"Final\":false,\"PastCount\":1,\"Timestamp\":64980,\"Height\":420,\"Past\":[1785222837,0],\"KeyHash\":\"eec07ce3efc1425bc0ad7e8c72d13b0500000000000000000000000000000000\",\"Flags\":0,\"Nonce\":[217232465,1676665600,2733630977]},{\"Version\":1,\"HighDiff\":false,\"Final\":false,\"PastCount\":1,\"Timestamp\":1441,\"Height\":420,\"Past\":[1785222837,0],\"KeyHash\":\"c3443540c243d11f706b6836d516a95500000000000000000000000000000000\",\"Flags\":0,\"Nonce\":[3850142823,974323200,4020130308]},{\"Version\":1,\"HighDiff\":false,\"Final\":false,\"PastCount\":1,\"Timestamp\":
+
+1482,\"Height\":420,\"Past\":[1785222837,0],\"KeyHash\":\"eec07ce3efc1425bc0ad7e8c72d13b0500000000000000000000000000000000\",\"Flags\":0,\"Nonce\":[2897249179,974365696,2734162177]},{\"Version\":1,\"HighDiff\":false,\"Final\":false,\"PastCount\":1,\"Timestamp\":2090,\"Height\":420,\"Past\":[1785222837,0],\"KeyHash\":\"c3443540c243d11f706b6836d516a95500000000000000000000000000000000\",\"Flags\":0,\"Nonce\":[1828815903,1915764736,4020518404]},{\"Version\":1,\"HighDiff\":false,\"Final\":false,\"PastCount\":1,\"Timestamp\":2157,\"Height\":420,\"Past\":[1785222837,0],\"KeyHash\":\"c3443540c243d11f706b6836d516a95500000000000000000000000000000000\",\"Flags\":0,\"Nonce\":[1070759456,3517679616,4023003393]},{\"Version\":1,\"HighDiff\":false,\"Final\":false,\"PastCount\":1,\"Timestamp\":3442,\"Height\":420,\"Past\":[1785222837,0],\"KeyHash\":\"c3443540c243d11f706b6836d516a95500000000000000000000000000000000\",\"Flags\":0,\"Nonce\":[186628109,1413669888,2728168962]},{\"Version\":1,\"HighDiff\":true,\"Final\":true,\"PastCount\":1,\"Timestamp\":11441,\"Height\":420,\"Past\":[1785222837,0],\"KeyHash\":\"a063e24bc973c78fd057fec97cacd72000000000000000000000000000000000\",\"Flags\":0,\"Nonce\":[1807233274,1922405120,4026009604]}],\"tx_hashes\":null}",
+        "block_header": {
+            "depth": 35589,
+            "difficulty": "15743",
+            "hash": "60e7e9f73a4a0f2c1b4a97976150ef6f53f0253f8552c6b2e7e4a010929d8259",
+            "height": 420,
+            "topoheight": 420,
+            "major_version": 1,
+            "minor_version": 1,
+            "nonce": 0,
+            "orphan_status": false,
+            "syncblock": true,
+            "sideblock": false,
+            "txcount": 0,
+            "reward": 0,
+            "tips": [
+                "6a6856b51e9ffd5b07c6c33ca635d984910f3b7fbbaaaebbb61a99780629e449"
+            ],
+            "timestamp": 1643337166001
+        },
+        "status": "OK"
+    }
+}
+```

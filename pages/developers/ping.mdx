@@ -1,0 +1,40 @@
+## Ping
+
+Simple Ping request
+
+#### Available Parameters
+
+No Parameters
+
+#### Body
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "DERO.Ping"
+}
+```
+
+#### cURL Request
+
+```bash
+curl -X POST \
+  http://127.0.0.1:40402/json_rpc \
+  -H 'content-type: application/json' \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "DERO.Ping"
+}'
+```
+
+#### Result
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "result": "Pong "
+}
+```

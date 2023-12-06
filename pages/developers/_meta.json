@@ -1,0 +1,7 @@
+{
+    "echo": "Echo",
+    "ping": "Ping",
+    "get-info": "Get Info",
+    "get-block": "Get Block",
+    "get-block-header-topo": "Get Block Header by Topo Height"
+  }

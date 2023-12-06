@@ -1,0 +1,69 @@
+## Get Block Header By Topo Height
+
+Returns the header of the requested block.
+
+#### Available parameters
+
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| topoheight   | uint64    | true     | Block Top Height    |
+
+#### Body
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "DERO.GetBlockHeaderByTopoHeight",
+    "params": {
+        "topoheight": 420
+    }
+}
+```
+
+#### cURL Request
+
+```bash
+curl -X POST \
+  http://127.0.0.1:40402/json_rpc \
+  -H 'content-type: application/json' \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "DERO.GetBlockHeaderByTopoHeight",
+    "params": {
+        "topoheight": 420
+    }
+}'
+```
+
+#### Result
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "result": {
+        "block_header": {
+            "depth": 35605,
+            "difficulty": "15743",
+            "hash": "60e7e9f73a4a0f2c1b4a97976150ef6f53f0253f8552c6b2e7e4a010929d8259",
+            "height": 420,
+            "topoheight": 420,
+            "major_version": 1,
+            "minor_version": 1,
+            "nonce": 0,
+            "orphan_status": false,
+            "syncblock": true,
+            "sideblock": false,
+            "txcount": 0,
+            "reward": 0,
+            "tips": [
+                "6a6856b51e9ffd5b07c6c33ca635d984910f3b7fbbaaaebbb61a99780629e449"
+            ],
+            "timestamp": 1643337166001
+        },
+        "status": "OK"
+    }
+}
+```
