@@ -1,5 +1,6 @@
 {
     "dero-virtual-machine": "DVM-Basic",
+    "token": "Token Smart Contract",
     "lottery": "Lottery Smart Contract"
 
   }
