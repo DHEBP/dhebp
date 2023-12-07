@@ -1,32 +1,40 @@
 {
-  "index":{
+  "index": {
     "display": "hidden",
     "title": "DHEBP",
     "theme": {
       "breadcrumb": false
     }
   },
-  
+
+  "-- Overview": {
+    "type": "separator",
+    "title": "Overview"
+  },
   "features": "Features",
   "technology": "Technology",
-  "tutorials": "Tutorials",
-  "wallets":{
+  "-- Documentation": {
+    "type": "separator",
+    "title": "Documentation"
+  },
+  "rpc-api": "RPC API",
+  "dvm": "Dero Virtual Machine",
+  "wallets": {
     "title": "Wallets",
     "theme": {
       "breadcrumb": false
-    }      
-    },
-  
+    }
+  },
   "about": {
     "title": "About",
     "type": "page"
   },
-"Dero (Official)": {
-  "title": "Official Website",
-  "type": "page",
-  "href": "https://dero.io",
-  "newWindow": true
-},
+  "Dero (Official)": {
+    "title": "Official Website",
+    "type": "page",
+    "href": "https://dero.io",
+    "newWindow": true
+  },
   "Trade Ogre": {
     "title": "Exchange",
     "type": "page",

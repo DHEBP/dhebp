@@ -1,0 +1,154 @@
+# Lottery Smart Contract Guide
+
+#### Dero Stargate DVM Smart Contracts guide to install and test various functions of the lottery Smart Contract.
+
+1. Download Dero Stargate testnet source and binaries.
+2. Start Dero daemon in testnet mode:
+   ```bash
+   ./derod-linux-amd64 --testnet
+   ```
+
+3. Start Dero wallet in testnet:
+   ```bash
+   dero-wallet-cli-linux-amd64 --rpc-server --wallet-file testnet.wallet --testnet
+   ```
+
+4. Start a second Dero wallet instance to test transfer/ownership functions, etc.:
+   ```bash
+   dero-wallet-cli-linux-amd64 --wallet-file testnet2.wallet --testnet --rpc-server --rpc-bind=127.0.0.1:40403
+   ```
+
+5. Dero testnet Explorer:
+   ```bash
+   ./explorer-linux-amd64 --rpc-server-address 127.0.0.1:30306 --http-address=0.0.0.0:8080
+   ```
+
+   - [Dero Stargate Testnet Explorer](https://testnetexplorer.dero.io/)
+
+### Installing Smart Contract
+
+```bash
+curl --request POST --data-binary @lottery.bas http://127.0.0.1:40403/install_sc
+```
+
+### Download SC Code, Check Balance, and Variables from SC
+
+```bash
+curl http://127.0.0.1:40402/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"getsc","params":{"scid":"30b84e9ab5baeee7195e7e1ccb1f533b7402beb2d3cfa97216a6d80c01056f66", "code":true}}' -H 'Content-Type: application/json'
+
+curl http://127.0.0.1:40402/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"getsc","params":{"scid":"30b84e9ab5baeee7195e7e1ccb1f533b7402beb2d3cfa97216a6d80c01056f66", "code":false, "keysstring":["deposit_count"]}}' -H 'Content-Type: application/json'
+```
+
+### Examples of Various Lottery Smart Contract Functions
+
+#### Play Lottery
+
+```bash
+curl http://127.0.0.1:40403/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"scinvoke","params":{"sc_dero_deposit":200000,"scid":"30b84e9ab5baeee7195e7e1ccb1f533b7402beb2d3cfa97216a6d80c01056f66","sc_rpc":[{"name":"entrypoint","datatype":"S","value":"Lottery"}]}}' -H 'Content-Type: application/json'
+```
+
+*Note: Every second deposit/play will trigger the lottery, and one wallet will win the lottery.*
+
+#### Withdraw Balance (Smart Contract Owner)
+
+```bash
+curl http://127.0.0.1:40403/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"scinvoke","params":{"scid":"30b84e9ab5baeee7195e7e1ccb1f533b7402beb2d3cfa97216a6d80c01056f66","sc_rpc":[{"name":"entrypoint","datatype":"S","value":"Withdraw"},{"name":"amount","datatype":"U","value":100000}]}}' -H 'Content-Type: application/json'
+```
+
+#### Transfer Ownership
+
+```bash
+curl http://127.0.0.1:40403/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"scinvoke","params":{"scid":"30b84e9ab5baeee7195e7e1ccb1f533b7402beb2d3cfa97216a6d80c01056f66","sc_rpc":[{"name":"entrypoint","datatype":"S","value":"TransferOwnership"},{"name":"newowner","datatype":"S","value":"detoAddressForOwnershipReceiver"}]}}' -H 'Content-Type: application/json'
+```
+
+#### Claim Ownership
+
+```bash
+curl http://127.0.0.1:40403/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"scinvoke","params":{"scid":"YourSCID","sc_rpc":[{"name":"entrypoint","datatype":"S","value":"ClaimOwnership"}]}}' -H 'Content-Type: application/json'
+```
+
+#### Update Code
+
+```bash
+curl http://127.0.0.1:40403/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"scinvoke","params":{"scid":"YourSCID","sc_rpc":[{"name":"entrypoint","datatype":"S","value":"UpdateCode"},{"name":"code","datatype":"S","value":"new code should be
+
+ placed here"}]}}' -H 'Content-Type: application/json'
+```
+
+## Lottery.bas
+
+```DVM-BASIC
+/* Lottery Smart Contract in DVM-BASIC
+This lottery smart contract will give lottery wins every xth try. */
+
+Function Lottery(value Uint64) Uint64
+    10 dim deposit_count,winner as Uint64
+    20 LET deposit_count =  LOAD("deposit_count")+1
+    25 IF value == 0 THEN GOTO 110  // if deposit amount is 0, simply return
+    30 STORE("depositor_address" + (deposit_count-1), SIGNER()) // store address for later on payment
+    40 STORE("deposit_total", LOAD("deposit_total") + value )
+    50 STORE("deposit_count", deposit_count)
+    60 IF LOAD("lotteryeveryXdeposit") > deposit_count THEN GOTO 110 // wait till X players join in
+    70 LET winner  = RANDOM() % deposit_count // we have a winner
+    80 SEND_DERO_TO_ADDRESS(LOAD("depositor_address" + winner) , LOAD("lotterygiveback")*LOAD("deposit_total")/10000)
+
+    // Reinitialize for another round
+    90 STORE("deposit_count", 0)   // initial players
+    100 STORE("deposit_total", 0)  // total deposit of all players
+    110 RETURN 0
+End Function
+
+// Function used to initialize parameters during install time
+Function Initialize() Uint64
+    10 STORE("owner", SIGNER())  // store in DB ["owner"] = address
+    20 STORE("lotteryeveryXdeposit", 2)  // lottery rewards every X deposits
+    30 STORE("lotterygiveback", 9900)  // lottery gives back 99% of deposits, 1% accumulated for owner to withdraw
+    33 STORE("deposit_count", 0)  // initial players
+    34 STORE("deposit_total", 0)  // total deposit of all players
+    // 35 printf "Initialize executed"
+    40 RETURN 0 
+End Function
+
+// Used to tune lottery parameters
+Function TuneLotteryParameters(input Uint64, lotteryeveryXdeposit Uint64, lotterygiveback Uint64) Uint64
+    10 dim key, stored_owner as String
+    20 dim value_uint64 as Uint64
+    30 IF LOAD("owner") == SIGNER() THEN GOTO 100 // check whether owner is real owner
+    40 RETURN 1
+
+    100 STORE("lotteryeveryXdeposit", lotteryeveryXdeposit)  // lottery rewards every X deposits
+    130 STORE("lotterygiveback", value_uint64)  // lottery gives back in 1/10000 parts, granularity .01%
+    140 RETURN 0 // return success
+End Function
+
+// Function used to change owner, owner is a string form of address
+Function TransferOwnership(newowner String) Uint64 
+    10 IF LOAD("owner") == SIGNER() THEN GOTO 30 
+    20 RETURN 1
+    30 STORE("tmpowner", ADDRESS_RAW(newowner))
+    40 RETURN 0
+End Function
+
+// Until the new owner claims ownership, the existing owner remains the owner
+Function ClaimOwnership() Uint64 
+    10 IF LOAD("tmpowner") == SIGNER() THEN GOTO 30 
+    20 RETURN 1
+    30 STORE("owner", SIGNER()) // ownership claim successful
+    40 RETURN 0
+End Function
+
+// If signer is the owner, withdraw any requested funds
+Function Withdraw(amount Uint64) Uint64 
+    10 IF LOAD("owner") == SIGNER() THEN GOTO 30 
+    20 RETURN 1
+    30 SEND_DERO_TO_ADDRESS(SIGNER(), amount)
+    40 RETURN 0
+End Function
+
+// If signer is the owner, provide rights to update code anytime
+Function UpdateCode(code String) Uint64 
+    10 IF LOAD("owner") == SIGNER() THEN GOTO 30 
+    20 RETURN 1
+    30 UPDATE_SC_CODE(code)
+    40 RETURN 0
+End Function
