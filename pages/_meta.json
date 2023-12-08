@@ -11,6 +11,7 @@
     "type": "separator",
     "title": "Overview"
   },
+  "basics": "Basics",
   "features": "Features",
   "technology": "Technology",
   "-- Documentation": {
@@ -19,12 +20,8 @@
   },
   "rpc-api": "RPC API",
   "dvm": "Dero Virtual Machine",
-  "wallets": {
-    "title": "Wallets",
-    "theme": {
-      "breadcrumb": false
-    }
-  },
+  "smartContracts": "Smart Contracts",
+  
   "about": {
     "title": "About",
     "type": "page"

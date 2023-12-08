@@ -110,96 +110,57 @@ curl http://127.0.0.1:40403/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"tra
 curl http://127.0.0.1:40403/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"transfer","params":{"transfers":[{"amount":111111,"destination":"deto1qxqqen6lqmksmzmxmfqmxp2y8zvkldtcq8jhkzqflmyczepjw9dp46gc3cczu"}],"scid":"aacaa7bb2388d06e523e5bc0783e4e131738270641406c12978155ba033373af", "sc_rpc":[{"name":"entrypoint","datatype":"S","value":"UpdateCode"}, {"name":"code","datatype":"S","value":"new code should be placed here"}]}}' -H 'Content-Type: application/json';
 ```
 
+DERO Smart Contracts Tokens privacy can be understood just like banks handle cash. Once cash is out from the bank, the bank is not aware of it (who owns what value) until it is deposited back. The smart contract only maintains supply and other necessary items to keep it working. DERO Tokens can be transferred to other wallets just like native DERO with Homomorphic Encryption and without involvement of issuing Smart Contracts. Token issuing Smart Contract cannot hold/freeze/control their tokens once they are issued and sent to any wallet. This token is Private. Use `Function InitializePrivate() Uint64` to make any Smart Contract private.
 
 ## token.bas
 
 ```DVM-BASIC
 /* Private Token Smart Contract Example in DVM-BASIC.
 
-DERO Smart Contracts Tokens privacy can be understood just like banks handle cash. Once cash is out from the bank, the bank is not aware of it (who owns what value) until it is deposited back. The smart contract only maintains supply and other necessary items to keep it working. DERO Tokens can be transferred to other wallets just like native DERO with Homomorphic Encryption and without involvement of issuing Smart Contracts. Token issuing Smart Contract cannot hold/freeze/control their tokens once they are issued and sent to any wallet. This token is Private. Use Function InitializePrivate() Uint64 to make any Smart Contract private.
-*/
-```
-
-### Functions:
-
-#### IssueTOKENX
-
-Issue tokens after depositing DERO (Convert DERO to TOKENX)
-
-```DVM-BASIC
+/* Issue tokens after depositing DERO (Convert DERO to TOKENX) */
 Function IssueTOKENX() Uint64
 10  SEND_ASSET_TO_ADDRESS(SIGNER(), DEROVALUE(), SCID())   // Increment balance of user, without knowing the original balance, this is done homomorphically
 20  RETURN 0
 End Function
-```
 
-#### ConvertTOKENX
-
-Convert TOKENX to DERO after depositing TOKENX. Smart Contract can give DERO, Only if DERO balance exists.
-
-```DVM-BASIC
+/* Convert TOKENX to DERO after depositing TOKENX. Smart Contract can give DERO, Only if DERO balance exists. */
 Function ConvertTOKENX() Uint64
 10  SEND_DERO_TO_ADDRESS(SIGNER(), ASSETVALUE(SCID()))   // Increment balance of user, without knowing the original balance, this is done using Homomorphic Encryption.
 20  RETURN 0
 End Function
-```
 
-#### InitializePrivate
-
-This function is used to initialize parameters during install time. It initializes a private SC.
-
-```DVM-BASIC
+/* This function is used to initialize parameters during install time InitializePrivate initializes a private SC */
 Function InitializePrivate() Uint64
 10  STORE("owner", SIGNER())   // Store in DB  ["owner"] = address
 30  SEND_ASSET_TO_ADDRESS(SIGNER(), 1600000, SCID())   // Gives initial encrypted balance of 1600000.
 40  RETURN 0
 End Function
-```
 
-#### TransferOwnership
-
-This function is used to change the owner. The owner is a string form of an address.
-
-```DVM-BASIC
+/* This function is used to change owner owner is a string form of an address */
 Function TransferOwnership(newowner String) Uint64
 10  IF LOAD("owner") == SIGNER() THEN GOTO 30
 20  RETURN 1
 30  STORE("tmpowner", ADDRESS_RAW(newowner))
 40  RETURN 0
 End Function
-```
 
-#### ClaimOwnership
-
-Until the new owner claims ownership, the existing owner remains the owner.
-
-```DVM-BASIC
+/* Until the new owner claims ownership, the existing owner remains the owner */
 Function ClaimOwnership() Uint64
 10  IF LOAD("tmpowner") == SIGNER() THEN GOTO 30
 20  RETURN 1
 30  STORE("owner", SIGNER()) // ownership claim successful
 40  RETURN 0
 End Function
-```
 
-#### Withdraw
-
-If signer is the owner, withdraw any requested funds.
-
-```DVM-BASIC
+/* If signer is owner, withdraw any requested funds if everything is okay, they will be showing in the signer's wallet */
 Function Withdraw(amount Uint64) Uint64
 10  IF LOAD("owner") == SIGNER() THEN GOTO 30
 20  RETURN 1
 30  SEND_DERO_TO_ADDRESS(SIGNER(), amount)
 40  RETURN 0
 End Function
-```
 
-#### UpdateCode
-
-If signer is the owner, provide him rights to update code anytime.
-
-```DVM-BASIC
+/* If signer is the owner, provide him rights to update code anytime make sure the update is always available to the SC */
 Function UpdateCode(code String) Uint64
 10  IF LOAD("owner") == SIGNER() THEN GOTO 30
 20  RETURN 1

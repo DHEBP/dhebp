@@ -1,0 +1,162 @@
+# Assets Interchange Smart Contract
+
+This Smart Contract converts assetOne to assetTwo as per the defined ratio in the contract, provided the exchange has sufficient asset balances.
+
+### Steps to Create an Exchange Contract:
+
+1. **Create the first token** and deposit it into the exchange:
+    - [Link to token example 1](https://github.com/deroproject/documentation/tree/master/DVMDOCS/examples/token)
+    ```bash
+    curl --request POST --data-binary @token.bas http://127.0.0.1:40403/install_sc
+    ```
+
+2. **Create the second token** and deposit it into the exchange:
+    - [Link to token example 2](https://github.com/deroproject/documentation/tree/master/DVMDOCS/examples/token)
+    ```bash
+    curl --request POST --data-binary @token2.bas http://127.0.0.1:40403/install_sc
+    ```
+
+3. **Create and install** the [Asset Exchange Smart Contract](https://github.com/deroproject/documentation/blob/master/DVMDOCS/examples/assetexchange/asset_exchange.bas):
+    ```bash
+    curl --request POST --data-binary @asset_exchange.bas http://127.0.0.1:40403/install_sc
+    ```
+
+4. **Deposit assetOne/token1** to the exchange contract:
+    ```bash
+    curl --silent http://127.0.0.1:40403/json_rpc -d '{
+        "jsonrpc":"2.0",
+        "id":"0",
+        "method":"transfer",
+        "params":{
+            "scid":"Interchange-SCID",
+            "ringsize":2,
+            "sc_rpc":[{"name":"entrypoint","datatype":"S","value":"Deposit"}],
+            "transfers": [
+                {"scid":"ASSET_ONE_SCID", "burn":AssetOneCount_DEPOSITED_TO_EXCHANGE}
+            ]
+        }
+    }' -H 'Content-Type: application/json'
+    ```
+
+5. **Deposit assetTwo/token2** to the exchange contract:
+    ```bash
+    curl --silent http://127.0.0.1:40403/json_rpc -d '{
+        "jsonrpc":"2.0",
+        "id":"0",
+        "method":"transfer",
+        "params":{
+            "scid":"Interchange-SCID",
+            "ringsize":2,
+            "sc_rpc":[
+                {"name":"entrypoint","datatype":"S","value":"Interchange"},
+                {"name":"incoming","datatype":"H","value":"ASSET_ONE_SCID"},
+                {"name":"outgoing","datatype":"H","value":"ASSET_TWO_SCID"}
+            ],
+            "transfers": [
+                {"scid":"ASSET_ONE_SCID", "burn":AssetOneCount_TO_BE__Converted}
+            ]
+        }
+    }' -H 'Content-Type: application/json'
+    ```
+
+6. **Check the balance of assetTwo** in the wallet:
+    ```bash
+    balance ASSET_TWO_SCID
+    ```
+
+**Note:** The variables used above need to be changed accordingly. SCIDs are transaction IDs returned by the respective commands.
+
+Replace variables:
+- `Interchange-SCID`
+- `ASSET_ONE_SCID`
+- `ASSET_TWO_SCID`
+- `AssetOneCount_DEPOSITED_TO_EXCHANGE`
+- `AssetTwoCount_DEPOSITED_TO_EXCHANGE`
+- `AssetOneCount_TO_BE__Converted`
+
+DERO Smart Contracts Tokens privacy can be understood just like banks handle cash. Once cash is out from the bank, the bank is not aware of it (who owns what value) until it is deposited back. The smart contract only maintains supply and other necessary items to keep it working. DERO Tokens can be transferred to other wallets just like native DERO with Homomorphic Encryption and without involvement of issuing Smart Contracts. Token issuing Smart Contract cannot hold/freeze/control their tokens once they are issued and sent to any wallet. This token is Private. Use `Function InitializePrivate() Uint64` to make any Smart Contract private.
+
+## asset.bas
+
+**Private Token Smart Contract Example in DVM-BASIC.**
+
+```basic
+/* Private Token Smart Contract Example in DVM-BASIC. */
+
+// Issue Asset after depositing DERO (Convert DERO to TOKENX)
+Function IssueAsset() Uint64
+10  SEND_ASSET_TO_ADDRESS(SIGNER(), DEROVALUE(),SCID())   // send asset without knowing original balance, this is done homomorphically
+20  RETURN 0
+End Function
+
+// This function is used to initialize parameters during install time
+// InitializePrivate initializes a private SC
+Function InitializePrivate() Uint64
+40  RETURN 0
+End Function
+```
+
+
+## asset_exchange.bas
+
+**Asset Interchange/Exchange Smart Contract Example in DVM-BASIC.**
+
+```basic
+// Asset Interchange/Exchnage  Smart Contract Example in DVM-BASIC.
+//    This SC allows you to deposit an arbitrary token, into it
+//    and later allows you to swap one token with another
+// if the smart contract has enough balance to cover outgoing transfer it will be done
+// deposits an arbitrary token
+//  owner should deposits all arbitrary types
+Function Deposit() Uint64
+20  RETURN 0
+End Function
+
+// incoming represents incoming asset type basicallly an SCID
+// outgoing represents outgoing asset type basicallly an SCID
+Function Interchange(incoming String, outgoing String) Uint64
+10  SEND_ASSET_TO_ADDRESS(SIGNER(), ASSETVALUE(incoming) / 2, outgoing)   // 1:1/2 interchange of assets
+20  RETURN 0
+End Function
+
+Function Initialize() Uint64
+10 STORE("owner", SIGNER())   // store in DB  ["owner"] = address
+40  RETURN 0
+End Function
+
+// everything below this is supplementary and not required
+// This function is used to change owner
+// owner is an string form of address
+Function TransferOwnership(newowner String) Uint64
+10  IF LOAD("owner") == SIGNER() THEN GOTO 30
+20  RETURN 1
+30  STORE("tmpowner", ADDRESS_RAW(newowner))
+40  RETURN 0
+End Function
+
+// Until the new owner claims ownership, existing owner remains owner
+Function ClaimOwnership() Uint64
+10  IF LOAD("tmpowner") == SIGNER() THEN GOTO 30
+20  RETURN 1
+30  STORE("owner", SIGNER()) // ownership claim successful
+40  RETURN 0
+End Function
+
+// if signer is owner, withdraw any requested funds
+// if everthing is okay, they will be showing in signer's wallet
+Function Withdraw(amount Uint64, asset String) Uint64
+10  IF LOAD("owner") == SIGNER() THEN GOTO 30
+20  RETURN 1
+30  SEND_ASSET_TO_ADDRESS(SIGNER(), amount, asset)
+40  RETURN 0
+End Function
+
+// if signer is owner, provide him rights to update code anytime
+// make sure update is always available to SC
+Function UpdateCode(code String) Uint64
+10  IF LOAD("owner") == SIGNER() THEN GOTO 30
+20  RETURN 1
+30  UPDATE_SC_CODE(code)
+40  RETURN 0
+End Function
+```
