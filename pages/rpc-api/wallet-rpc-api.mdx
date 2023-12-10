@@ -26,7 +26,7 @@ Test endpoint to verify that the RPC server is enabled and working well on the w
 |------|-----------|-----------|--------------------------|
 | | []string  | true      | Array of string         |
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -37,7 +37,7 @@ Test endpoint to verify that the RPC server is enabled and working well on the w
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -51,7 +51,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -65,11 +65,11 @@ curl -X POST \
 
 Returns the DERO address of the wallet to receive DEROs or other tokens.
 
-#### **Available parameters**
+#### Available parameters
 
 No parameters
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -79,7 +79,7 @@ No parameters
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -92,7 +92,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -108,11 +108,11 @@ curl -X POST \
 
 Retrieves the current balance of the wallet.
 
-#### **Available parameters**
+#### Available parameters
 
 No parameters
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -122,7 +122,7 @@ No parameters
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -135,7 +135,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -168,11 +168,11 @@ curl -X POST \
 
 Returns at which block height the wallet is synchronized.
 
-#### **Available parameters**
+#### Available parameters
 
 No parameters
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -182,7 +182,7 @@ No parameters
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -195,7 +195,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -211,13 +211,13 @@ curl -X POST \
 
 Returns the details of the transaction based on its hash.
 
-#### **Available parameters**
+#### Available parameters
 
 | Name | Type      | Mandatory | 
 |------|-----------|-----------|
 | hash | Hash  | true      | 
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -230,7 +230,7 @@ Returns the details of the transaction based on its hash.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -246,7 +246,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -292,7 +292,7 @@ curl -X POST \
 
 Returns all transactions present in the portfolio against the applied filters.
 
-#### **Available parameters**
+#### Available parameters
 
 | Name   | Type    | Mandatory | Comment       |
 |--------|---------|-----------|---------------|
@@ -307,7 +307,7 @@ Returns all transactions present in the portfolio against the applied filters.
 | dstport | uint64  | false     | Destination Port (Service)  |
 | srcport | uint64  | false     | Source Port (Service)  |
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -321,7 +321,7 @@ Returns all transactions present in the portfolio against the applied filters.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -338,7 +338,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -386,7 +386,7 @@ curl -X POST \
 
 Returns a new integrated address with Payloads included.
 
-#### **Available parameters**
+#### Available parameters
 
 | Name   | Type    | Mandatory | Comment       |
 |--------|---------|-----------|---------------|
@@ -394,7 +394,7 @@ Returns a new integrated address with Payloads included.
 | payload_rpc | Argument  | false     | Parameters to include in address  |
 
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -413,7 +413,7 @@ Returns a new integrated address with Payloads included.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -458,13 +458,13 @@ curl -X POST \
 
 Returns the DERO address and the payloads included in an Integrated Address.
 
-#### **Available parameters**
+#### Available parameters
 
 | Name   | Type    | Mandatory | Comment       |
 |--------|---------|-----------|---------------|
 | integrated_address  | string    | true     | Integrated Address to decode   |
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -477,7 +477,7 @@ Returns the DERO address and the payloads included in an Integrated Address.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -493,7 +493,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -516,13 +516,13 @@ curl -X POST \
 
 Returns the mnemonic key (seed) associated with this portfolio.
 
-#### **Available parameters**
+#### Available parameters
 
 | Name   | Type    | Mandatory | Comment       |
 |--------|---------|-----------|---------------|
 | key_type  | string    | true     | Key Type ("mnemonic" only)   |
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -535,7 +535,7 @@ Returns the mnemonic key (seed) associated with this portfolio.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -551,7 +551,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -567,7 +567,7 @@ curl -X POST \
 
 Creates a transaction and returns its hash.
 
-#### **Available parameters**
+#### Available parameters
 
 | Name   | Type    | Mandatory | Comment       |
 |--------|---------|-----------|---------------|
@@ -577,7 +577,7 @@ Creates a transaction and returns its hash.
 | burn | uint63  | false     | Amount of token to burn  |
 | payload_rpc | Arguments  | false     | Payload Arguments  |
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -592,7 +592,7 @@ Creates a transaction and returns its hash.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -610,7 +610,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -626,7 +626,7 @@ curl -X POST \
 
 Creates a transaction to several distinct addresses and returns its hash.
 
-#### **Available parameters**
+#### Available parameters
 
 | Name   | Type    | Mandatory | Comment       |
 |--------|---------|-----------|---------------|
@@ -638,7 +638,7 @@ Creates a transaction to several distinct addresses and returns its hash.
 | fees | uint64  | false     | Tx Fees  |
 | signer | string  | false     | used for gas estimation  |
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -660,7 +660,7 @@ Creates a transaction to several distinct addresses and returns its hash.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -685,7 +685,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -701,7 +701,7 @@ curl -X POST \
 
 Creates a transaction to call a Smart Contract function and returns its hash.
 
-#### **Available parameters**
+#### Available parameters
 
 | Name   | Type    | Mandatory | Comment       |
 |--------|---------|-----------|---------------|
@@ -711,7 +711,7 @@ Creates a transaction to call a Smart Contract function and returns its hash.
 | sc_token_deposit | uint64  | false     | Amount of token to deposit  |
 | ringsize | uint64  | false     | Level of anonymity  |
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -737,7 +737,7 @@ Creates a transaction to call a Smart Contract function and returns its hash.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -766,7 +766,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {

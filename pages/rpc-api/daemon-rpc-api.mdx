@@ -315,7 +315,7 @@ Returns the header of the requested block.
 |--------|---------|-----------|---------------|
 | hash  | hash   | true     | Block Top Hash    |
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -328,7 +328,7 @@ Returns the header of the requested block.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -344,7 +344,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -381,9 +381,9 @@ Returns the list of pending transactions (not included in a block).
 
 #### Available parameters
 
-**No parameters**
+No parameters
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -393,7 +393,7 @@ Returns the list of pending transactions (not included in a block).
 }
 ```
 
-**cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -406,7 +406,7 @@ curl -X POST \
 }'
 ```
 
-**Result**
+#### Result
 
 ```json
 {
@@ -440,7 +440,7 @@ Returns a random list of different DERO addresses registered on the blockchain.
 |--------|---------|-----------|---------------|
 | scid  | Hash   | false     | SCID of asset/token    |
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -450,7 +450,7 @@ Returns a random list of different DERO addresses registered on the blockchain.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -463,7 +463,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -499,7 +499,7 @@ Returns information related to a transaction.
 | tx_hashes   | []Hash    | true     | TXs Hashes    |
 | decode_as_json | uint64  | false     | Decode each tx as json  |
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -515,7 +515,7 @@ Returns information related to a transaction.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -534,7 +534,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -634,7 +634,7 @@ Broadcast a transaction on the DERO network.
 |--------|---------|-----------|---------------|
 | tx_as_hex  | string   | true     | TX in hex format    |
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -647,7 +647,7 @@ Broadcast a transaction on the DERO network.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -663,7 +663,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -687,9 +687,9 @@ Broadcast a transaction on the DERO network.
 | jobid   | string    | true     | Job ID   |
 | mbl_blob | string  | true     | Mini Block Hashing Blob  |
 
-#### **Body**
+#### Body
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -698,11 +698,9 @@ curl -X POST \
   -d ''
 ```
 
-#### **Result**
+#### Result
 
 **To Do**
-
-Certainly! Here's the provided code snippet formatted in Markdown:
 
 ## Get Height
 
@@ -710,7 +708,7 @@ Returns the current block height.
 
 #### Available parameters
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -733,7 +731,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -754,7 +752,7 @@ Returns the total number of blocks in the blockchain.
 
 #### Available parameters
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -764,7 +762,7 @@ Returns the total number of blocks in the blockchain.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -777,7 +775,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -796,7 +794,7 @@ Returns the header of the last block of the blockchain.
 
 #### Available parameters
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -806,7 +804,7 @@ Returns the header of the last block of the blockchain.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -819,7 +817,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -863,7 +861,7 @@ Return the Block Template to find a new block.
 | miner | string  | false     | Miner in JobID  |
 
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -878,7 +876,7 @@ Return the Block Template to find a new block.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -896,7 +894,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -933,7 +931,7 @@ Returns the balance of the selected asset from a valid DERO address.
 | treehash | string  | false     | Merkle Balance Tree Hash  |
 
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -947,7 +945,7 @@ Returns the balance of the selected asset from a valid DERO address.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -964,7 +962,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -1005,7 +1003,7 @@ Returns information related to a Smart Contract.
 | keysstring | []string  | false     | All variables with these string keys  |
 | keysbytes | [][]byte  | false     | All variables with these bytes keys  |
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -1020,7 +1018,7 @@ Returns information related to a Smart Contract.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -1038,7 +1036,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -1072,7 +1070,7 @@ Returns the total costs (= storage and compute) to be paid for a call on a funct
 | sc_rpc | Arguments  | false     | SC Call arguments  |
 | signer | string  | false     | Signer for SC call  |
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -1107,7 +1105,7 @@ Returns the total costs (= storage and compute) to be paid for a call on a funct
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -1145,7 +1143,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
@@ -1170,7 +1168,7 @@ Returns the DERO address associated with the registered name.
 | name  | string  | true    | Name for look up   |
 | topoheight  | int64    | true     | lookup in reference to this topo height   |
 
-#### **Body**
+#### Body
 
 ```json
 {
@@ -1184,7 +1182,7 @@ Returns the DERO address associated with the registered name.
 }
 ```
 
-#### **cURL Request**
+#### cURL Request
 
 ```bash
 curl -X POST \
@@ -1201,7 +1199,7 @@ curl -X POST \
 }'
 ```
 
-#### **Result**
+#### Result
 
 ```json
 {
