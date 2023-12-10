@@ -22,6 +22,10 @@ Test endpoint to verify that the RPC server is enabled and working well on the w
 
 #### Available parameters
 
+| Name | Type      | Mandatory | Comment                  |
+|------|-----------|-----------|--------------------------|
+| | []string  | true      | Array of string         |
+
 #### **Body**
 
 ```json
@@ -209,6 +213,10 @@ Returns the details of the transaction based on its hash.
 
 #### **Available parameters**
 
+| Name | Type      | Mandatory | 
+|------|-----------|-----------|
+| hash | Hash  | true      | 
+
 #### **Body**
 
 ```json
@@ -285,6 +293,19 @@ curl -X POST \
 Returns all transactions present in the portfolio against the applied filters.
 
 #### **Available parameters**
+
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| scid  | Hash    | false     | Smart Contract ID   |
+| coinbase | bool  | false     | Accept coinbase TX ?  |
+| in | bool  | false     | Accept incoming TX ?  |
+| out | bool  | false     | Accept outgoing TX ?  |
+| min_height | unint64  | false     | Minimum height  |
+| max_height | unint64  | false     | Maximum height  |
+| sender | string  | false     | Sender address equal  |
+| receiver | string  | false     | Receiver address equal  |
+| dstport | uint64  | false     | Destination Port (Service)  |
+| srcport | uint64  | false     | Source Port (Service)  |
 
 #### **Body**
 
@@ -367,6 +388,12 @@ Returns a new integrated address with Payloads included.
 
 #### **Available parameters**
 
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| address  | string    | false     | DERO Address (if empty, the one from wallet is used)   |
+| payload_rpc | Argument  | false     | Parameters to include in address  |
+
+
 #### **Body**
 
 ```json
@@ -433,6 +460,10 @@ Returns the DERO address and the payloads included in an Integrated Address.
 
 #### **Available parameters**
 
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| integrated_address  | string    | true     | Integrated Address to decode   |
+
 #### **Body**
 
 ```json
@@ -487,6 +518,10 @@ Returns the mnemonic key (seed) associated with this portfolio.
 
 #### **Available parameters**
 
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| key_type  | string    | true     | Key Type ("mnemonic" only)   |
+
 #### **Body**
 
 ```json
@@ -533,6 +568,14 @@ curl -X POST \
 Creates a transaction and returns its hash.
 
 #### **Available parameters**
+
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| scid  | Hash    | false     | SCID of asset  |
+| destination | string | false     | DERO Address of receiver  |
+| amount | uint64  | false     | Amount of token to send  |
+| burn | uint63  | false     | Amount of token to burn  |
+| payload_rpc | Arguments  | false     | Payload Arguments  |
 
 #### **Body**
 
@@ -584,6 +627,16 @@ curl -X POST \
 Creates a transaction to several distinct addresses and returns its hash.
 
 #### **Available parameters**
+
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| transfers | []Transfer    | false     | see previous request   |
+| sc | string  | false     | SC Code to deploy |
+| sc_rpc | Arguments  | false     | SC Call Arguments  |
+| ringsize | uint64  | false     | Level of anonymity  |
+| scid | string  | false     | SCID to call  |
+| fees | uint64  | false     | Tx Fees  |
+| signer | string  | false     | used for gas estimation  |
 
 #### **Body**
 
@@ -649,6 +702,14 @@ curl -X POST \
 Creates a transaction to call a Smart Contract function and returns its hash.
 
 #### **Available parameters**
+
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| scid | string    | true     | SCID of asset/token   |
+| sc_rpc | Arguments  | true     | SC Arguments  |
+| sc_dero_deposit | uint64  | false     | Amount of DERO to deposit  |
+| sc_token_deposit | uint64  | false     | Amount of token to deposit  |
+| ringsize | uint64  | false     | Level of anonymity  |
 
 #### **Body**
 
