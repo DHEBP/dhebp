@@ -311,6 +311,10 @@ Returns the header of the requested block.
 
 #### Available parameters
 
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| hash  | hash   | true     | Block Top Hash    |
+
 #### **Body**
 
 ```json
@@ -432,7 +436,9 @@ Returns a random list of different DERO addresses registered on the blockchain.
 
 #### Available parameters
 
-No parameters
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| scid  | Hash   | false     | SCID of asset/token    |
 
 #### **Body**
 
@@ -487,6 +493,11 @@ curl -X POST \
 Returns information related to a transaction.
 
 #### Available parameters
+
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| tx_hashes   | []Hash    | true     | TXs Hashes    |
+| decode_as_json | uint64  | false     | Decode each tx as json  |
 
 #### **Body**
 
@@ -619,6 +630,10 @@ Broadcast a transaction on the DERO network.
 
 #### Available parameters
 
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| tx_as_hex  | string   | true     | TX in hex format    |
+
 #### **Body**
 
 ```json
@@ -666,6 +681,11 @@ curl -X POST \
 Broadcast a transaction on the DERO network.
 
 #### Available parameters
+
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| jobid   | string    | true     | Job ID   |
+| mbl_blob | string  | true     | Mini Block Hashing Blob  |
 
 #### **Body**
 
@@ -836,6 +856,13 @@ Return the Block Template to find a new block.
 
 #### Available parameters
 
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| wallet_address   | string    | true     | DERO Address   |
+| block | bool  | false     | Include Block  |
+| miner | string  | false     | Miner in JobID  |
+
+
 #### **Body**
 
 ```json
@@ -897,6 +924,14 @@ curl -X POST \
 Returns the balance of the selected asset from a valid DERO address.
 
 #### Available parameters
+
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| address   | string    | true     | DERO Address   |
+| topoheight | int64  | true     | balance at specified height  |
+| scid | Hash  | false     | SCID of asset/token  |
+| treehash | string  | false     | Merkle Balance Tree Hash  |
+
 
 #### **Body**
 
@@ -960,6 +995,16 @@ Returns information related to a Smart Contract.
 
 #### Available parameters
 
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| scid  | Hash    | true     | Smart Contract ID   |
+| code | bool  | false     | Returns code or not  |
+| variables | bool  | false     | Returns all variables or not  |
+| topheight | int64  | false     | data at specified height  |
+| keysuint64 | []unint64  | false     | All variables with these int keys  |
+| keysstring | []string  | false     | All variables with these string keys  |
+| keysbytes | [][]byte  | false     | All variables with these bytes keys  |
+
 #### **Body**
 
 ```json
@@ -1019,6 +1064,13 @@ curl -X POST \
 Returns the total costs (= storage and compute) to be paid for a call on a function of a Smart Contract.
 
 #### Available parameters
+
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| transfers  | []Transfer    | false     | All transfers   |
+| sc | string  | false     | SC Code to deploy  |
+| sc_rpc | Arguments  | false     | SC Call arguments  |
+| signer | string  | false     | Signer for SC call  |
 
 #### **Body**
 
@@ -1112,6 +1164,11 @@ curl -X POST \
 Returns the DERO address associated with the registered name.
 
 #### Available parameters
+
+| Name   | Type    | Mandatory | Comment       |
+|--------|---------|-----------|---------------|
+| name  | string  | true    | Name for look up   |
+| topoheight  | int64    | true     | lookup in reference to this topo height   |
 
 #### **Body**
 
