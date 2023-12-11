@@ -1,5 +1,5 @@
 {
-  "name": "DHEBP",
+  "name": "dhebp",
   "version": "0.0.1",
   "description": "DERO DOCS",
   "type": "module",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/br0el/dhebp.git"
+    "url": "git+https://github.com/br0el/dhebp.git"
   },
   "author": "br0el",
   "license": "MIT",
@@ -33,5 +33,6 @@
   "devDependencies": {
     "@types/node": "18.11.10",
     "typescript": "^4.9.3"
-  }
+  },
+  "main": "next.config.js"
 }

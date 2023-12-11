@@ -16,10 +16,10 @@
   "technology": "Technology",
   "-- Documentation": {
     "type": "separator",
-    "title": "Documentation"
+    "title": "Dero Docs"
   },
-  "rpc-api": "RPC API",
   "dvm": "Dero Virtual Machine",
+  "rpc-api": "RPC API",
   "smartContracts": "Smart Contracts",
   
   "about": {
