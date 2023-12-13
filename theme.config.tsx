@@ -5,10 +5,11 @@ import { useConfig } from 'nextra-theme-docs'
 
 const logo = (
   <svg
-    height="50"
+    height="37"
     viewBox="0 0 1685.95 487.8"
     fill="currentColor"
     xmlns="http://www.w3.org/2000/svg"
+    transform="translate(-10)"
   >
 <defs>
         <linearGradient
