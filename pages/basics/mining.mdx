@@ -1,6 +1,12 @@
 import { Callout } from 'nextra/components';
 
+# Mining
+Cryptocurrency mining is the process where miners perform various mathematical proofs on cryptocurrency transactions in order to verify the validity of these transactions. As an incentive for supporting the cryptocurrency network, miners are given mining rewards in the form of the cryptocurrency. These rewards often either come as brand new coins, or as fees from the transactions.
+
+The algorithms for validating transactions are often very computationally difficult and expensive, and as such a relatively powerful processing unit is usually required. While most cryptocurrencies take advantage of GPU/ASIC mining, DERO currently only (efficiently) supports CPU mining. DERO utilizes a version of the [AstroBWT](/features/astroBWT) algorithm.
+
 ## Dero Mining
+DERO supports and is made for solo mining officially. Run your own node & mine on it to save 10% fees. Mining on your own node also helps in decentralization of the network.
 
 **Mining** has been completely reworked to vastly decentralize mining rewards with the introduction of Σ-blocks (Sigma blocks), which are simply smaller blocks that are constantly emitted every 1 second and converge into the final 18 second block. Even more plainly, the Σ-Blocks allow on-chain storage of mining data, which effectively turns DERO into one large mining pool. Every miner on the entire network will receive mining rewards based on the amount of work that was contributed, thus creating a truly decentralized network and distribution of rewards. It also greatly improves handling of massive network traffic, where each daemon can support over 10,000 connected devices, acting as a way to pool all of your devices.
 

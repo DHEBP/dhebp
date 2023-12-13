@@ -1,5 +1,8 @@
 {
    "about": "About Dero",
    "wallets": "Dero Wallet",
-    "daemon": "Dero Daemon"
+    "daemon": "Dero Daemon",
+    "tokens": "Dero Tokens",
+    "mining": "Mining"
+
   }

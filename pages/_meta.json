@@ -13,7 +13,6 @@
   },
   "basics": "Basics",
   "features": "Features",
-  "technology": "Technology",
   "-- Documentation": {
     "type": "separator",
     "title": "Dero Docs"

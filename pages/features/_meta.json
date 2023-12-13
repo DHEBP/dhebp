@@ -1,7 +1,10 @@
 {
-    "mining": "Mining",
     "astroBWT": "AstroBWT",
     "golang": "Golang",
     "dapps": "dApps",
-    "graviton": "Graviton"
+    "graviton": "Graviton",
+    "derohe": "Homomorphic Encryption",
+    "smart-contracts": "Private Smart Contracts",
+    "dvm": "DERO Virtual Machine",
+    "encrypted-network": "Encrypted Network"
   }
