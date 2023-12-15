@@ -21,10 +21,7 @@
   "rpc-api": "RPC API",
   "smartContracts": "Smart Contracts",
   
-  "about": {
-    "title": "About",
-    "type": "page"
-  },
+
   "Dero (Official)": {
     "title": "Official Website",
     "type": "page",
