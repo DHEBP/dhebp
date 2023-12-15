@@ -1,0 +1,54 @@
+import Image from 'next/image';
+
+# Gnomon
+![Gnomon](/assets/gnomon.jpeg)
+## Indexing Blockchain Data
+Gnomon interacts with databases primarily for indexing and storing blockchain-related data obtained from the DERO blockchain. The databases used include BoltDB and GravitonDB, each serving specific purposes within the Gnomon ecosystem.
+
+Gnomon's interaction with databases like BoltDB and GravitonDB involves managing storage, indexing blockchain-related data, and retrieving information necessary for decentralized search functionality. These databases play a crucial role in storing and organizing indexed data retrieved from the DERO blockchain, allowing Gnomon to efficiently query and index information for various decentralized applications and services.
+
+## BoltDB
+BoltDB is a key-value pair embedded database that Gnomon utilizes for storage.
+
+#### Setup Process
+1. **Initialization:** Gnomon initializes BoltDB to store and manage data efficiently.
+2. **Database Creation:** It creates or opens a BoltDB database file, establishing a storage location for indexing.
+
+#### Functions and Operations
+- **Data Retrieval:** Gnomon retrieves indexed data using various functions provided by BoltDB. For instance:
+  - Retrieving validated Smart Contract IDs (SCIDs) and their respective owners.
+  - Getting details of SC transfer transactions, SCID invokes, etc.
+- **Last Indexed Height:** It keeps track of the last indexed block height for continuing data indexing.
+
+#### Example Use Cases
+- Gnomon retrieves information such as SCIDs, transaction details, and SC-specific data stored in BoltDB.
+- It manages database operations, including storing and querying indexed data for various purposes, such as Smart Contract interaction details and transaction history.
+
+## GravitonDB
+GravitonDB is another database option used by Gnomon, mainly focused on enhancing performance and scalability.
+
+#### Initialization
+1. **Import:** Gnomon imports the GravitonDB library/module to use it as an alternative database option.
+2. **Database Setup:** It sets up GravitonDB by initializing and specifying the database type (GravitonDB) for storage.
+
+#### Operations and Use Cases
+- **Similar Operations:** Gnomon performs similar operations in GravitonDB as it does in BoltDB, such as storing and retrieving indexed data, managing the last indexed height, and fetching Smart Contract-related information.
+
+#### Potential Advantages
+- GravitonDB may offer optimizations for specific use cases, potentially enhancing speed and efficiency in handling indexed blockchain data.
+- It might provide different functionalities or optimizations compared to BoltDB, catering to diverse database requirements.
+
+## Indexing Other Data
+Gnomon's core emphasis lies in indexing and managing blockchain-related data extracted from the DERO blockchain. However, it's plausible that Gnomon could extend its scope to interact with, manage, or store non-blockchain-related data in diverse scenarios. This expansion might be vital in supporting functionalities, operations, or applications integrated within the Gnomon ecosystem.
+### Indexing Auxiliary Data
+- **Metadata:** Gnomon might store metadata or descriptive information related to indexed blockchain data. This could include timestamps, indexing statuses, or other relevant details.
+- **User Data:** In scenarios where users provide search terms or queries, Gnomon might index and store these user-generated search terms along with associated data for future reference or analysis.
+
+### Application-Specific Data
+- **Application Logs:** If Gnomon is integrated into decentralized applications (dApps), it might handle and store logs or specific application data generated during the usage of those dApps.
+- **API Calls and Responses:** Gnomon might interact with external APIs to fetch additional data or perform operations, storing relevant API responses or retrieved information.
+
+### Configuration and Management
+- **Configuration Settings:** Gnomon might have configurations, settings, or preferences stored in a database to manage its behavior, such as indexing parameters, database connection details, or indexing modes.
+- **Indexer States:** It could store states or flags to manage the indexing process, such as indexing progress, status flags, or error logs related to the indexing process.
+
