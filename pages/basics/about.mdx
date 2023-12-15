@@ -1,20 +1,135 @@
 import { Card, Cards } from 'nextra-theme-docs';
+import Image from 'next/image';
+
 
 
 # What is DERO?
+![What is DERO?](/assets/dero_hero.jpeg)
+
 ## A Decentralized Application Platform
 
-DERO stands as a versatile decentralized application platform prioritizing privacy and scalability. Developed entirely in Golang by its original creators, DERO's uniqueness lies in its innovation, security, and privacy-focused architecture.
+DERO is as a versatile decentralized application platform prioritizing privacy and scalability. Developed entirely in Golang by its original creators, DERO's uniqueness lies in its innovation, security, and privacy-focused architecture.
+## Mission
+The goal is to create a unique state of the art blockchain technology with enhanced Reliability, Privacy, Security, Usability, and Portability by bringing together some of the best proven technologies. These technologies will include Homomorphic Encryption, Services and Smart Contracts which will allow for the creation and execution of Decentralized Applications on a Secure Private Blockchain.
 
 ## Privacy-Preserving Features
-
 DERO emphasizes security and privacy, enabling users to conduct confidential transactions and maintain control over their assets without fear of protocol-level or network attacks. Noteworthy features include:
-
-- **Homomorphic Encryption:** Utilizes the first privacy chain to incorporate this technology.
-- **Instant Account Balances:** Offers quick access to account balances, minimizing data retrieval from the blockchain.
-- **Mining Decentralization:** Eliminates the necessity for mining pools, enhancing network resilience.
-- **Erasure Coded Blocks:** Reduces bandwidth requirements and propagates data swiftly, enabling larger block sizes without delays.
-- **Efficient Wallets:** Provides lightweight and efficient wallets for user convenience.
+<Cards>
+  <Card
+    icon={
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="#2a9cbb"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        className="h-6 w-6"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
+        />
+      </svg>
+    }
+    title="Homomorphic Encryption"
+    href="/features/derohe"
+  />
+  <Card
+    icon={
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="#2a9cbb"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        className="h-6 w-6"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
+        />
+      </svg>
+    }
+    title="Private Smart Contracts"
+    href="/features/smart-contracts"
+  />
+  <Card
+    icon={
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="#2a9cbb"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        className="h-6 w-6"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
+        />
+      </svg>
+    }
+    title="Turing Complete DVM"
+    href="/features/dvm"
+  />
+   <Card
+    icon={
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="#2a9cbb"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        className="h-6 w-6"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
+        />
+      </svg>
+    }
+    title="Encrypted Network"
+    href="/features/encrypted-network"
+  />
+  <Card
+    icon={
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="#2a9cbb"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        className="h-6 w-6"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
+        />
+      </svg>
+    }
+    title="PoW Mining"
+    href="/basics/mining"
+  />
+ <Card
+    icon={
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="#2a9cbb"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        className="h-6 w-6"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
+        />
+      </svg>
+    }
+    title="Lightweight Wallet"
+    href="/basics/wallet"
+  />
+</Cards>
 
 ## Technical Details
 
@@ -26,105 +141,17 @@ DERO's technical prowess is evident in its cryptographic elements:
 - **Pederson Commitment and Borromean Signature:** Integral parts of ring confidential transactions ensuring cryptographic commitment and validation without revealing sensitive data.
 - **Homomorphic Encryption and Multilayered Linkable Spontaneous Anonymous Group (MLSAG):** Enhance privacy and validate transaction amounts securely.
 
-## Innovations
-
-#### Client Protocol
-
-**Unique Transaction Handling:** Unlike traditional blockchains, DERO processes transactions individually, allowing the inclusion of blocks containing duplicate or double-spend transactions.
-
-#### DERO Rocket BulletProofs
-
-**Ultrafast Optimizations:** Proprietary optimization techniques enable bulletproof verifications ten times faster than standard implementations, setting new benchmarks in cryptographic performance.
-
-## Mission
-DERO is a new blockchain technology written in Golang with a focus on enhanced Privacy and Smart Contracts while maintaining the transparency and security of the blockchain. The goal is to create a unique state of the art blockchain technology with enhanced Reliability, Privacy, Security, Usability, and Portability by bringing together some of the best proven technologies. These technologies will include Homomorphic Encryption, Services and Smart Contracts which will allow for the creation and execution of Decentralized Applications on a Secure Private Blockchain.
-### Key Features
-
-
-<Cards>
-  <Card
-    icon={
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="h-6 w-6"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"
-        />
-      </svg>
-    }
-    title="Homomorphic Encryption"
-    href="/features/decentralization"
-  />
-  <Card
-    icon={
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="h-6 w-6"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
-        />
-      </svg>
-    }
-    title="Private Smart Contracts"
-    href="/features/fungibilty"
-  />
-  <Card
-    icon={
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        className="h-6 w-6"
-      >
-        <path
-          fillRule="evenodd"
-          d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z"
-          clipRule="evenodd"
-        />
-      </svg>
-    }
-    title="Turing Complete DVM"
-    href="/features/privacy"
-  />
-  <Card
-    icon={
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="h-6 w-6"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"
-        />
-      </svg>
-    }
-    title="PoW Mining"
-    href="/features/untraceability"
-  />
-
-</Cards>
+## Tokenonmics
+Stargate brings with it a conversion to the Bitcoin emission model. The max supply changed to 21 million coins and there will be a halving every 4 years. 
+- **Ticker**: DERO
+- **Max Supply**: 21 Million
+- **Mining Algorithm**: AstroBWT
+- **Block Reward**: 0.0615 (Halving every 4 years)
+- **Atomic Units**: 5
+- **Difficulty**: Retargets at every block
 
 ## Dero Foundation
-
 The DERO Foundation aims to provide support for the advancement of the DERO Platform and supporting the DERO Community to integrate Decentralized Privacy Systems and Standards within the Blockchain Ecosystem. This will help with the creation and deployment of Private Decentralized Applications, Payment Systems, Services and Tools.
-## Stargate
 
+## To Our Community
+From the trolls to the most stalwart, the moderators to the developers, we thank you for joining us on this journey and for your continued support. It has been quite an adventure and there are many more to come. Continue to spread the word so that we may attract like-minded individuals that will build by the people, for the people. Let’s bring DERO to the masses. 
