@@ -1,13 +1,29 @@
+import Image from 'next/image';
+
 # AstroBWT
-## A Cryptocurrency Mining Innovation
+![AstroBWT](/assets/AstroBWT.jpg)
 
-AstroBWT is an advanced CPU mining algorithm resistant to ASICs, FPGAs, and GPUs, built upon mathematical proofs—a departure from the conventional approaches seen in many other CPU mining algorithms within the cryptocurrency sphere.
+AstroBWT stands out as a cryptocurrency mining innovation. It's an advanced CPU mining algorithm designed to resist specialized mining hardware such as ASICs, FPGAs, and GPUs. What makes AstroBWT particularly intriguing is its foundation in mathematical proofs, setting it apart from conventional CPU mining algorithms commonly used in the cryptocurrency sphere.
 
-### Mathematical Foundation
-AstroBWT distinguishes itself through its reliance on rigorous mathematical proofs and research, contrasting with other CPU mining algorithms that hinge on specific computational pathways or conditions prevalent in the field.
+At its core, AstroBWT leverages the Burrows-Wheeler Transform (BWT), a sophisticated data reordering technique derived from Information Theory and Compression Domains. Unlike many existing mining algorithms that follow predetermined computational paths, AstroBWT takes a different route by incorporating the BWT, which has been a subject of extensive research for over three decades.
+```mermaid
+graph TD
+    A[Input Data] -->|SHA3-256| B[Hashing]
+    B -->|Salsa20 Cipher| C[Data Expansion]
+    C -->|BWT Calculation| D[Burrows-Wheeler Transform]
+    D -->|SHA3-256| E[Hashing of BWT Data]
+    E -->|Salsa20 + Random Number| F[Additional Expansion]
+    F -->|BWT Calculation| G[Calculate BWT of Expanded Data]
+    G -->|SHA3-256| H[Hashing of BWT Data]
 
-### Core Component: Burrows-Wheeler Transform (BWT)
-At its core, AstroBWT employs the Burrows-Wheeler Transform (BWT), a cornerstone of Information Theory and the Compression Domains. Despite prolonged research spanning three decades and various attempts to optimize BWT for GPU/FPGA usage, no significant performance enhancements over CPU utilization have been achieved thus far.
+```
+Despite this innovation, AstroBWT faces a challenge in optimizing its performance on GPUs or FPGAs. Major technology companies like Intel and NVIDIA have developed optimized versions of BWT, but their implementations haven't yet significantly surpassed CPU performance in the mining context.
 
-### Existing Implementations and Insights
-Notably, major technology providers like Intel and NVIDIA have developed optimized versions of BWT, driven by its widespread usage in information theory and compression domains. However, these implementations have failed to demonstrate substantial performance improvements compared to CPU utilization.
+AstroBWT represents a crossroads between cryptography, computational theory, and real-world applications. Its success could signify not only a breakthrough in mining technology but also broader implications for scientific innovation in various domains.
+## Scientific Impacts
+Beyond cryptocurrency, optimized AstroBWT could revolutionize domains like Bioinformatics and DNA Sequencing. A more efficient BWT algorithm could lead to groundbreaking advancements in scientific research.
+
+More about AstroBWT here: [Explaining AstroBWT](/dvm/astroBWT)
+
+
+
