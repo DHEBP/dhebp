@@ -19,6 +19,7 @@
   },
   "homepage": "https://deroproject/",
   "dependencies": {
+    "@theguild/remark-mermaid": "^0.0.5",
     "autoprefixer": "^10.4.16",
     "clsx": "^2.0.0",
     "framer-motion": "^10.16.5",

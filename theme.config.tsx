@@ -96,6 +96,7 @@ const config: DocsThemeConfig = {
   project: {
     link: 'https://github.com/deroproject/derohe'
   },
+
   docsRepositoryBase: 'https://dero.io',
   useNextSeoProps() {
     const { asPath } = useRouter()

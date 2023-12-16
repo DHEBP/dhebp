@@ -36,14 +36,36 @@ def AstroBWT(input String):
     Step5 = SHA3-256(Step4)  # Calculate final POW hash
     return Step5
 ```
+```mermaid
+graph TD;
 
+inputData(Input Data)
+calcSHA3(SHA3-256)
+expandSalsa20(Expand using Salsa20 Cipher)
+calculateBWT(Calculate BWT)
+calcSHA3BWT(SHA3-256 of BWT Data)
+expandSalsa20Random(Expand using Salsa20 + Random Number)
+calculateBWTStep6(Calculate BWT of Step 5)
+calcSHA3BWTStep6(SHA3-256 of BWT Data from Step 6)
 
-1. Calculate SHA3-256 of input data
-2. Expand data using Salsa20 cipher 69371 bytes
-3. Calculate BWT of step 2
-4. Calculate SHA3-256 of BWT data
-5. Expand data using Salsa20 cipher 69371 + random number based on step 4
-6. Calculate BWT of data from step 5
-7. Calculate SHA3-256 of BWT data from step 6
+inputData --> calcSHA3
+calcSHA3 --> expandSalsa20
+expandSalsa20 --> calculateBWT
+calculateBWT --> calcSHA3BWT
+calcSHA3BWT --> expandSalsa20Random
+expandSalsa20Random --> calculateBWTStep6
+calculateBWTStep6 --> calcSHA3BWTStep6
+```
+
+This flowchart outlines the sequential steps involved in the cryptographic process:
+
+1. **Input Data:** Represents the initial data.
+2. **SHA3-256:** Calculation of the SHA3-256 hash of the input data.
+3. **Expand using Salsa20 Cipher:** Expansion of the data using the Salsa20 cipher.
+4. **Calculate BWT:** Calculation of the Burrows-Wheeler Transform (BWT) of the expanded data.
+5. **SHA3-256 of BWT Data:** Calculation of the SHA3-256 hash of the BWT data obtained in the previous step.
+6. **Expand using Salsa20 + Random Number:** Expansion of data using Salsa20 with an additional random number based on the SHA3-256 result from Step 4.
+7. **Calculate BWT of Step 5:** Calculation of the BWT of the data obtained in Step 6.
+8. **SHA3-256 of BWT Data from Step 6:** Calculation of the SHA3-256 hash of the BWT data obtained in Step 7.
 
 More about BWT here: [Explaining AstroBWT](/features/astroBWT)
