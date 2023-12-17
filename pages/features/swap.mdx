@@ -1,0 +1,82 @@
+import { Steps } from 'nextra/components'
+import { Callout } from 'nextra/components'
+
+# XMR Atomic Swap 
+<Callout emoji="⏲️">
+  Be mindful, this process takes about 20 minutes (which is really fast, IMO) 
+</Callout>
+## Before you begin
+Please have these things in order before beginning with your swap:
+    - Fully synced XMR Wallet
+    - Registered DERO Wallet
+    - Basic knowledge about DERO CLI Wallet
+
+
+## Swap DERO for XMR
+<Steps>
+### Log in to the Secret Discord Server
+ 
+[Secret Discord Server](https://discord.gg/yEe5eAQKss)
+ 
+### Enter this command into the Discord Bot
+ 
+`/trade-dero-xmr`
+### Copy the Integrated Address that is displayed
+
+It should look like this:
+```
+deroi1qyw4fl3dupcg5qlrcsvcedze507q9u67lxfpu8kgnzp04aq73yheqqdyvfp4x7z7t9hh2grpwfjjqarjv9jxjmn8ypzy25j0ypnx7u3qtpx4ygp68gsyxmmdwpkx2ar9yp68sgrxdaezqarjv9jx2grfdeehgun4vd68xgr5dusxyefqv3jkc6tkv4ex2epqw3hjq7t0w4ezqampd3kx2arzg323j89rvf892qrz2e2sygeaw9a
+```
+### Go to your Dero CLI Wallet and select option (5)
+Enter your wallet password then press `Enter`
+
+Paste in the Integrated Address from Step 3 and press `Enter`
+
+### Review the receiving instructions that are displayed
+
+It should look like this:
+```
+13/08 20:25:01  INFO    wallet  Destination port is integrated in address.  {"dst port": 7331}
+13/08 20:25:01  INFO    wallet  Integrated Message      {"comment": "You are trading DERO for XMR :: Complete tx for trade instructs to be delivered to your wallet"}
+13/08 20:25:01  INFO    wallet  Transaction     {"Value": "0.00002"}
+13/08 20:25:01  INFO    wallet  This RPC has requested your address.
+13/08 20:25:01  INFO    wallet  If you are expecting something back, it needs to be sent
+13/08 20:25:01  INFO    wallet  Your address will remain completely invisible to external entities(only sender/receiver can see your address)
+```
+Confirm Transaction (y/N)? Type `y` the press `Enter`
+
+Make a note of the txid. It should like like this:
+
+```
+13/08 20:25:01  INFO    wallet  Dispatched tx   {"txid": "da4619061ca9b59de8b734e2f6ebd179bd0050fab38ef153045ea8ed74a14f10"}
+```
+*Yours will be different.*
+
+### Select option (13) in your wallet
+
+Your transaction history will be displayed. Make a note of the most recent transaction. It should look like this:
+```
+13 Aug 23 20:22 MDT Height 2460989 TopoHeight 2460989 transaction 439ae71b2346dba7c1fe0ab2373146c6a41840657823c126b27e67497ecbbcbf
+received 0.00002 DERO Proof: deroproof1qy94d6w3ud3v8my978jg5c7yrzk7hc49xu9rq05x0hs7khptrkk3xq9zvfyyskpqw9ylegtj0v4phg6qcw3f3smdwx
+0ksx6cxnka2t05055hwr5xt7uky4j4qg3vcz30 RPC CALL arguments [Name:C Type:string Value:'Send DERO for XMR: dero1qyw4fl3dupcg5qlrcsvce
+dze507q9u67lxfpu8kgnzp04aq73yheqqg2ctjn4|port 7331|comment: XMR addr']
+```
+*Yours will be very similar.*
+### Begin the actual swap by pressing (5)
+Enter your wallet password then press `Enter`
+
+Paste in the destination address from Step 6 (located at the end) and press `Enter`
+It should look like this:
+```
+dero1qyw4fl3dupcg5qlrcsvcedze507q9u67lxfpu8kgnzp04aq73yheqqg2ctjn4
+```
+Enter amount to transfer: `1` (for example) and press `Enter`
+
+Enter payment id (or destination port number): `7331` and press `Enter`
+<Callout type="warning" emoji="⚠️">
+Be mindful to paste the correct XMR Deposit Address and nothing else.
+</Callout>
+Enter Comment:  `PASTE YOUR XMR DEPOSIT ADDRESS HERE` and press `Enter`
+
+### Wait ~20 minutes for XMR to arrive in your XMR Wallet
+</Steps>
