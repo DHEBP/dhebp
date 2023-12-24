@@ -1,5 +1,6 @@
 {
   "name": "dhebp",
+  "homepage": ".",
   "version": "0.0.1",
   "description": "DERO DOCS",
   "type": "module",
