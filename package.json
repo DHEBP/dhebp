@@ -10,12 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/br0el/dhebp.git"
+    "url": "git+https://github.com/DHEBP/dhebp.git"
   },
-  "author": "br0el",
+  "author": "DHEBP",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/br0el/dhebp/issues"
+    "url": "https://github.com/DHEBP/dhebp/issues"
   },
   "homepage": "https://deroproject/",
   "dependencies": {
