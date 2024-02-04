@@ -5,7 +5,7 @@ import Image from 'next/image';
 ## Decentralized Search Engine
 DeroHE's client, powered by Gnomon, empowers individual user nodes by enabling direct navigation, exploration, and search within the blockchain and its smart contracts. This liberates users from relying on external blockchain data providers like Infura, offering more control over data access and management. Gnomon efficiently handles and arranges the gathered information, thus enhancing its operational efficiency within the decentralized ecosystem.
 
-Gnomon leverages a small selection of databases such as BoltDB and GravitonDB. Due to their key/value pair nature as well as being written entirely in Golang, they are easy choices to be leveraged for an all-go codebase. Being that they are key/value pair data structures, this makes storing and retrieving information simpler and more efficient.
+Gnomon leverages a small selection of databases such as [BoltDB](https://pkg.go.dev/go.etcd.io/bbolt) and [GravitonDB](/features/graviton). Due to their key/value pair nature as well as being written entirely in Golang, they are easy choices to be leveraged for an all-go codebase. Being that they are key/value pair data structures, this makes storing and retrieving information simpler and more efficient.
 
 #### Core Features
 - Smart Contract querying and indexing
