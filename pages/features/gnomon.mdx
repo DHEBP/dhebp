@@ -5,50 +5,24 @@ import Image from 'next/image';
 ## Decentralized Search Engine
 DeroHE's client, powered by Gnomon, empowers individual user nodes by enabling direct navigation, exploration, and search within the blockchain and its smart contracts. This liberates users from relying on external blockchain data providers like Infura, offering more control over data access and management. Gnomon efficiently handles and arranges the gathered information, thus enhancing its operational efficiency within the decentralized ecosystem.
 
-Gnomon works effectively with databases like BoltDB and GravitonDB. It mainly stores, indexes, and fetches data from the DERO blockchain. These databases help organize and manage blockchain information, making it easier to search and use in decentralized apps. BoltDB and GravitonDB play a crucial role in storing indexed blockchain data, boosting Gnomon's ability to search and organize information for various decentralized services.
+Gnomon leverages a small selection of databases such as BoltDB and GravitonDB. Due to their key/value pair nature as well as being written entirely in Golang, they are easy choices to be leveraged for an all-go codebase. Being that they are key/value pair data structures, this makes storing and retrieving information simpler and more efficient.
 
-## BoltDB
-BoltDB is a key-value pair embedded database that Gnomon utilizes for storage.
+#### Core Features
+- Smart Contract querying and indexing
+- Transaction querying and indexing
+- Transaction Markup Language (xtag) support
+- No custom daemon, no modified code.
 
-#### Setup Process
-**Initialization:** Gnomon initializes BoltDB to store and manage data efficiently.
-**Database Creation:** It creates or opens a BoltDB database file, establishing a storage location for indexing.
+## Gnomon Use Cases
+### GnomonIndexer (CLI)
+The GnomonIndexer CLI is a command-line interface used to initiate an indexer for analyzing transactions on the DERO blockchain. It is primarily designed for indexing smart contract interactions and asset transactions.
 
-#### Functions and Operations
-**Data Retrieval:** Gnomon retrieves indexed data using various functions provided by BoltDB. For instance:
-  - Retrieving validated Smart Contract IDs (SCIDs) and their respective owners.
-  - Getting details of SC transfer transactions, SCID invokes, etc.
-**Last Indexed Height:** It keeps track of the last indexed block height for continuing data indexing.
+Users can specify various options when running the indexer, such as the daemon RPC address and the number of parallel blocks to index. Increasing the number of parallel blocks may result in higher load on both the GnomonIndexer and the connected daemon.
 
-#### Example Use Cases
-- Gnomon retrieves information such as SCIDs, transaction details, and SC-specific data stored in BoltDB.
-- It manages database operations, including storing and querying indexed data for various purposes, such as Smart Contract interaction details and transaction history.
+### Gnomon as a Go package
+The Gnomon repository provides a Go package that can be imported into other Golang projects, allowing developers to leverage its functionality within their own decentralized applications (dApps) or configurations. This package offers various capabilities for tracking specific contracts or data on the DERO blockchain.
 
-## GravitonDB
-GravitonDB is another database option used by Gnomon, mainly focused on enhancing performance and scalability.
+### Gnomon Smart Contract Indexing Service
+The Smart Contract Indexing Service by Gnomon is crucial for analyzing DERO blockchain smart contracts. It operates on-chain, indexing contracts based on defined filters or all contracts if no filter is set. Users can specify criteria like contract actions. Stored contract details include deployment height, owner identity, and SCID. 
 
-#### Initialization
-**Import:** Gnomon imports the GravitonDB library/module to use it as an alternative database option.
-**Database Setup:** It sets up GravitonDB by initializing and specifying the database type (GravitonDB) for storage.
-
-#### Operations and Use Cases
-- **Similar Operations:** Gnomon performs similar operations in GravitonDB as it does in BoltDB, such as storing and retrieving indexed data, managing the last indexed height, and fetching Smart Contract-related information.
-
-#### Potential Advantages
-- GravitonDB may offer optimizations for specific use cases, potentially enhancing speed and efficiency in handling indexed blockchain data.
-- It might provide different functionalities or optimizations compared to BoltDB, catering to diverse database requirements.
-
-## Indexing Other Data
-Gnomon primarily focuses on indexing and managing data associated with the DERO blockchain. However, Gnomon has the potential to expand its scope by indexing data beyond the realm of blockchain. This could prove crucial in supporting the functionalities, operations, or applications that are part of the Gnomon ecosystem.
-### Indexing Auxiliary Data
-- **Metadata:** Gnomon might store metadata or descriptive information related to indexed blockchain data. This could include timestamps, indexing statuses, or other relevant details.
-- **User Data:** In scenarios where users provide search terms or queries, Gnomon might index and store these user-generated search terms along with associated data for future reference or analysis.
-
-### Application-Specific Data
-- **Application Logs:** If Gnomon is integrated into decentralized applications (dApps), it might handle and store logs or specific application data generated during the usage of those dApps.
-- **API Calls and Responses:** Gnomon might interact with external APIs to fetch additional data or perform operations, storing relevant API responses or retrieved information.
-
-### Configuration and Management
-- **Configuration Settings:** Gnomon might have configurations, settings, or preferences stored in a database to manage its behavior, such as indexing parameters, database connection details, or indexing modes.
-- **Indexer States:** It could store states or flags to manage the indexing process, such as indexing progress, status flags, or error logs related to the indexing process.
-
+The `gnomonsc` CLI configures this service, with parameters like daemon RPC address. Future enhancements aim for efficiency and off-chain data storage, though detailed plans are pending.
