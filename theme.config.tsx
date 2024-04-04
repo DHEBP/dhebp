@@ -113,7 +113,7 @@ const config: DocsThemeConfig = {
   logo,
   head: function useHead() {
     const { title } = useConfig()
-    const socialCard = '/og.jpeg'
+    const socialCard = '/assets/og.jpeg'
     return (
       <>
         <meta name="msapplication-TileColor" content="#fff" />
