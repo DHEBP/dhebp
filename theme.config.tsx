@@ -120,7 +120,7 @@ const config: DocsThemeConfig = {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <meta property="og:title" content="What is Dero?" />
         <meta property="og:description" content="Dero Homomorphic Encryption Blockchain Protocol" />
-        <meta property="og:image" content="/assets/og.jpeg" />
+        <meta property="og:image" content="https://dero.is/assets/og.jpeg" />
         <meta property="og:url" content="https://dero.is" />
         <meta httpEquiv="Content-Language" content="en" />
         <meta name="twitter:card" content="summary_large_image" />
