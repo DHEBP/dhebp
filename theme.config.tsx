@@ -126,7 +126,7 @@ const config: DocsThemeConfig = {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="What is Dero?" />
         <meta name="twitter:description" content="Dero Homomorphic Encryption Blockchain Protocol" />
-        <meta name="twitter:image" content="/assets/og.jpeg" />
+        <meta name="twitter:image" content="https://dero.is/assets/og.jpeg" />
         <meta name="twitter:site" content="@DERO_Foundation" />
         <meta name="twitter:url" content="https://dero.is" />
         <meta
