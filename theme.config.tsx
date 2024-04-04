@@ -119,19 +119,21 @@ const config: DocsThemeConfig = {
         <meta name="msapplication-TileColor" content="#fff" />
         <meta name="theme-color" content="#fff" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <meta property="og:title" content="Rollkit" />
+        <meta property="og:title" content="What is Dero?" />
         <meta property="og:description" content="Dero Homomorphic Encryption Blockchain Protocol" />
-        <meta property="description" content="Dero Homomorphic Encryption Blockchain Protocol" />
+        <meta property="og:image" content={socialCard} />
+        <meta property="og:url" content="https://dero.is" />
         <meta httpEquiv="Content-Language" content="en" />
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="What is Dero?" />
+        <meta name="twitter:description" content="Dero Homomorphic Encryption Blockchain Protocol" />
         <meta name="twitter:image" content={socialCard} />
-        <meta name="twitter:site:domain" content="deroproject/" />
-        <meta name="twitter:url" content="deroproject/" />
+        <meta name="twitter:site" content="@DERO_Foundation" />
+        <meta name="twitter:url" content="https://dero.is" />
         <meta
           name="og:title"
           content={title ? title + ' – Dero' : 'Dero'}
         />
-        <meta name="og:image" content={socialCard} />
         <meta name="apple-mobile-web-app-title" content="Dero" />
         <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
         <link rel="icon" href="/assets/favicon.png" type="image/png" />
