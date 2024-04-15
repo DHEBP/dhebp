@@ -3,11 +3,13 @@
     "dvm": "DERO Virtual Machine",
     "smart-contracts": "Private Smart Contracts",
     "encrypted-network": "Encrypted Network",
-    "dapps": "dApps",
+    "xswd": "XSWD",
     "astroBWT": "AstroBWT",
     "graviton": "GravitonDB",
     "bulletproofs": "Rocket Bulletproofs",
     "gnomon": "Gnomon",
+    "usernames": "Usernames",
+    "dapps": "dApps",
     "golang": "Golang"
 
 

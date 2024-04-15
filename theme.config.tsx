@@ -189,7 +189,7 @@ const config: DocsThemeConfig = {
         footer: {
     text: (
       <div className="flex w-full flex-col items-center sm:items-start">
-          <span>.deroproject/</span>
+          <span>Privacy Together</span>
             
         <p className="mt-6 text-xs">
           © {new Date().getFullYear()} DHEBP
