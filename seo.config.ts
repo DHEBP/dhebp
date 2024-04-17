@@ -15,7 +15,7 @@ const seoConfig = defineMetadata({
     images: '/assets/og-image.png',
     url: 'https://dero.is'
   },
-  manifest: 'assets/site.webmanifest',
+  manifest: '/assets/site.webmanifest',
   icons: [
     { rel: 'icon', url: 'assets/favicon.ico' },
     { rel: 'apple-touch-icon', url: 'assets/apple-touch-icon.png' },
