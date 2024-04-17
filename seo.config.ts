@@ -17,10 +17,10 @@ const seoConfig = defineMetadata({
   },
   manifest: '/assets/site.webmanifest',
   icons: [
-    { rel: 'icon', url: 'assets/favicon.ico' },
-    { rel: 'apple-touch-icon', url: 'assets/apple-touch-icon.png' },
-    { rel: 'mask-icon', url: 'assets/favicon.ico' },
-    { rel: 'image/x-icon', url: 'assets/favicon.ico' }
+    { rel: 'icon', url: '/assets/favicon.ico' },
+    { rel: 'apple-touch-icon', url: '/assets/apple-touch-icon.png' },
+    { rel: 'mask-icon', url: '/assets/favicon.ico' },
+    { rel: 'image/x-icon', url: '/assets/favicon.ico' }
   ],
   twitter: {
     site: '@DERO_Foundation',
