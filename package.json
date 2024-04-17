@@ -1,6 +1,6 @@
 {
   "name": "dhebp",
-  "homepage": ".",
+  "homepage": "https://deroproject/",
   "version": "0.0.1",
   "description": "DERO DOCS",
   "type": "module",
@@ -18,13 +18,13 @@
   "bugs": {
     "url": "https://github.com/DHEBP/dhebp/issues"
   },
-  "homepage": "https://deroproject/",
   "dependencies": {
     "@theguild/remark-mermaid": "^0.0.5",
     "autoprefixer": "^10.4.16",
     "clsx": "^2.0.0",
     "framer-motion": "^10.16.5",
     "next": "^14.0.3",
+    "next-seo": "^6.5.0",
     "nextra": "^2.13.2",
     "nextra-theme-docs": "^2.13.2",
     "postcss": "^8.4.31",

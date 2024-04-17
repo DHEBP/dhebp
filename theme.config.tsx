@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router'
 import type { DocsThemeConfig } from 'nextra-theme-docs'
 import { useConfig } from 'nextra-theme-docs'
+import seoConfig from './seo.config'
 
 
 const logo = (
@@ -99,55 +100,47 @@ const config: DocsThemeConfig = {
 
   docsRepositoryBase: 'https://dero.io',
   useNextSeoProps() {
-    const { asPath } = useRouter()
-    if (asPath === '/') {
-      return {
-        titleTemplate: 'DERO'
-      };
-    } else {
-      return {
-        titleTemplate: '%s – DERO'
-      }
+    const { route } = useRouter()
+    const { url, images } = seoConfig.openGraph
+
+    if (route === '/') {
+      return { titleTemplate: '%s – DERO' }
+    }
+
+    return {
+      titleTemplate: seoConfig.title.template,
+      openGraph: { url, images: [{ url: `${url}${images}` }] }
     }
   },
   logo,
-  head: function useHead() {
-    const { title } = useConfig()
+  head: () => {
+    const { frontMatter: meta } = useConfig()
+    const { title } = meta
+
     return (
       <>
-        <meta name="msapplication-TileColor" content="#fff" />
-        <meta name="theme-color" content="#fff" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <meta property="og:title" content="What is Dero?" />
-        <meta property="og:description" content="Dero Homomorphic Encryption Blockchain Protocol" />
-        <meta property="og:image" content="https://dero.is/assets/og.jpeg" />
-        <meta property="og:url" content="https://dero.is" />
+        {seoConfig.icons.map((icon, index) => (
+          <link key={index} rel={icon.rel} href={icon.url} />
+        ))}
         <meta httpEquiv="Content-Language" content="en" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="What is Dero?" />
-        <meta name="twitter:description" content="Dero Homomorphic Encryption Blockchain Protocol" />
-        <meta name="twitter:image" content="https://dero.is/assets/og.jpeg" />
-        <meta name="twitter:site" content="@DERO_Foundation" />
-        <meta name="twitter:url" content="https://dero.is" />
+        <meta
+          name="description"
+          content={meta['description'] || seoConfig.description}
+        />
         <meta
           name="og:title"
-          content={title ? title + ' – Dero' : 'Dero'}
+          content={title ? title + ' – DERO' : seoConfig.title.default}
         />
-        <meta name="apple-mobile-web-app-title" content="Dero" />
-        <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
-        <link rel="icon" href="/assets/favicon.png" type="image/png" />
-        <link
-          rel="icon"
-          href="/assets/favicon-dark.svg"
-          type="image/svg+xml"
-          media="(prefers-color-scheme: dark)"
+        <meta
+          name="og:description"
+          content={meta['description'] || seoConfig.description}
         />
-        <link
-          rel="icon"
-          href="/assets/favicon-dark.png"
-          type="image/png"
-          media="(prefers-color-scheme: dark)"
-        />
+        <meta name="og:image" content={seoConfig.openGraph.images} />
+        <meta name="og:url" content={seoConfig.openGraph.url} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content={seoConfig.twitter.site} />
+        <meta name="twitter:creator" content={seoConfig.twitter.creator} />
+        <meta name="apple-mobile-web-app-title" content="DERO" />
       </>
     )
   },
@@ -158,7 +151,7 @@ const config: DocsThemeConfig = {
       }
       return <>{title}</>
     },
-    defaultMenuCollapseLevel: 1,
+    //defaultMenuCollapseLevel: 1,
     toggleButton: false
   },
      toc:{
