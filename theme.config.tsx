@@ -112,7 +112,7 @@ const config: DocsThemeConfig = {
       openGraph: { url, images: [{ url: `${url}${images}` }] }
     }
   },
-  logo,
+  
   head: () => {
     const { frontMatter: meta } = useConfig()
     const { title } = meta

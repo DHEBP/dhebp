@@ -12,7 +12,7 @@ const seoConfig = defineMetadata({
   description: 'DERO is a privacy-focused decentralized application platform.',
   themeColor: '#061636',
   openGraph: {
-    images: 'assets/og-image.png',
+    images: '/assets/og-image.png',
     url: 'https://dero.is'
   },
   manifest: 'assets/site.webmanifest',
