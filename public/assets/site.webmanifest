@@ -1,7 +1,6 @@
 {
   "name": "Dero Homomorphic Encryption Blockchain Protocol",
   "short_name": "DHEBP",
-  "start_url": ".",
   "display": "standalone",
   "background_color": "#061636",
   "description": "DERO is a privacy-focused decentralized application platform.",
