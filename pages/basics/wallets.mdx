@@ -1,0 +1,58 @@
+---
+title: "Understanding Cryptocurrency Wallets: A Comprehensive Guide"
+description: "Explore different wallet options, including CLI, Engram, Web, and Cold wallets."
+tags: ["Wallets", "Cryptocurrency", "Security", "DERO"]
+image: "/assets/wallets.jpeg"
+---
+
+
+import Image from 'next/image';
+import { Callout } from 'nextra/components';
+
+# What is a wallet?
+![What is a wallet](/assets/wallets.jpeg)
+
+A cryptocurrency wallet is a digital tool or software application that allows users to securely store, manage, and interact with their cryptocurrencies. It serves as a virtual wallet for storing private keys, which are essential for accessing and controlling the user's cryptocurrency holdings on the blockchain.
+
+Many cryptocurrency wallets, including Dero's, employ seed phrases—a sequence of random dictionary words. These seed phrases enable the regeneration of a lost private key, underscoring their crucial role in wallet security. It is strongly advised to diligently record and store your seed phrase. Dero adopts a 25-word seed phrase, displayed during wallet creation and accessible for printing at any time within the wallet interface.
+<Callout type="info" emoji="⬇️">
+  Download here: https://github.com/deroproject/derohe/releases
+</Callout>
+## Dero Wallet Options
+
+
+
+### CLI (Command Line Interface) Wallet
+
+The CLI wallet, the fundamental and official wallet, resides [here](https://github.com/deroproject/derohe) within the official Dero suite of software. Offering all necessary functions, starting with this wallet is recommended.
+
+#### Usage:
+
+To utilize the CLI wallet, execute the binary file via the command line or terminal. The process might slightly differ based on your operating system. Nevertheless, navigate to the folder containing the executable and run it accordingly:
+
+- Linux: `./dero-wallet-cli-linux-amd64`
+- Windows: `dero-wallet-cli-windows-amd64.exe`
+- Mac: `./dero-wallet-cli-darwin`
+
+### ENGRAM (Graphical) Wallet
+
+The Engram wallet, the pioneering graphical wallet within the Dero ecosystem, is available [here](https://github.com/DEROFDN/Engram). Though currently in alpha, it serves basic wallet functionalities, encompassing a built-in miner (netrunner), an authentication system for dApps (Cyberdeck), and services for nameservice smart contracts and fully encrypted messaging for Dero users.
+
+#### Usage:
+
+To use Engram, download the precompiled binary and execute it. The user-friendly GUI simplifies setup procedures.
+
+### Web Wallet
+
+The Web Wallet, accessible via the [wallet.dero.io website](https://wallet.dero.io), offers convenience but involves longer registration times and inherent risks when conducting financial transactions through a web browser. While convenient if unable to use the CLI or Engram wallet, it's advisable to resort to the CLI or Engram wallet whenever possible.
+
+#### Usage:
+
+Navigate to [https://wallet.dero.io/](https://wallet.dero.io/) and select your desired service, likely opening or creating a wallet. The setup process should be straightforward.
+
+### Cold Wallet
+
+Cold wallets refer to valid wallet addresses generated offline to safeguard private keys from exposure. For Dero wallets, which necessitate registration, the process is more complex. Find the necessary software and guide for this process [here](https://github.com/Slixe/dero-tools#cold-wallet).
+<Callout type="warning" emoji="⚠️">
+  All wallets require **Wallet Registration**.
+</Callout>

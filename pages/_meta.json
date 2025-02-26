@@ -1,0 +1,39 @@
+{
+  "index": {
+    "display": "hidden",
+    "title": "DHEBP",
+    "theme": {
+      "breadcrumb": false
+    }
+  },
+
+  "-- Overview": {
+    "type": "separator",
+    "title": "Overview"
+  },
+  "basics": "Basics",
+  "features": "Features",
+  "tools": "Tools",
+  "tutorials": "Tutorials",
+  "-- Documentation": {
+    "type": "separator",
+    "title": "Dero Docs"
+  },
+  "dvm": "Dero Virtual Machine",
+  "rpc-api": "RPC API",
+  "smartContracts": "Smart Contracts",
+  
+  
+  "Dero (Official)": {
+    "title": "Official Website",
+    "type": "page",
+    "href": "https://dero.io",
+    "newWindow": true
+  },
+  "Trade Ogre": {
+    "title": "Exchange",
+    "type": "page",
+    "href": "https://tradeogre.com/markets",
+    "newWindow": true
+  }
+}

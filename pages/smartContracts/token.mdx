@@ -1,0 +1,170 @@
+# Token Smart Contract Guide
+
+Dero Stargate DVM Smart Contracts guide to install and test various functions of the private token Smart Contract.
+
+### Notes:
+1. All wallet addresses need to be registered first with SC before interacting with it. This condition will be removed in the future.
+2. The requirement of `detoAnyRandomAddressFromExplorer` during SC invocation will be removed in the future.
+3. Burn is equal to deposit if SCID is defined, else DERO/token will disappear/burn from the network forever. Burn will be renamed to something more meaningful. This can be proved with cryptographic proof.
+
+### Instructions:
+
+1. Download DERO Stargate testnet source and binaries from [GitHub](https://github.com/deroproject/derohe/releases).
+
+2. Start Dero daemon in testnet mode:
+
+```shell
+./derod-linux-amd64 --testnet;
+```
+
+3. Start Dero wallet in testnet:
+
+```shell
+dero-wallet-cli-linux-amd64 --rpc-server --wallet-file testnet.wallet --testnet;
+```
+
+4. Start a second instance of Dero wallet to test transfer/ownership functions, etc.:
+
+```shell
+dero-wallet-cli-linux-amd64 --wallet-file testnet2.wallet --testnet --rpc-server --rpc-bind=127.0.0.1:40403;
+```
+
+5. Dero testnet Explorer: [Testnet Explorer](https://testnetexplorer.dero.io/)
+
+### Commands:
+
+To send DERO to multiple users in one transaction:
+
+```shell
+curl http://127.0.0.1:40403/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"transfer","params":{"transfers":[{"amount":100000,"destination":"deto1ADDRESS1"},{"amount":300000,"destination":"deto1ADDRESS12"}]}}' -H 'Content-Type: application/json';
+```
+
+DERO has two types of SCs: public and private.
+
+1. Public SCs are public with all data/code/exchanges available to the public.
+2. Private SCs have their smart contract data public, but no one knows the specific details of users' token ownership or transactions. It's like cash in a bank; once it's withdrawn, the bank doesn’t know who has what amount or how it's used/sent/received.
+
+### Installing Private Smart Contract:
+
+Download `token.bas` [here](https://git.dero.io/DeroProject/derosuite_stargate/src/master/cmd/dvm/token.bas).
+
+```shell
+curl --request POST --data-binary @token.bas http://127.0.0.1:40403/install_sc;
+```
+
+To check private token balance in the wallet:
+
+```shell
+balance SCID;
+```
+
+Download SC code, check SC balance, and variables from the chain:
+
+```shell
+curl http://127.0.0.1:40402/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"getsc","params":{"scid":"aacaa7bb2388d06e523e5bc0783e4e131738270641406c12978155ba033373af", "code":true}}' -H 'Content-Type: application/json';
+```
+
+### Examples of Various Functions:
+
+- Send private tokens from one wallet to another wallet:
+
+```shell
+curl http://127.0.0.1:40403/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"transfer","params":{"transfers":[{"amount":111111,"destination":"deto1qxqqen6lqmksmzmxmfqmxp2y8zvkldtcq8jhkzqflmyczepjw9dp46gc3cczu"},{"amount":333333,"destination":"deto1qxqqen6lqmksmzmxmfqmxp2y8zvkldtcq8jhkzqflmyczepjw9dp46gc3cczu","scid": "aacaa7bb2388d06e523e5bc0783e4e131738270641406c12978155ba033373af"}]}}' -H 'Content-Type: application/json';
+```
+
+- Convert DERO to tokens 1:1 swap:
+
+```shell
+curl http://127.0.0.1:40403/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"transfer","params":{"transfers":[{"amount":1,"destination":"deto1qxqqen6lqmksmzmxmfqmxp2y8zvkldtcq8jhkzqflmyczepjw9dp46gc3cczu", "burn":44}],"scid":"aacaa7bb2388d06e523e5bc0783e4e131738270641406c12978155ba033373af", "sc_rpc":[{"name":"entrypoint","datatype":"S","value":"IssueTOKENX"}]}}' -H 'Content-Type: application/json';
+```
+
+- Convert tokens to DERO 1:1 swap:
+
+```shell
+curl http://127.0.0.1:40403/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"transfer","params":{"transfers":[{"scid":"aacaa7bb2388d06e523e5bc0783e4e131738270641406c12978155ba033373af", "amount":1,"destination":"deto1qxqqen6lqmksmzmxmfqmxp2y8zvkldtcq8jhkzqflmyczepjw9dp46gc3cczu", "burn":9}],"scid":"aacaa7bb2388d06e523e5bc0783e4e131738270641406c12978155ba033373af", "sc_rpc":[{"name":"entrypoint","datatype":"S","value":"ConvertTOKENX"}]}}' -H 'Content-Type: application/json';
+```
+
+- Withdraw balance only for the smart contract owner:
+
+```shell
+curl http://127.0.0.1:40403/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"transfer","params":{"transfers":[{"amount":111111,"destination":"deto1qxqqen6lqmksmzmxmfqmxp2y8zvkldtcq8jhkzqflmyczepjw9dp46gc3cczu"}],"scid":"aacaa7bb2388d06e523e5bc0783e4e131738270641406c12978155ba033373af", "sc_rpc":[{"name":"entrypoint","datatype":"S","value":"Withdraw"}, {"name":"amount","datatype":"U","value":2}]}}' -H 'Content-Type: application/json';
+```
+
+- Transfer ownership of the smart contract to a new address/owner:
+
+```shell
+curl http://127.0.0.1:40403/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"transfer","params":{"transfers":[{"
+
+amount":111111,"destination":"deto1qxqqen6lqmksmzmxmfqmxp2y8zvkldtcq8jhkzqflmyczepjw9dp46gc3cczu"}],"scid":"aacaa7bb2388d06e523e5bc0783e4e131738270641406c12978155ba033373af", "sc_rpc":[{"name":"entrypoint","datatype":"S","value":"TransferOwnership"}, {"name":"newowner","datatype":"S","value":"deto1qxsplx7vzgydacczw6vnrtfh3fxqcjevyxcvlvl82fs8uykjkmaxgfgulfha5"}]}}' -H 'Content-Type: application/json';
+```
+
+- Claim ownership of the smart contract:
+
+```shell
+curl http://127.0.0.1:40403/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"transfer","params":{"transfers":[{"amount":111111,"destination":"deto1qxqqen6lqmksmzmxmfqmxp2y8zvkldtcq8jhkzqflmyczepjw9dp46gc3cczu"}],"scid":"aacaa7bb2388d06e523e5bc0783e4e131738270641406c12978155ba033373af", "sc_rpc":[{"name":"entrypoint","datatype":"S","value":"ClaimOwnership"}]}}' -H 'Content-Type: application/json';
+```
+
+- Update smart contract code:
+
+```shell
+curl http://127.0.0.1:40403/json_rpc -d '{"jsonrpc":"2.0","id":"0","method":"transfer","params":{"transfers":[{"amount":111111,"destination":"deto1qxqqen6lqmksmzmxmfqmxp2y8zvkldtcq8jhkzqflmyczepjw9dp46gc3cczu"}],"scid":"aacaa7bb2388d06e523e5bc0783e4e131738270641406c12978155ba033373af", "sc_rpc":[{"name":"entrypoint","datatype":"S","value":"UpdateCode"}, {"name":"code","datatype":"S","value":"new code should be placed here"}]}}' -H 'Content-Type: application/json';
+```
+
+DERO Smart Contracts Tokens privacy can be understood just like banks handle cash. Once cash is out from the bank, the bank is not aware of it (who owns what value) until it is deposited back. The smart contract only maintains supply and other necessary items to keep it working. DERO Tokens can be transferred to other wallets just like native DERO with Homomorphic Encryption and without involvement of issuing Smart Contracts. Token issuing Smart Contract cannot hold/freeze/control their tokens once they are issued and sent to any wallet. This token is Private. Use `Function InitializePrivate() Uint64` to make any Smart Contract private.
+
+## token.bas
+
+```DVM-BASIC
+/* Private Token Smart Contract Example in DVM-BASIC.
+
+/* Issue tokens after depositing DERO (Convert DERO to TOKENX) */
+Function IssueTOKENX() Uint64
+10  SEND_ASSET_TO_ADDRESS(SIGNER(), DEROVALUE(), SCID())   // Increment balance of user, without knowing the original balance, this is done homomorphically
+20  RETURN 0
+End Function
+
+/* Convert TOKENX to DERO after depositing TOKENX. Smart Contract can give DERO, Only if DERO balance exists. */
+Function ConvertTOKENX() Uint64
+10  SEND_DERO_TO_ADDRESS(SIGNER(), ASSETVALUE(SCID()))   // Increment balance of user, without knowing the original balance, this is done using Homomorphic Encryption.
+20  RETURN 0
+End Function
+
+/* This function is used to initialize parameters during install time InitializePrivate initializes a private SC */
+Function InitializePrivate() Uint64
+10  STORE("owner", SIGNER())   // Store in DB  ["owner"] = address
+30  SEND_ASSET_TO_ADDRESS(SIGNER(), 1600000, SCID())   // Gives initial encrypted balance of 1600000.
+40  RETURN 0
+End Function
+
+/* This function is used to change owner owner is a string form of an address */
+Function TransferOwnership(newowner String) Uint64
+10  IF LOAD("owner") == SIGNER() THEN GOTO 30
+20  RETURN 1
+30  STORE("tmpowner", ADDRESS_RAW(newowner))
+40  RETURN 0
+End Function
+
+/* Until the new owner claims ownership, the existing owner remains the owner */
+Function ClaimOwnership() Uint64
+10  IF LOAD("tmpowner") == SIGNER() THEN GOTO 30
+20  RETURN 1
+30  STORE("owner", SIGNER()) // ownership claim successful
+40  RETURN 0
+End Function
+
+/* If signer is owner, withdraw any requested funds if everything is okay, they will be showing in the signer's wallet */
+Function Withdraw(amount Uint64) Uint64
+10  IF LOAD("owner") == SIGNER() THEN GOTO 30
+20  RETURN 1
+30  SEND_DERO_TO_ADDRESS(SIGNER(), amount)
+40  RETURN 0
+End Function
+
+/* If signer is the owner, provide him rights to update code anytime make sure the update is always available to the SC */
+Function UpdateCode(code String) Uint64
+10  IF LOAD("owner") == SIGNER() THEN GOTO 30
+20  RETURN 1
+30  UPDATE_SC_CODE(code)
+40  RETURN 0
+End Function
+```

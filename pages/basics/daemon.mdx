@@ -1,0 +1,34 @@
+---
+title: "Understanding Daemons in Blockchain: The Dero Daemon Explained"
+description: "Learn about daemons in blockchain technology, focusing on the Dero Daemon's role in supporting network functionalities and mining."
+author: "DHEBP"
+tags: ["Daemon", "Blockchain", "Dero", "Node", "Mining"]
+image: "/assets/daemon.jpeg"
+---
+
+
+import { Callout } from 'nextra/components';
+import Image from 'next/image';
+
+# What is a daemon?
+![What is a daemon](/assets/daemon.jpeg)
+
+In blockchain terminology, a daemon is a background process that continuously runs and interacts with the network, handling various essential tasks to support the blockchain's functionalities. The Dero Daemon refers to the core software component of the Dero network. 
+## Dero Daemon (node)
+
+The Dero Daemon, also known as 'the daemon' or 'node', acts as a Peer-To-Peer service that miners use for block validation and coin mining. While numerous remote nodes are available for connection, running the daemon on one's network is recommended for additional mining rewards and to demonstrate support for the Dero network's commitment to privacy, security, and anonymity. It can function in the background on a personal computer or operate as a service on a dedicated server. When both mining and running the daemon on a single system, the daemon can connect to itself. It provides various services for blockchain interaction, information retrieval, and peer-to-peer discovery.
+
+During mining, every 10th Miniblock becomes the integrator block, with nine times the difficulty, settling the entire block and being rewarded to the daemon's integrator address. This allows daemons to receive 1/10th of a mined block on their node. To be acknowledged as a valid node for miner connections, the daemon needs to sync with the network, visually represented by two numbers separated by a slash in the bottom left corner of the daemon. These numbers denote the current blockchain height. While the daemon builds the entire chain locally by obtaining blockchain information from peers, there's an option to expedite this process. However, not having a complete node may limit some functionalities like mining.
+<Callout type="info" emoji="⬇️">
+  Download here: https://github.com/deroproject/derohe/releases
+</Callout>
+## Features
+**Core Functionality:** The Dero Daemon (derod) is the core software that forms the backbone of the Dero blockchain. It is responsible for managing the blockchain database, validating transactions, maintaining the network, and handling communication between nodes in the network.
+
+**Consensus and Block Validation:** It participates in the Proof-of-Work (PoW) consensus mechanism by validating transactions, creating new blocks, and securing the network.
+
+**P2P Communication:** The daemon interacts with other nodes in the Dero network using a peer-to-peer (P2P) protocol to synchronize the blockchain data across all nodes, ensuring consensus and network consistency.
+
+**Wallet Functionalities:** It often includes functionalities for managing wallets, creating addresses, signing transactions, and interfacing with the blockchain for balance inquiries or transaction history.
+
+**API Support:** It provides a RPC (Remote Procedure Call) interface that allows external applications or user interfaces to communicate with the Dero blockchain and perform various operations programmatically.
