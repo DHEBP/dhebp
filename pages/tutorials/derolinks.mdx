@@ -11,12 +11,14 @@ import Image from 'next/image';
 
 # Launch a TELA site (CLI)
 
+## Create Your Immutable Link Hub with TELA
+This tutorial guides you through deploying an on-chain link hub using DERO's TELA framework. You'll clone an existing TELA smart contract (SCID), modify its HTML template to create your personalized link directory, and redeploy the updated version as a new TELA-DOC contract. Edits generate tamper-proof blockchain records, with TXIDs acting as cryptographic receipts of your site's history.
 ## Prerequisites
 1. TELA-CLI installed ([from source](https://github.com/civilware/tela))
 2. DERO wallet Testnet or Mainnet
 3. Basic text editor (VS Code recommended)
 
-### TELA-CLI Commands
+## TELA-CLI Basic Commands
 
 Here are some essential commands to get you started:
 
@@ -25,7 +27,7 @@ Here are some essential commands to get you started:
 | `install-doc <file>` | Deploy a TELA-DOC contract. |
 | `install-index <SCID>` | Deploy a TELA-INDEX contract. |
 | `serve <SCID>` | Serve TELA content from a specific SCID. |
-| `rate <SCID>` | Rate a TELA smart contract. |
+| `rate <SCID>` | Rate a TELA web page. |
 
 ## Step 1: Launch TELA-CLI
 Navigate to tela-cli directory.
