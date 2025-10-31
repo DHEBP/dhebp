@@ -1,0 +1,341 @@
+---
+title: "How to Launch a TELA Site Using TELA-CLI | Complete Deployment Tutorial"
+description: "A comprehensive step-by-step guide to creating and deploying your own decentralized TELA site on the DERO blockchain using the TELA-CLI tool. From local testing to production deployment."
+keywords: "TELA site creation, TELA-CLI, DERO blockchain, decentralized web, launch TELA, blockchain development, web3 development, smart contracts, deployment tutorial"
+date: "2024-08-26"
+lastUpdated: "2025-10-22"
+authors: ["DHEBP"]
+image: "/assets/tutorials/tela-launch.png"
+slug: "tutorials/launch-tela-site"
+canonicalUrl: "https://tela.derod.org/tutorials/launch-tela-site"
+tags: ["tutorial", "deployment", "TELA-CLI", "getting-started", "DERO"]
+---
+
+import Image from 'next/image';
+import { TelaLink } from '../../components/TelaLink';
+import { ZoomableImage } from '../../components/ZoomableImage';
+import { Callout } from 'nextra/components';
+import { Card, Cards } from 'nextra/components';
+
+
+# Launch a TELA site (CLI)
+
+## Prerequisites
+1. TELA-CLI installed ([from source](https://github.com/civilware/tela))
+2. DERO wallet Testnet or Mainnet
+3. Basic text editor (VS Code recommended)
+
+### TELA-CLI Commands
+
+Here are some essential commands to get you started:
+
+| Command | Description |
+|---------|-------------|
+| `install-doc [file]` | Deploy a TELA-DOC contract (prompts for file if not specified). |
+| `install-index [name]` | Deploy a TELA-INDEX contract (prompts for name if not specified). |
+| `serve <SCID>` | Serve TELA content from a specific SCID. |
+| `rate <SCID>` | Rate a TELA smart contract. |
+| `clone <SCID>` | Clone TELA application files locally. |
+| `endpoint <network>` | Connect to network (simulator, testnet, mainnet). |
+
+## Step 1: Launch TELA-CLI
+
+**Option A: If installed globally:**
+```bash
+tela-cli
+```
+
+**Option B: From source directory:**
+```bash
+cd tela-dev/cmd/tela-cli
+./tela-cli
+```
+
+**With options (optional):**
+```bash
+# With daemon and Gnomon enabled
+tela-cli --daemon=127.0.0.1:10102 --gnomon
+
+# Or for simulator (recommended for beginners)
+tela-cli --simulator
+```
+
+<ZoomableImage 
+  src="/assets/tutorials/tela-launch.png"
+  alt="TELA-CLI Launch"
+  width={800}
+  height={450}
+/>
+
+## Step 2: Select Network
+
+**Choose your deployment network:**
+
+```bash
+# For testing (recommended for beginners)
+» endpoint simulator
+
+# For testnet
+» endpoint testnet
+
+# For production mainnet
+» endpoint mainnet
+```
+
+## Step 3: Wallet Connection
+Connect your wallet.
+```bash
+» wallet 
+Enter wallet file path » /path/to/your/wallet.db
+# Enter wallet password when prompted
+```
+
+## Step 4: Clone the Template (Optional)
+TELA's immutable update system creates new versions with each change. When cloning, you can specify the exact TXID to ensure you get the correct version. If there has been no changes to the page you can paste the SCID only. After you make updates to your page you must specify both the SCID and TXID to clone the exact version you want.
+```
+» clone
+Enter SCID » e107f605bf1a3a1b27d264d010bc8ba263742012a5b246ae7fa782bd34613efb
+```
+<ZoomableImage 
+  src="/assets/tutorials/tela-clone.png"
+  alt="TELA-CLI Clone"
+  width={800}
+  height={450}
+/>
+
+## Step 5: Modify Template Files
+The cloned files will be saved to: `/datashards/clone/TELA-template/index.html`.
+
+Edit `index.html` with your preferred editor:
+```html
+# For example replace Dero Project with your actual name
+   <h1>Chakipu</h1>
+   <h2>My Links</h2>
+   <ul>
+      <li><a href="https://nonsensus.io/people/chakipu/" target="_blank">Nonsensus Profile</a></li>
+```
+<ZoomableImage 
+  src="/assets/tutorials/tela-edit.png"
+  alt="TELA-CLI Code Editing"
+  width={800}
+  height={450}
+/>
+##### Optional
+Create a dedicated directory for your files. Copy the index.html file from the datashards directory and paste it into your new directory.
+
+## Step 6: Install Modified Document
+
+```bash
+» install-doc
+Confirm password » [enter your wallet password]
+Enter DOC file path » /path/to/your/index.html
+
+# Follow prompts carefully:
+Enter DOC description » My first TELA application
+Enter DOC icon » [leave blank or provide URL/SCID]
+Enter DOC dURL » my-first-app.tela
+Enter DOC subDir » [press enter for root]
+Enter DOC install ringsize » 2
+Confirm DOC install (y/n) » y
+
+# IMPORTANT: Note the generated SCID from the output!
+# Example output: DOC install TXID: abc123...
+# The SCID will be derived from this TXID
+```
+
+<Callout type="tip">
+**File Path Tip:** You can also provide the file path directly: `install-doc /path/to/your/index.html`
+</Callout>
+
+<Callout type="info">
+**Compression:** TELA automatically handles compression based on file size. Files are compressed if needed to meet blockchain size limits.
+</Callout>
+
+<ZoomableImage 
+  src="/assets/tutorials/tela-install-doc.png"
+  alt="Install DOC Process"
+  width={800}
+  height={450}
+/>
+
+## Step 7: Create Index Contract
+
+```bash
+» install-index
+Confirm password » [enter your wallet password]
+Enter INDEX name » My First TELA App
+Enter INDEX description » My first decentralized web application
+Enter INDEX icon » [leave blank or provide URL/SCID]
+Enter INDEX dURL » my-first-app.tela
+How many total documents are embedded in this INDEX? » 1
+Enter DOC1 SCID » [paste the SCID from Step 6]
+
+# Optional: Enable MODs (press enter to skip)
+Enter INDEX mods (comma separated tags, or leave blank) » [press enter]
+
+Enter INDEX install ringsize » 2
+Confirm INDEX install (y/n) » y
+
+# IMPORTANT: Note the generated INDEX SCID from the output!
+# This is what you'll use to access your app
+```
+
+<Callout type="tip">
+**Quick Install:** You can also provide the name directly: `install-index "My App Name"`
+</Callout>
+
+<Callout type="warning">
+**MODs are Optional:** For your first app, skip MODs (press enter). Learn about [TELA-MOD-1](/advanced-features/tela-mods) for advanced features like variable storage and DERO deposits.
+</Callout>
+<ZoomableImage 
+  src="/assets/tutorials/tela-install-index.png"
+  alt="Install Index Process"
+  width={800}
+  height={450}
+/>
+
+## Step 8: Serve Your TELA Site
+
+Server will start on localhost (default port 8082):
+
+```bash
+» serve [your-index-scid]
+
+# Example output:
+# ✓ Serving: my-first-app.tela
+# ✓ URL: http://localhost:8082
+# ✓ Press Ctrl+C to stop
+```
+
+**Access your app:** Open http://localhost:8082 in your browser!
+
+<Callout type="success" emoji="🎉">
+**Congratulations!** You've successfully deployed your first TELA application to the DERO blockchain!
+</Callout>
+
+## Step 9: Share Your Application (Optional)
+
+Share your app with others by providing the INDEX SCID:
+
+```bash
+# Your INDEX SCID is what users need to access your app
+# They can enter it in Engram or use TELA-CLI:
+serve [your-index-scid]
+```
+
+## Final Result
+<ZoomableImage 
+  src="/assets/tutorials/tela-final.png"
+  alt="Final TELA Page"
+  width={800}
+  height={450}
+/>
+
+---
+
+## Common Issues & Solutions
+
+### Issue: "No daemon connection"
+
+**Solution:**
+```bash
+# Check daemon status
+» info
+
+# If daemon is offline, connect to correct network
+» endpoint simulator  # or testnet/mainnet
+```
+
+### Issue: "Insufficient balance"
+
+**Solution:**
+- **Simulator:** Provides free DERO automatically
+- **Testnet:** Use DERO testnet faucet
+- **Mainnet:** Ensure wallet has sufficient DERO for deployment
+
+### Issue: "File too large"
+
+**Solution:**
+```bash
+# Check file size
+» file-info index.html
+
+# If > 18KB, use compression or sharding
+# See: /advanced-features/compression
+```
+
+### Issue: "Cannot find wallet file"
+
+**Solution:**
+```bash
+# Verify file path is correct
+ls -la /path/to/your/wallet.db
+
+# Use absolute path if relative doesn't work
+» wallet /Users/home/path/to/wallet.db
+```
+
+---
+
+## Next Steps
+
+### Enhance Your Application
+
+1. **Add More Files:**
+   ```bash
+   install-doc style.css
+   install-doc app.js
+   install-doc assets/logo.png
+   
+   # Then update your INDEX
+   update-index [your-index-scid]
+   ```
+
+2. **Enable MODs:**
+   - [Variable Storage](/advanced-features/tela-mods#variable-store-mods) - Store app data
+   - [DERO Transfers](/advanced-features/tela-mods#transfer-mods) - Accept payments
+   - [Transfer Ownership](/advanced-features/tela-mods#transfer-ownership) - Transfer your app
+
+3. **Add XSWD Integration:**
+   - Use [XSWD Super Core](/templates/xswd-super-core) library
+   - Connect to DERO wallet from your app
+   - Access blockchain data in real-time
+
+### Learning Resources
+
+<Cards>
+  <Card title="TELA-CLI Workflows" href="/tela-cli/workflows">
+    Advanced deployment workflows and automation
+  </Card>
+  <Card title="TELA-MOD-1" href="/advanced-features/tela-mods">
+    Extend your app with modular functionality
+  </Card>
+  <Card title="Troubleshooting" href="/tela-cli/troubleshooting">
+    Complete troubleshooting guide
+  </Card>
+  <Card title="Size Optimization" href="/size-optimization">
+    Optimize files for blockchain deployment
+  </Card>
+</Cards>
+
+---
+
+## Tutorial Summary
+
+**What You Accomplished:**
+- ✅ Launched TELA-CLI and connected to network
+- ✅ Connected your DERO wallet
+- ✅ Deployed a TELA-DOC contract (your HTML file)
+- ✅ Created a TELA-INDEX contract (your application manifest)
+- ✅ Served your app locally and verified it works
+- ✅ Published your first decentralized web application on DERO blockchain!
+
+**Key Concepts Learned:**
+- 📋 **INDEX contracts** - Application manifests that reference DOC files
+- 📄 **DOC contracts** - Immutable code files stored on blockchain
+- 🔗 **SCIDs** - Smart Contract IDs for accessing deployed content
+- 🌐 **Networks** - Simulator (testing), Testnet, Mainnet (production)
+
+<Callout type="success" emoji="🎓">
+You're now ready to build more complex TELA applications! Check out the [Beginner Guide](/beginner-guide) for advanced features and patterns.
+</Callout>

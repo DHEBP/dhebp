@@ -1,0 +1,652 @@
+---
+title: "TELA Libraries | Building Reusable Decentralized Code Modules"
+description: "Building reusable, decentralized code libraries on the DERO blockchain. Complete guide to creating, deploying, and sharing blockchain-stored code modules."
+keywords: "TELA libraries, reusable code, DERO blockchain, decentralized libraries, code sharing, modular development, blockchain modules"
+date: "2024-08-26"
+lastUpdated: "2025-10-22"
+authors: ["DHEBP"]
+image: "/assets/advanced/libraries.png"
+slug: "advanced-features/libraries-overview"
+canonicalUrl: "https://tela.derod.org/advanced-features/libraries-overview"
+tags: ["libraries", "advanced", "reusable-code", "modules", "TELA"]
+---
+
+import { Callout } from 'nextra/components';
+
+# TELA Libraries: Complete Developer Guide
+
+*Building reusable, decentralized code libraries on the DERO blockchain*
+
+## What are TELA Libraries?
+
+TELA libraries are **reusable code modules** stored on the DERO blockchain that can be shared across multiple TELA applications. Think of them as decentralized npm packages, but instead of being hosted on centralized servers, they're permanently stored on the blockchain and can be used by any TELA application.
+
+### Key Characteristics:
+- ✅ **Blockchain-Stored** - Code lives permanently on DERO blockchain
+- ✅ **Application-Agnostic** - Can be used by any TELA application
+- ✅ **Version Controlled** - Each deployment creates an immutable version
+- ✅ **Community Driven** - Shared and discoverable by all developers
+- ✅ **Size Optimized** - Follow same 18KB per file limits as regular TELA files
+
+## How TELA Libraries Work
+
+### Basic Architecture
+```
+TELA Library Structure:
+├── Core Module (TELA-DOC-1) - Main functionality
+├── Helper Modules (TELA-DOC-1) - Supporting functions  
+├── Optional: Library Index (TELA-INDEX-1) - Bundle multiple modules
+└── Library Identifier: dURL ends with ".lib"
+```
+
+### Library vs Regular TELA Files
+| Aspect | Regular TELA File | TELA Library |
+|--------|-------------------|--------------|
+| **Purpose** | Application-specific | Reusable across apps |
+| **dURL** | `app.tela` | `library.lib` |
+| **Deployment** | Part of app | Independent |
+| **Discovery** | Not indexed | Searchable via TELA-CLI |
+| **Usage** | Direct inclusion | Reference by SCID |
+
+## 🎉 Benefits of TELA Libraries
+
+### For Developers
+1. **Code Reuse** - Write once, use everywhere
+2. **Faster Development** - Don't reinvent the wheel
+3. **Reduced Bundle Size** - Share common code instead of duplicating
+4. **Community Testing** - Libraries can be tested and improved by the community
+5. **Consistency** - Standardized functionality across the ecosystem
+
+### For the TELA Ecosystem
+1. **Reduced Blockchain Bloat** - Shared libraries instead of duplicated code
+2. **Higher Quality Code** - Community review and testing
+3. **Faster Innovation** - Developers can build on proven foundations
+4. **Standardization** - Common patterns and utilities
+
+### For End Users
+1. **Better Performance** - Optimized, tested code
+2. **More Features** - Developers can focus on unique functionality
+3. **Consistent UX** - Standardized UI components and interactions
+
+## 📚 Types of TELA Libraries
+
+### 1. **Utility Libraries**
+Common helper functions and utilities.
+
+**Examples:**
+- String manipulation functions
+- Date/time formatting
+- Number formatting (DERO amounts, etc.)
+- Hash functions and validation
+- Local storage helpers
+
+### 2. **UI Component Libraries**
+Reusable interface components.
+
+**Examples:**
+- Button styles and interactions
+- Modal dialogs
+- Loading spinners
+- Navigation components
+- Form inputs and validation
+
+### 3. **Blockchain Integration Libraries**
+DERO-specific functionality.
+
+**Examples:**
+- XSWD connection management
+- DERO RPC method wrappers
+- Address validation utilities
+- Transaction formatting
+- Block explorer components
+
+### 4. **Data Processing Libraries**
+Data manipulation and analysis.
+
+**Examples:**
+- Chart generation (without external dependencies)
+- Data table formatting
+- Search and filtering utilities
+- Statistics calculations
+- Data export functions
+
+## Creating a TELA Library
+
+### Step 1: Design Your Library
+
+**Planning Questions:**
+- What functionality will it provide?
+- How will other developers use it?
+- What's the API interface?
+- Can it fit within size constraints?
+
+### Step 2: Write Library Code
+
+**Example: DERO Utilities Library**
+
+```javascript
+// File: dero-utils.js
+(function() {
+    'use strict';
+    
+    // DERO Utilities Library v1.0.0
+    var DeroUtils = {
+        
+        // Format atomic units to DERO amount
+        formatDERO: function(atomicUnits, decimals) {
+            decimals = decimals || 6;
+            if (!atomicUnits || atomicUnits === 0) return '0.' + '0'.repeat(decimals) + ' DERO';
+            
+            var deroAmount = parseFloat(atomicUnits) / 1000000000000;
+            return deroAmount.toFixed(decimals) + ' DERO';
+        },
+        
+        // Validate DERO address
+        isValidAddress: function(address) {
+            if (!address || typeof address !== 'string') return false;
+            return address.startsWith('dero') && address.length >= 64;
+        },
+        
+        // Format hash for display
+        formatHash: function(hash, length) {
+            length = length || 12;
+            if (!hash || hash.length <= length * 2) return hash || 'N/A';
+            return hash.substring(0, length) + '...' + hash.substring(hash.length - length);
+        },
+        
+        // Format large numbers
+        formatNumber: function(num) {
+            if (num === undefined || num === null) return '0';
+            return parseInt(num, 10).toLocaleString();
+        },
+        
+        // Calculate time ago
+        timeAgo: function(timestamp) {
+            if (!timestamp) return 'Unknown';
+            
+            var now = new Date().getTime() / 1000;
+            var diff = now - timestamp;
+            
+            if (diff < 60) return 'Just now';
+            if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+            if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+            
+            return Math.floor(diff / 86400) + 'd ago';
+        }
+    };
+    
+    // Export to global scope
+    window.DeroUtils = DeroUtils;
+})();
+```
+
+### Step 3: Add Library Metadata
+
+**Important Naming Convention:**
+- **dURL**: Must end with `.lib` (e.g., `dero-utils.lib`)
+- **Name**: Descriptive library name
+- **Description**: Clear explanation of functionality
+- **Version**: Semantic versioning recommended
+
+### Step 4: Test Your Library
+
+**Create Test Application:**
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Library Test</title>
+</head>
+<body>
+    <div id="test-results"></div>
+    
+    <script src="dero-utils.js"></script>
+    <script>
+        // Test library functions
+        function testLibrary() {
+            var results = [];
+            
+            // Test DERO formatting
+            results.push('formatDERO(1000000000000): ' + DeroUtils.formatDERO(1000000000000));
+            
+            // Test address validation
+            results.push('isValidAddress("dero123..."): ' + DeroUtils.isValidAddress('dero123456789'));
+            
+            // Test hash formatting
+            results.push('formatHash("abcd1234..."): ' + DeroUtils.formatHash('abcd1234567890abcd1234567890'));
+            
+            document.getElementById('test-results').innerHTML = 
+                '<h2>Library Tests</h2><pre>' + results.join('\n') + '</pre>';
+        }
+        
+        testLibrary();
+    </script>
+</body>
+</html>
+```
+
+### Step 5: Deploy Library
+
+**Using TELA-CLI:**
+```bash
+# 1. Install the library as a DOC
+install-doc
+# Enter DOC file path » /path/to/dero-utils.js
+# Enter DOC description » Common DERO blockchain utilities
+# Enter DOC icon » [press enter - leave empty]
+# Enter DOC dURL » dero-utils.lib  # IMPORTANT: .lib suffix
+# Enter DOC subDir » [press enter - leave empty]
+# Enter DOC install ringsize » 2
+
+# 2. Note the SCID for sharing
+# Example output: Library deployed with SCID: abc123...
+```
+
+## 📖 Using TELA Libraries
+
+### Method 1: Direct Inclusion (Single Module)
+
+If your library is a single file, include it directly in your TELA-INDEX-1:
+
+```bash
+# In TELA-CLI, when creating your INDEX:
+install-index
+# DOC1: your-main-app.html
+# DOC2: your-styles.css  
+# DOC3: abc123... (library SCID)
+# DOC4: your-main-app.js
+```
+
+**In your HTML:**
+```html
+<script src="dero-utils.js"></script>
+<script src="main.js"></script>
+```
+
+**In your JavaScript:**
+```javascript
+// Library is now available globally
+function displayBalance(atomicUnits) {
+    var formatted = DeroUtils.formatDERO(atomicUnits);
+    document.getElementById('balance').textContent = formatted;
+}
+```
+
+### Method 2: Multi-Module Libraries (Using INDEX)
+
+For complex libraries with multiple files:
+
+```bash
+# Library creator bundles modules in an INDEX
+install-index
+# DOC1: dero-utils-core.js
+# DOC2: dero-utils-advanced.js
+# DOC3: dero-utils-ui.js
+# dURL: dero-utils-complete.lib
+```
+
+**Library User:**
+```bash
+install-index
+# DOC1: your-app.html
+# DOC2: xyz789... (library INDEX SCID)
+# DOC3: your-app.js
+```
+
+### Method 3: Development Workflow (Clone & Reference)
+
+**During Development:**
+```bash
+# Clone library for local development
+clone abc123...
+# This creates local files for testing
+
+# Reference in your development files
+<script src="cloned/dero-utils.js"></script>
+```
+
+**For Production:**
+```bash
+# Reference library SCID in your INDEX
+# DOC3: abc123... (library SCID)
+```
+
+## Discovering Libraries
+
+### Using TELA-CLI Search
+
+```bash
+# Search all libraries
+search libs
+
+# Search by category
+search libs ui
+search libs dero
+search libs utils
+
+# Search with filters
+search libs -min-likes 5
+```
+
+### Library Categories
+
+Libraries are typically categorized by:
+- **utils** - Utility functions
+- **ui** - User interface components  
+- **dero** - DERO blockchain specific
+- **data** - Data processing
+- **crypto** - Cryptographic functions
+
+## Real-World Examples
+
+### Example 1: XSWD Connection Library
+
+**Purpose**: Simplify XSWD connection management
+
+```javascript
+// xswd-helper.lib
+window.XSWDHelper = {
+    
+    connect: function(timeout) {
+        timeout = timeout || 5000;
+        
+        return new Promise(function(resolve, reject) {
+            if (window.xswd && window.xswd.isConnected) {
+                resolve(window.xswd);
+                return;
+            }
+            
+            var timeoutId = setTimeout(function() {
+                reject(new Error('XSWD connection timeout'));
+            }, timeout);
+            
+            // Wait for XSWD to become available
+            var checkInterval = setInterval(function() {
+                if (window.xswd && window.xswd.isConnected) {
+                    clearTimeout(timeoutId);
+                    clearInterval(checkInterval);
+                    resolve(window.xswd);
+                }
+            }, 100);
+        });
+    },
+    
+    safeCall: function(method, params) {
+        return this.connect().then(function(xswd) {
+            return xswd.call(method, params);
+        });
+    }
+};
+```
+
+**Usage in Applications:**
+```javascript
+// Much simpler than managing connection manually
+XSWDHelper.safeCall('DERO.GetInfo').then(function(info) {
+    console.log('Network height:', info.height);
+});
+```
+
+### Example 2: UI Components Library
+
+**Purpose**: Standardized UI components
+
+```javascript
+// tela-ui.lib
+window.TelaUI = {
+    
+    createButton: function(text, onclick, style) {
+        style = style || 'primary';
+        
+        var button = document.createElement('button');
+        button.textContent = text;
+        button.className = 'tela-btn tela-btn-' + style;
+        button.onclick = onclick;
+        
+        return button;
+    },
+    
+    showLoading: function(message) {
+        message = message || 'Loading...';
+        
+        var overlay = document.createElement('div');
+        overlay.className = 'tela-loading-overlay';
+        overlay.innerHTML = '<div class="tela-spinner"></div><p>' + message + '</p>';
+        
+        document.body.appendChild(overlay);
+        return overlay;
+    },
+    
+    hideLoading: function() {
+        var overlays = document.querySelectorAll('.tela-loading-overlay');
+        for (var i = 0; i < overlays.length; i++) {
+            overlays[i].remove();
+        }
+    }
+};
+```
+
+### Example 3: Data Formatting Library
+
+**Purpose**: Consistent data display formatting
+
+```javascript
+// data-format.lib
+window.DataFormat = {
+    
+    table: function(data, columns) {
+        var html = '<table class="tela-table"><thead><tr>';
+        
+        // Headers
+        for (var i = 0; i < columns.length; i++) {
+            html += '<th>' + columns[i].title + '</th>';
+        }
+        html += '</tr></thead><tbody>';
+        
+        // Rows
+        for (var i = 0; i < data.length; i++) {
+            html += '<tr>';
+            for (var j = 0; j < columns.length; j++) {
+                var value = data[i][columns[j].key];
+                if (columns[j].format) {
+                    value = columns[j].format(value);
+                }
+                html += '<td>' + value + '</td>';
+            }
+            html += '</tr>';
+        }
+        
+        html += '</tbody></table>';
+        return html;
+    },
+    
+    pagination: function(currentPage, totalPages, onPageChange) {
+        var html = '<div class="tela-pagination">';
+        
+        // Previous button
+        if (currentPage > 1) {
+            html += '<button onclick="' + onPageChange + '(' + (currentPage - 1) + ')">←</button>';
+        }
+        
+        // Page numbers
+        for (var i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
+            var activeClass = i === currentPage ? ' active' : '';
+            html += '<button class="' + activeClass + '" onclick="' + onPageChange + '(' + i + ')">' + i + '</button>';
+        }
+        
+        // Next button
+        if (currentPage < totalPages) {
+            html += '<button onclick="' + onPageChange + '(' + (currentPage + 1) + ')">→</button>';
+        }
+        
+        html += '</div>';
+        return html;
+    }
+};
+```
+
+## 📋 Library Best Practices
+
+### 1. **Design Principles**
+- **Single Responsibility** - Each library should have a clear, focused purpose
+- **Minimal Dependencies** - Avoid depending on other libraries when possible
+- **Backward Compatibility** - Don't break existing API when updating
+- **Clear Documentation** - Include usage examples in comments
+
+### 2. **Naming Conventions**
+```
+dURL Pattern: [category]-[name].lib
+Examples:
+- dero-utils.lib
+- ui-components.lib  
+- data-tables.lib
+- crypto-helpers.lib
+```
+
+### 3. **Size Optimization**
+```javascript
+// Use short but meaningful variable names
+var DU = { // Instead of DeroUtilities
+    fmtDERO: function(a) { // Instead of formatDEROAmount
+        return a ? (parseFloat(a)/1e12).toFixed(6)+' DERO' : '0.000000 DERO';
+    }
+};
+```
+
+### 4. **Error Handling**
+```javascript
+// Always include proper error handling
+formatDERO: function(atomicUnits) {
+    try {
+        if (atomicUnits === null || atomicUnits === undefined) {
+            return '0.000000 DERO';
+        }
+        var amount = parseFloat(atomicUnits) / 1000000000000;
+        return amount.toFixed(6) + ' DERO';
+    } catch (error) {
+        console.error('DeroUtils.formatDERO error:', error);
+        return 'Error';
+    }
+}
+```
+
+### 5. **Testing Strategy**
+- Create comprehensive test suites
+- Test edge cases and error conditions
+- Test with different browsers
+- Document expected behavior
+
+## Advanced Library Patterns
+
+### 1. **Versioned Libraries**
+```javascript
+// Include version information
+window.DeroUtils = {
+    version: '1.2.0',
+    
+    // Check compatibility
+    requiresVersion: function(minVersion) {
+        // Simple version comparison logic
+        return this.version >= minVersion;
+    }
+};
+```
+
+### 2. **Modular Libraries**
+```javascript
+// Main library with plugin system
+window.TelaFramework = {
+    plugins: {},
+    
+    use: function(pluginName, plugin) {
+        this.plugins[pluginName] = plugin;
+        if (plugin.init) plugin.init();
+    },
+    
+    get: function(pluginName) {
+        return this.plugins[pluginName];
+    }
+};
+```
+
+### 3. **Configuration Libraries**
+```javascript
+// Configurable library behavior
+window.ConfigurableLib = (function() {
+    var config = {
+        theme: 'dark',
+        timeout: 5000,
+        debug: false
+    };
+    
+    return {
+        configure: function(options) {
+            for (var key in options) {
+                if (config.hasOwnProperty(key)) {
+                    config[key] = options[key];
+                }
+            }
+        },
+        
+        getConfig: function() {
+            return Object.assign({}, config);
+        }
+    };
+})();
+```
+
+## Library Maintenance
+
+### Updating Libraries
+1. **Create New Version** - Deploy updated code as new SCID
+2. **Maintain Old Versions** - Don't break existing applications
+3. **Migration Guide** - Document changes and upgrade paths
+4. **Deprecation Notice** - Give advance warning before removing features
+
+### Community Contribution
+1. **Open Source Mindset** - Share code for community benefit
+2. **Documentation** - Provide clear usage examples
+3. **Feedback Integration** - Listen to user requests and bug reports
+4. **Collaboration** - Work with other developers on improvements
+
+## Getting Started: Your First Library
+
+### Quick Start Checklist
+- [ ] **Plan Your Library** - Define purpose and API
+- [ ] **Write Core Functions** - Keep it simple and focused
+- [ ] **Add Error Handling** - Handle edge cases gracefully
+- [ ] **Test Thoroughly** - Create test cases and examples
+- [ ] **Optimize Size** - Ensure it fits within 18KB limit
+- [ ] **Deploy with .lib suffix** - Use proper dURL naming
+- [ ] **Document Usage** - Create clear examples
+- [ ] **Share with Community** - Announce in DERO Discord/forums
+
+### Example: Minimal Starter Library
+```javascript
+// starter-lib.js (your-name-utils.lib)
+(function() {
+    'use strict';
+    
+    window.StarterLib = {
+        version: '1.0.0',
+        
+        // Your utility functions here
+        hello: function(name) {
+            return 'Hello, ' + (name || 'TELA Developer') + '!';
+        },
+        
+        // Add more functions as needed
+        timestamp: function() {
+            return Math.floor(Date.now() / 1000);
+        }
+    };
+})();
+```
+
+---
+
+**🚀 Start Building Libraries Today!**
+
+TELA libraries are the foundation of a thriving decentralized ecosystem. By creating and sharing libraries, you contribute to faster development, better applications, and a stronger TELA community.
+
+*Remember: Every great library started with a simple utility function. What will you build?*

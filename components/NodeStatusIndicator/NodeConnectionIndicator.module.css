@@ -1,0 +1,125 @@
+/* Enhanced Node Connection Indicator Styles */
+/* Based on TELA Explorer design but adapted for React */
+
+.nodeConnectionIndicator {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nodeConnectionIndicator:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  transition: all 0.2s ease;
+}
+
+.statusText {
+  color: #b3b3b3;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Status-specific styles */
+.connected {
+  background-color: #28a745;
+  box-shadow: 0 0 5px #28a745;
+}
+
+.disconnected {
+  background-color: #cc3300;
+  box-shadow: 0 0 5px #cc3300;
+}
+
+.connecting {
+  background-color: #f0ad4e;
+  box-shadow: 0 0 5px #f0ad4e;
+  animation: pulse 2s infinite;
+}
+
+.unknown {
+  background-color: #6c757d;
+  box-shadow: 0 0 5px #6c757d;
+}
+
+.error {
+  background-color: #dc3545;
+  box-shadow: 0 0 5px #dc3545;
+}
+
+/* Pulsing animation for connecting state */
+@keyframes pulse {
+  0% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.6; 
+    transform: scale(1.1);
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+}
+
+/* Dark theme compatibility */
+@media (prefers-color-scheme: dark) {
+  .nodeConnectionIndicator {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .nodeConnectionIndicator:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .nodeConnectionIndicator {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+  }
+  
+  .statusText {
+    display: none; /* Hide text on mobile, show only dot */
+  }
+}
+
+/* Large variant */
+.large {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+.large .statusDot {
+  width: 10px;
+  height: 10px;
+}
+
+/* Compact variant */
+.compact {
+  padding: 0.2rem 0.3rem;
+  font-size: 0.7rem;
+}
+
+.compact .statusDot {
+  width: 4px;
+  height: 4px;
+}

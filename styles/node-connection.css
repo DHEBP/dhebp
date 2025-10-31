@@ -1,0 +1,52 @@
+.node-connection-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  margin-left: auto;
+  font-size: 13px;
+  cursor: default;
+  transition: all 0.2s ease;
+}
+
+.dark .node-connection-indicator {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.node-connection-indicator:hover {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.dark .node-connection-indicator:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.status-dot.connected {
+  background-color: #28a745;
+  box-shadow: 0 0 6px rgba(40, 167, 69, 0.8);
+}
+
+.status-dot.disconnected {
+  background-color: #dc3545;
+  box-shadow: 0 0 6px rgba(220, 53, 69, 0.8);
+}
+
+.status-dot.unknown {
+  background-color: #6c757d;
+  box-shadow: none;
+}
+
+.status-text {
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 500;
+} 

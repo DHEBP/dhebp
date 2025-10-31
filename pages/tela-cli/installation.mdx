@@ -1,0 +1,657 @@
+---
+title: "TELA-CLI Installation Guide | Setup TELA Command-Line Interface"
+description: "Complete installation guide for TELA-CLI - install from source, build binaries, or use pre-built releases. Setup instructions for Windows, macOS, and Linux."
+keywords: "TELA-CLI installation, setup TELA, install from source, build TELA-CLI, Go installation, TELA setup, command line tools"
+date: "2024-08-26"
+lastUpdated: "2025-10-22"
+authors: ["DHEBP"]
+image: "/assets/tela-cli-install.png"
+slug: "tela-cli/installation"
+canonicalUrl: "https://tela.derod.org/tela-cli/installation"
+tags: ["installation", "setup", "TELA-CLI", "getting-started", "guide"]
+---
+
+import { Callout } from 'nextra/components'
+import { Card, Cards } from 'nextra/components'
+
+# TELA-CLI Installation Guide
+
+Complete guide to installing and setting up TELA-CLI on your system.
+
+<Callout type="info" emoji="📦">
+**What is TELA-CLI?** A command-line interface for managing TELA content - deploy applications, clone content, serve locally, and interact with the DERO blockchain.
+</Callout>
+
+## Prerequisites
+
+### Required Software
+
+**1. Go Programming Language (1.19 or higher)**
+
+Check if Go is installed:
+```bash
+go version
+# Should show: go version go1.19 or higher
+```
+
+If not installed, download from [golang.org](https://go.dev/doc/install)
+
+**2. DERO Daemon (for blockchain operations)**
+
+- Download from [DERO releases](https://github.com/deroproject/derohe/releases)
+- Required for deploying and serving TELA content
+- Optional for cloning and local serving
+
+**3. DERO Wallet (for deployments)**
+
+- Engram wallet (recommended) or dero-wallet-cli
+- Required for `install-doc`, `install-index`, `rate` commands
+- Not required for viewing/serving existing content
+
+---
+
+## Installation Methods
+
+<Cards>
+  <Card title="Method 1: Install from Source" href="#method-1-install-from-source">
+    Recommended - Installs globally to your system
+  </Card>
+  <Card title="Method 2: Build from Source" href="#method-2-build-from-source">
+    Creates local executable in project directory
+  </Card>
+  <Card title="Method 3: Run from Source" href="#method-3-run-from-source">
+    Development mode - no build artifacts
+  </Card>
+</Cards>
+
+---
+
+## Method 1: Install from Source
+
+**Best for:** Most users - installs TELA-CLI globally so you can run it from anywhere.
+
+### Step 1: Install via Go
+
+```bash
+go install github.com/civilware/tela/cmd/tela-cli@latest
+```
+
+### Step 2: Verify Installation
+
+```bash
+# Check if tela-cli is in PATH
+tela-cli --help
+
+# Should display TELA-CLI usage information
+```
+
+### Step 3: Add to PATH (if needed)
+
+If you get "command not found":
+
+**macOS/Linux:**
+```bash
+# Add Go bin to PATH (add to ~/.bashrc or ~/.zshrc)
+export PATH=$PATH:$(go env GOPATH)/bin
+
+# Apply changes
+source ~/.bashrc  # or source ~/.zshrc
+```
+
+**Windows (PowerShell):**
+```powershell
+# Add Go bin to PATH
+$env:PATH += ";$(go env GOPATH)\bin"
+
+# Make permanent via System Environment Variables
+```
+
+### Step 4: Run TELA-CLI
+
+```bash
+tela-cli
+```
+
+<Callout type="success" emoji="✅">
+**Success!** TELA-CLI is now installed globally. You can run `tela-cli` from any directory.
+</Callout>
+
+---
+
+## Method 2: Build from Source
+
+**Best for:** Users who want to customize TELA-CLI or contribute to development.
+
+### Step 1: Clone Repository
+
+```bash
+git clone https://github.com/civilware/tela.git
+cd tela/cmd/tela-cli
+```
+
+### Step 2: Install Dependencies
+
+```bash
+go mod tidy
+go mod download
+```
+
+### Step 3: Build Executable
+
+```bash
+go build .
+```
+
+This creates a `tela-cli` executable in the current directory.
+
+### Step 4: Run TELA-CLI
+
+```bash
+# From the tela/cmd/tela-cli directory
+./tela-cli
+
+# Or move to system PATH for global access
+sudo mv tela-cli /usr/local/bin/  # macOS/Linux
+```
+
+---
+
+## Method 3: Run from Source
+
+**Best for:** Development and testing - no build files created.
+
+### Step 1: Clone Repository
+
+```bash
+git clone https://github.com/civilware/tela.git
+cd tela/cmd/tela-cli
+```
+
+### Step 2: Run Directly
+
+```bash
+go run .
+```
+
+This compiles and runs TELA-CLI without creating a binary file.
+
+<Callout type="info">
+**Note:** You must be in the `tela/cmd/tela-cli` directory to use this method.
+</Callout>
+
+---
+
+## Verify Installation
+
+After installing using any method, verify TELA-CLI works:
+
+```bash
+# Check help menu
+tela-cli --help
+
+# Should display:
+# Usage:
+#   tela-cli [options]
+#   tela-cli -h | --help
+# Options:
+#   -h --help     Show this screen
+#   --debug       Enable debug mode
+#   --mainnet     Set the network to mainnet
+#   --testnet     Set the network to testnet
+#   --simulator   Set the network to simulator
+#   ...
+```
+
+---
+
+## First-Time Setup
+
+### 1. Start TELA-CLI
+
+```bash
+tela-cli
+```
+
+### 2. Connect to Network
+
+```bash
+# For beginners - simulator provides free DERO
+» endpoint simulator
+
+# For testnet
+» endpoint testnet
+
+# For mainnet
+» endpoint mainnet
+```
+
+### 3. Verify Connection
+
+```bash
+» info
+
+# Check status indicators:
+# [D:▲] - Daemon online
+# [G:▼] - Gnomon offline
+# [W:0]  - No wallet connected
+```
+
+### 4. Optional: Start Gnomon Indexer
+
+```bash
+» gnomon start
+
+# Wait for sync...
+# Check status: [G:▲] - Gnomon online
+```
+
+### 5. Test with Search
+
+```bash
+» search all
+
+# Should display TELA content from the network
+```
+
+<Callout type="success" emoji="🎉">
+**Setup Complete!** You're ready to start using TELA-CLI.
+</Callout>
+
+---
+
+## Advanced Installation Options
+
+### Install with Specific Version
+
+```bash
+# Install specific version/commit
+go install github.com/civilware/tela/cmd/tela-cli@v1.2.3
+
+# Install from specific commit
+go install github.com/civilware/tela/cmd/tela-cli@abc123def
+```
+
+### Build with Custom Flags
+
+```bash
+# Build with optimizations
+go build -ldflags="-s -w" .
+
+# Build for specific OS/architecture
+GOOS=linux GOARCH=amd64 go build .
+GOOS=windows GOARCH=amd64 go build .
+GOOS=darwin GOARCH=arm64 go build .
+```
+
+### Development Installation
+
+```bash
+# Clone for development
+git clone https://github.com/civilware/tela.git
+cd tela
+
+# Install dependencies
+go mod tidy
+
+# Make changes to source code...
+
+# Test your changes
+cd cmd/tela-cli
+go run .
+
+# Build when ready
+go build .
+```
+
+---
+
+## Configuration
+
+### Data Storage Locations
+
+TELA-CLI stores data in these locations:
+
+**macOS/Linux:**
+```
+~/.local/share/tela/
+├── datashards/
+│   ├── clone/           # Cloned TELA content
+│   ├── tela/            # Served TELA applications
+│   ├── gnomon_*.db      # Gnomon indexer database
+│   └── settings.db      # TELA-CLI preferences
+```
+
+**Windows:**
+```
+%APPDATA%\tela\
+├── datashards\
+│   ├── clone\
+│   ├── tela\
+│   ├── gnomon_*.db
+│   └── settings.db
+```
+
+### Database Options
+
+TELA-CLI supports two database types:
+
+```bash
+# GravDB (default, recommended)
+tela-cli --db-type=gravdb
+
+# BoltDB (alternative)
+tela-cli --db-type=boltdb
+```
+
+---
+
+## Startup Flags
+
+Launch TELA-CLI with pre-configured settings:
+
+### Network Selection
+
+```bash
+# Mainnet (default)
+tela-cli --mainnet
+
+# Testnet
+tela-cli --testnet
+
+# Simulator (testing with free DERO)
+tela-cli --simulator
+```
+
+### Daemon Connection
+
+```bash
+# Connect to daemon on startup
+tela-cli --daemon=127.0.0.1:10102
+
+# Connect to daemon from stored preferences
+tela-cli --daemon
+```
+
+### Wallet Auto-Open
+
+```bash
+# Open wallet file on startup
+tela-cli --wallet=./my-wallet.db
+
+# With password (use carefully!)
+tela-cli --wallet=./my-wallet.db --password=mypassword
+```
+
+<Callout type="warning" emoji="⚠️">
+**Security Warning:** Using `--password` flag stores password in shell history. Only use in secure environments or scripts.
+</Callout>
+
+### Gnomon Indexer
+
+```bash
+# Start with Gnomon enabled
+tela-cli --daemon --gnomon
+
+# With fastsync (loads at current chain height)
+tela-cli --daemon --gnomon --fastsync=true
+
+# Control parallel block processing
+tela-cli --daemon --gnomon --num-parallel-blocks=3
+```
+
+### Debug Mode
+
+```bash
+# Enable debug output
+tela-cli --debug
+```
+
+### Combined Flags
+
+```bash
+# Full development setup
+tela-cli --simulator --gnomon --debug
+
+# Production setup
+tela-cli --mainnet --daemon=127.0.0.1:10102 --gnomon --num-parallel-blocks=1
+
+# Quick testing
+tela-cli --testnet --wallet=./test-wallet.db --gnomon
+```
+
+---
+
+## Updating TELA-CLI
+
+### Update from Source
+
+```bash
+# Update to latest version
+go install github.com/civilware/tela/cmd/tela-cli@latest
+
+# Verify update
+tela-cli --help
+```
+
+### Update from Git
+
+```bash
+# If you cloned the repository
+cd tela
+git pull origin main
+cd cmd/tela-cli
+go build .
+```
+
+---
+
+## Troubleshooting Installation
+
+### Issue: "go: command not found"
+
+**Solution:** Install Go from [golang.org](https://go.dev/doc/install)
+
+```bash
+# Verify installation
+go version
+```
+
+### Issue: "tela-cli: command not found"
+
+**Solutions:**
+
+1. **Check if installed:**
+   ```bash
+   ls $(go env GOPATH)/bin/tela-cli
+   ```
+
+2. **Add to PATH:**
+   ```bash
+   export PATH=$PATH:$(go env GOPATH)/bin
+   ```
+
+3. **Use full path:**
+   ```bash
+   $(go env GOPATH)/bin/tela-cli
+   ```
+
+### Issue: "cannot find package"
+
+**Solution:**
+```bash
+# Clear module cache
+go clean -modcache
+
+# Reinstall
+go install github.com/civilware/tela/cmd/tela-cli@latest
+```
+
+### Issue: "build failed: missing dependencies"
+
+**Solution:**
+```bash
+cd tela/cmd/tela-cli
+go mod tidy
+go mod download
+go build .
+```
+
+### Issue: "permission denied"
+
+**macOS/Linux:**
+```bash
+# Make executable
+chmod +x tela-cli
+
+# Or install to user directory
+go install github.com/civilware/tela/cmd/tela-cli@latest
+```
+
+**Windows:**
+```powershell
+# Run as Administrator
+# Right-click Command Prompt → Run as Administrator
+```
+
+---
+
+## Platform-Specific Notes
+
+### macOS
+
+**Apple Silicon (M1/M2/M3):**
+```bash
+# Go should auto-detect arm64
+# Verify architecture
+go env GOARCH  # Should show: arm64
+
+# Install normally
+go install github.com/civilware/tela/cmd/tela-cli@latest
+```
+
+**Intel Macs:**
+```bash
+# Should work out of the box
+go install github.com/civilware/tela/cmd/tela-cli@latest
+```
+
+### Linux
+
+**Common distributions:**
+```bash
+# Ubuntu/Debian
+sudo apt update
+sudo apt install golang-go
+go install github.com/civilware/tela/cmd/tela-cli@latest
+
+# Fedora/RHEL
+sudo dnf install golang
+go install github.com/civilware/tela/cmd/tela-cli@latest
+
+# Arch Linux
+sudo pacman -S go
+go install github.com/civilware/tela/cmd/tela-cli@latest
+```
+
+### Windows
+
+**PowerShell:**
+```powershell
+# Install Go from golang.org first
+# Then install TELA-CLI
+go install github.com/civilware/tela/cmd/tela-cli@latest
+
+# Add to PATH (run as Administrator)
+$oldPath = [Environment]::GetEnvironmentVariable('Path', 'Machine')
+$newPath = $oldPath + ';' + (go env GOPATH) + '\bin'
+[Environment]::SetEnvironmentVariable('Path', $newPath, 'Machine')
+```
+
+**WSL (Windows Subsystem for Linux):**
+```bash
+# Same as Linux installation
+go install github.com/civilware/tela/cmd/tela-cli@latest
+```
+
+---
+
+## Post-Installation
+
+### Recommended Setup
+
+1. **Install DERO Daemon:**
+   ```bash
+   # Download from https://github.com/deroproject/derohe/releases
+   # Run for your network
+   derod --simulator  # or --testnet, or mainnet (no flag)
+   ```
+
+2. **Create Development Wallet:**
+   ```bash
+   # For simulator/testnet
+   dero-wallet-cli --wallet-file=./dev-wallet.db
+   ```
+
+3. **Test TELA-CLI:**
+   ```bash
+   tela-cli --simulator --gnomon
+   ```
+
+### Quick Start Commands
+
+```bash
+# Start TELA-CLI
+tela-cli
+
+# Connect to simulator
+» endpoint simulator
+
+# Start indexer
+» gnomon start
+
+# Search for content
+» search all
+
+# Serve an app
+» serve [some-scid]
+```
+
+---
+
+## Uninstallation
+
+### Remove TELA-CLI
+
+```bash
+# Remove binary
+rm $(go env GOPATH)/bin/tela-cli
+
+# Remove data (optional - this deletes all cloned content!)
+rm -rf ~/.local/share/tela/  # macOS/Linux
+# or
+rmdir /s %APPDATA%\tela  # Windows
+```
+
+---
+
+## Next Steps
+
+<Cards>
+  <Card title="Command Reference" href="/tela-cli/command-reference">
+    Complete list of all TELA-CLI commands
+  </Card>
+  <Card title="Workflows" href="/tela-cli/workflows">
+    Development workflows and best practices
+  </Card>
+  <Card title="Launch Tutorial" href="/tutorials/launch-tela-site">
+    Deploy your first TELA application
+  </Card>
+  <Card title="Troubleshooting" href="/tela-cli/troubleshooting">
+    Common issues and solutions
+  </Card>
+</Cards>
+
+<Callout type="success" emoji="🚀">
+**Ready to Go!** You now have TELA-CLI installed. Continue with the [Launch Tutorial](/tutorials/launch-tela-site) to deploy your first decentralized application!
+</Callout>
+

@@ -1,93 +1,82 @@
+import React from 'react'
 import { useRouter } from 'next/router'
 import type { DocsThemeConfig } from 'nextra-theme-docs'
 import { useConfig } from 'nextra-theme-docs'
 import seoConfig from './seo.config'
+import { useState, useEffect } from 'react'
+import NodeConnectionIndicator from './components/NodeConnectionIndicator'
+import DeroStatsIndicator from './components/DeroStatsIndicator'
 
+// Global state for connection status
+let globalConnectionStatus: boolean | null = null;
+
+// Function to update global connection status
+export const updateConnectionStatus = (status: boolean) => {
+  globalConnectionStatus = status;
+  // Dispatch an event to notify components
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('dero-connection-update', { detail: status }));
+  }
+};
+
+// Custom navbar component
+function Navbar() {
+  const [connectionStatus, setConnectionStatus] = useState<boolean | null>(globalConnectionStatus);
+  
+  useEffect(() => {
+    // Listen for connection status updates
+    const handleConnectionUpdate = (event: CustomEvent<boolean>) => {
+      setConnectionStatus(event.detail);
+    };
+    
+    window.addEventListener('dero-connection-update', handleConnectionUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('dero-connection-update', handleConnectionUpdate as EventListener);
+    };
+  }, []);
+  
+  return (
+    <div className="nx-flex nx-items-center nx-gap-2">
+      <NodeConnectionIndicator isConnected={connectionStatus} />
+      <DeroStatsIndicator />
+    </div>
+  );
+}
 
 const logo = (
-  <svg
-    height="37"
-    viewBox="0 0 1685.95 487.8"
-    fill="currentColor"
-    xmlns="http://www.w3.org/2000/svg"
-    transform="translate(-10)"
-  >
-<defs>
-        <linearGradient
-          id="linear-gradient"
-          x1="1040.85"
-          y1="45.15"
-          x2="1040.85"
-          y2="414.71"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop offset="0" stopColor="#b2b3b3" />
-          <stop offset="1" stopColor="#686868" />
-        </linearGradient>
-        <linearGradient
-          id="linear-gradient-2"
-          x1="642.69"
-          y1="45.15"
-          x2="642.69"
-          y2="414.71"
-          xlinkHref="#linear-gradient"
-        />
-        <linearGradient
-          id="linear-gradient-3"
-          x1="244.5"
-          y1="45.15"
-          x2="244.5"
-          y2="414.71"
-          xlinkHref="#linear-gradient"
-        />
-        <linearGradient
-          id="linear-gradient-4"
-          x1="1439.2"
-          y1="45.15"
-          x2="1439.2"
-          y2="414.71"
-          xlinkHref="#linear-gradient"
-        />
-      </defs>
-      <path
-        className="cls-1"
-        fill="url(#linear-gradient)"
-        d="m1161.9,81.21l41.73,42.17v101.32l-41.84,42.1h-92.62v4.82c1.35.18,134.42,134.93,134.42,134.93h-64.29l-135.63-139.28h-78.62v139.28h-46.97V81.21h283.83Zm-236.76,139.03h218.1l13.96-13.78v-64.88l-13.87-13.63h-218.19v92.29Z"
-      />
-      <path
-        className="cls-4"
-        fill="url(#linear-gradient)"
-        d="m538.48,127.19l-9.63,10.09v73.45l9.94,9.84h268.75v46.27h-269.02l-9.63,9.93v73.8l9.97,9.36h268.78v46.43h-283.3l-46.59-46.5v-92.64l22.74-18.93v-8.64l-22.74-19.27v-92.55l46.55-46.6h283.12v45.96h-268.93Z"
-      />
-      <path
-        className="cls-2"
-        fill="url(#linear-gradient)"
-        d="m365.32,81.32l41.91,42.28v240.78l-41.94,41.96H81.76V81.32h283.56Zm-236.84,46.42v231.86h218.29l14.07-13.77v-204.06l-13.92-14.04h-218.44Z"
-      />
-      <path
-        className="cls-3"
-        fill="url(#linear-gradient)"
-        d="m1604.19,127.82v231.98l-46.42,46.8h-237.05l-46.51-46.97v-231.61l46.31-46.75h237.33l46.33,46.55Zm-268.52,231.71h207.59l10.06-9.01v-213.26l-9.76-9.44h-208.57l-9.41,9.62v213l10.08,9.08Z"
-      />
-    <style jsx>{`
-      svg {
-        mask-image: linear-gradient(
-          60deg,
-          black 25%,
-          rgba(0, 0, 0, 0.2) 50%,
-          black 75%
-        );
-        mask-size: 400%;
-        mask-position: 0%;
-      }
-      svg:hover {
-        mask-position: 100%;
-        transition:
-          mask-position 1s ease,
-          -webkit-mask-position 1s ease;
-      }
-    `}</style>
-  </svg>
+  <div className="flex items-center">
+    <svg
+      height="37"
+      viewBox="0 0 686.4 326.2"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <polygon points="452.8 51.2 452.8 229.2 362.8 229.2 362.8 50.2 318.8 50.2 318.8 229.2 183.8 229.2 183.8 274.2 497.8 274.2 497.8 159.2 614.3 274.2 676.8 274.2 452.8 51.2" fill="currentColor"/>
+      <polygon points="273.8 94.2 273.8 50.2 4.8 50.2 4.8 94.2 94.8 94.2 94.8 274.2 138.8 274.2 138.8 94.2 273.8 94.2" fill="currentColor"/>
+      <rect x="183.8" y="140.2" width="90" height="44" fill="currentColor"/>
+      <rect x="139.8" y="275.2" width="44" height="43" fill="#46b868"/>
+      <rect x="274.3" y="7" width="44" height="43" fill="#ec2426"/>
+      <style jsx>{`
+        svg {
+          mask-image: linear-gradient(
+            60deg,
+            black 25%,
+            rgba(0, 0, 0, 0.2) 50%,
+            black 75%
+          );
+          mask-size: 400%;
+          mask-position: 0%;
+        }
+        svg:hover {
+          mask-position: 100%;
+          transition:
+            mask-position 1s ease,
+            -webkit-mask-position 1s ease;
+        }
+      `}</style>
+    </svg>
+  </div>
 )
 
 
@@ -95,16 +84,19 @@ const config: DocsThemeConfig = {
   primaryHue: { dark: 193, light: 193 }, // Adjust the hue value to get the desired shade of purple
   primarySaturation: { dark: 63, light: 63 }, // Adjust the saturation value for the desired intensity
   project: {
-    link: 'https://github.com/deroproject/derohe'
+    link: 'https://github.com/TELA/tela-main'
+  },
+  navbar: {
+    extraContent: <Navbar />
   },
 
-  docsRepositoryBase: 'https://dero.io',
+  docsRepositoryBase: 'https://tela.derod.org',
   useNextSeoProps() {
     const { route } = useRouter()
     const { url, images } = seoConfig.openGraph
 
     if (route === '/') {
-      return { titleTemplate: '%s – DERO' }
+      return { titleTemplate: '%s – TELA' }
     }
 
     return {
@@ -117,6 +109,13 @@ const config: DocsThemeConfig = {
   head: () => {
     const { frontMatter: meta } = useConfig()
     const { title } = meta
+    const router = useRouter()
+    const pagePath = router.asPath
+
+    // Get image from frontmatter or fallback to default
+    const imageUrl = meta.image 
+      ? (meta.image.startsWith('http') ? meta.image : `${seoConfig.openGraph.url}${meta.image}`)
+      : `${seoConfig.openGraph.url}${seoConfig.openGraph.images}`
 
     return (
       <>
@@ -126,22 +125,53 @@ const config: DocsThemeConfig = {
         <meta httpEquiv="Content-Language" content="en" />
         <meta
           name="description"
-          content={meta['description'] || seoConfig.description}
+          content={meta.description || seoConfig.description}
+        />
+        
+        {/* OpenGraph tags */}
+        <meta
+          property="og:title"
+          content={title ? title + ' – TELA' : seoConfig.title.default}
         />
         <meta
-          name="og:title"
-          content={title ? title + ' – DERO' : seoConfig.title.default}
+          property="og:description"
+          content={meta.description || seoConfig.description}
         />
-        <meta
-          name="og:description"
-          content={meta['description'] || seoConfig.description}
-        />
-        <meta name="og:image" content={seoConfig.openGraph.images} />
-        <meta name="og:url" content={seoConfig.openGraph.url} />
+        <meta property="og:image" content={imageUrl} />
+        <meta property="og:url" content={`${seoConfig.openGraph.url}${pagePath}`} />
+        <meta property="og:type" content="article" />
+        
+        {/* Twitter tags */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content={seoConfig.twitter.site} />
         <meta name="twitter:creator" content={seoConfig.twitter.creator} />
-        <meta name="apple-mobile-web-app-title" content="DERO" />
+        <meta name="twitter:title" content={title ? title + ' – TELA' : seoConfig.title.default} />
+        <meta name="twitter:description" content={meta.description || seoConfig.description} />
+        <meta name="twitter:image" content={imageUrl} />
+        
+        {/* Canonical URL */}
+        <link rel="canonical" href={`${seoConfig.openGraph.url}${pagePath}`} />
+        
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'TechArticle',
+              headline: title || seoConfig.title.default,
+              description: meta.description || seoConfig.description,
+              image: imageUrl,
+              author: meta.authors || 'TELA Team',
+              datePublished: meta.date || undefined,
+              dateModified: meta.lastUpdated || undefined,
+              mainEntityOfPage: `${seoConfig.openGraph.url}${pagePath}`,
+            }),
+          }}
+        />
+        
+        <meta name="apple-mobile-web-app-title" content="TELA" />
       </>
     )
   },
@@ -152,7 +182,7 @@ const config: DocsThemeConfig = {
       }
       return <>{title}</>
     },
-    //defaultMenuCollapseLevel: 1,
+    defaultMenuCollapseLevel: 1,
     toggleButton: false
   },
      toc:{
@@ -171,7 +201,6 @@ const config: DocsThemeConfig = {
         gitTimestamp: null,
         darkMode:true,
         themeSwitch: {
-          component:null,
           useOptions() {
             return {
               light: 'Light',
@@ -183,10 +212,10 @@ const config: DocsThemeConfig = {
         footer: {
     text: (
       <div className="flex w-full flex-col items-center sm:items-start">
-          <span>Privacy Together</span>
+          <span>Private Web3 Platform</span>
             
         <p className="mt-6 text-xs">
-          © {new Date().getFullYear()} DHEBP
+          © {new Date().getFullYear()} TELA Team
         </p>
       </div>
     )

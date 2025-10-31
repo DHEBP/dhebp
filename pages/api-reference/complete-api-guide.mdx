@@ -1,0 +1,1125 @@
+---
+title: "Complete TELA API Guide"
+description: "Comprehensive API reference combining DERO RPC, XSWD protocol, Gnomon indexer, and EPOCH mining for TELA development"
+keywords: ["TELA API", "DERO RPC", "XSWD protocol", "Gnomon indexer", "EPOCH mining", "blockchain API", "smart contracts"]
+---
+
+import { Callout } from 'nextra/components';
+
+# Complete TELA API Guide
+
+This comprehensive guide combines all available APIs for DERO blockchain and TELA application development, including real-world usage examples and developer commentary.
+
+<Callout emoji="💡">
+  **Quick Reference**: Use the [TELA API Template](/api/template) for a complete implementation with all methods included.
+</Callout>
+
+## 🔌 Connection & Setup
+
+### XSWD WebSocket Connection
+
+**Endpoint**: `ws://127.0.0.1:44326/xswd`
+
+```javascript
+// Basic XSWD connection setup
+const applicationData = {
+    "id": "your-unique-app-id",
+    "name": "Your TELA Application", 
+    "description": "Description of your app",
+    "url": "http://localhost:" + location.port
+};
+
+const socket = new WebSocket("ws://127.0.0.1:44326/xswd");
+
+socket.addEventListener("open", function(event) {
+    // Send handshake
+    socket.send(JSON.stringify(applicationData));
+});
+
+socket.addEventListener("message", function(event) {
+    const response = JSON.parse(event.data);
+    // Handle responses
+});
+```
+
+### Request Format
+
+All API calls use JSON-RPC 2.0 format:
+
+```javascript
+{
+    "jsonrpc": "2.0",
+    "id": "unique-request-id",
+    "method": "METHOD_NAME", 
+    "params": { /* parameters */ }
+}
+```
+
+## DERO Core RPC Methods
+
+### Network Information
+
+#### `DERO.GetInfo`
+Get current network status and node information.
+
+<details>
+<summary>**Developer Commentary** 👨‍💻</summary>
+
+> **Real-world usage**: This is your go-to method for dashboard applications. I use it every 18 seconds for live monitoring - matches DERO's block time perfectly. The `hashrate` field is calculated as `difficulty / 16`, so you get an approximate network hash rate.
+
+> **Performance tip**: Cache this data for 15-30 seconds if multiple modules need it. Making too many `GetInfo` calls can overwhelm the XSWD connection.
+
+</details>
+
+**Parameters**: None
+
+**Response**:
+```javascript
+{
+    "height": 12345,
+    "topoheight": 12345,
+    "difficulty": 1000000000,
+    "hashrate": 62500000,
+    "version": "5.2.0",
+    "peer_count": 8,
+    "tx_pool_size": 2,
+    "total_supply": 18400000000000,
+    "network_active_miners": 150,
+    "target": 18,
+    "uptime": 3600,
+    "testnet": false,
+    "top_block_hash": "abc123...",
+    "treehash": "def456...",
+    "stableheight": 12340
+}
+```
+
+**Usage Example**:
+```javascript
+const networkInfo = await xswd.call('DERO.GetInfo');
+console.log('Current height:', networkInfo.height);
+console.log('Network hashrate:', networkInfo.hashrate);
+
+// Format for display
+const hashrateMH = (networkInfo.hashrate / 1000000).toFixed(2) + ' MH/s';
+const supply = (networkInfo.total_supply / 100000).toFixed(2) + ' DERO';
+```
+
+#### `DERO.GetHeight`
+Get current blockchain height.
+
+**Parameters**: None
+
+**Response**:
+```javascript
+{
+    "height": 12345,
+    "stableheight": 12340,
+    "topoheight": 12345
+}
+```
+
+### Block Operations
+
+#### `DERO.GetBlock`
+Get complete block data including transactions.
+
+<details>
+<summary>**Developer Commentary** 👨‍💻</summary>
+
+> **Performance warning**: This method returns A LOT of data. For block explorers, use `GetBlockHeaderByHeight` instead unless you specifically need transaction details. I learned this the hard way when my explorer started timing out!
+
+> **Tip**: The `tx_hashes` array gives you transaction IDs that you can then query individually with `GetTransaction` if needed.
+
+</details>
+
+**Parameters**:
+- `height` (number) - Block height
+- OR `hash` (string) - Block hash
+
+**Response**:
+```javascript
+{
+    "block_header": {
+        "depth": 0,
+        "difficulty": 1000000,
+        "hash": "abc123...",
+        "height": 12345,
+        "timestamp": 1640995200,
+        "reward": 30000000000,
+        "orphan_status": false,
+        "txcount": 5
+    },
+    "tx_hashes": ["tx1hash", "tx2hash", "tx3hash"]
+}
+```
+
+**Usage Example**:
+```javascript
+// Get by height (most common)
+const block = await xswd.call('DERO.GetBlock', {height: 12345});
+
+// Get by hash (when you have the hash)
+const block = await xswd.call('DERO.GetBlock', {hash: 'abc123...'});
+
+// Process transaction hashes
+if (block.tx_hashes && block.tx_hashes.length > 0) {
+    console.log(`Block ${block.block_header.height} has ${block.tx_hashes.length} transactions`);
+}
+```
+
+#### `DERO.GetLastBlockHeader`
+Get the most recent block header only (lightweight).
+
+<details>
+<summary>**Developer Commentary** 👨‍💻</summary>
+
+> **Perfect for dashboards**: This is much faster than `GetBlock` when you only need basic block info. I use this for live monitoring systems that update every 18 seconds.
+
+</details>
+
+**Parameters**: None
+
+**Response**: Same as `block_header` in GetBlock
+
+**Usage Example**:
+```javascript
+// Perfect for live monitoring
+const latest = await xswd.call('DERO.GetLastBlockHeader');
+const header = latest.block_header;
+
+// Update dashboard
+document.getElementById('current-height').textContent = header.height;
+document.getElementById('current-difficulty').textContent = header.difficulty;
+
+// Calculate time since last block
+const timeSince = Date.now() - (header.timestamp * 1000);
+const secondsAgo = Math.floor(timeSince / 1000);
+document.getElementById('last-block-time').textContent = secondsAgo + 's ago';
+```
+
+#### `DERO.GetBlockHeaderByHeight`
+Get block header by specific height.
+
+**Parameters**:
+- `height` (number) - Block height
+
+#### `DERO.GetBlockHeaderByHash`
+Get block header by specific hash.
+
+**Parameters**:
+- `hash` (string) - Block hash
+
+### Transaction Operations
+
+#### `DERO.GetTransaction`
+Get transaction details by hash.
+
+<details>
+<summary>**Developer Commentary** 👨‍💻</summary>
+
+> **Array input**: Notice the `txs_hashes` parameter is an array - you can request multiple transactions at once! But be careful not to request too many simultaneously or you'll overwhelm the XSWD connection.
+
+> **Real-world tip**: The `as_hex` field contains the raw transaction data. You can extract the transaction hash from the first 64 characters if needed: `tx.as_hex.substring(0, 64)`
+
+</details>
+
+**Parameters**:
+- `txs_hashes` (array) - Array of transaction hashes
+
+**Response**:
+```javascript
+{
+    "txs": [{
+        "txid": "abc123...",
+        "block_height": 12345,
+        "timestamp": 1640995200,
+        "fee": 50000,
+        "size": 1024,
+        "in_pool": false,
+        "as_hex": "hexdata..."
+    }]
+}
+```
+
+**Usage Example**:
+```javascript
+// Single transaction
+const tx = await xswd.call('DERO.GetTransaction', {
+    txs_hashes: ['abc123...']
+});
+
+// Multiple transactions (use sparingly!)
+const txs = await xswd.call('DERO.GetTransaction', {
+    txs_hashes: ['hash1', 'hash2', 'hash3']
+});
+
+// Process results
+if (tx.txs && tx.txs.length > 0) {
+    const transaction = tx.txs[0];
+    console.log('Fee:', transaction.fee);
+    console.log('Size:', transaction.size, 'bytes');
+    
+    // Format fee for display
+    const feeDERO = (transaction.fee / 100000).toFixed(5) + ' DERO';
+}
+```
+
+#### `DERO.GetTxPool`
+Get current transaction pool (mempool).
+
+<details>
+<summary>**Developer Commentary** 👨‍💻</summary>
+
+> **Live data**: This is perfect for showing "pending transactions" in real-time. The mempool changes constantly, so don't cache this data for more than a few seconds.
+
+> **Hash extraction**: Pool transactions have `as_hex` data but no direct `txid`. Extract the hash from `as_hex.substring(0, 64)` if you need clickable transaction links.
+
+</details>
+
+**Parameters**: None
+
+**Response**:
+```javascript
+{
+    "txs": [
+        {
+            "as_hex": "0100000...",
+            "fee": 50000,
+            "size": 1024
+        }
+    ]
+}
+```
+
+**Usage Example**:
+```javascript
+const pool = await xswd.call('DERO.GetTxPool');
+
+// Display pool activity
+if (pool.txs && pool.txs.length > 0) {
+    console.log(`${pool.txs.length} transactions in mempool`);
+    
+    // Extract transaction hashes for display
+    const recentHashes = pool.txs.slice(0, 5).map(tx => {
+        if (tx.as_hex) {
+            return tx.as_hex.substring(0, 8) + '...';
+        }
+        return 'Unknown';
+    });
+    
+    console.log('Recent transactions:', recentHashes);
+}
+```
+
+### Smart Contract Operations
+
+#### `DERO.GetSC`
+Get smart contract data and state.
+
+<details>
+<summary>**Developer Commentary** 👨‍💻</summary>
+
+> **Powerful but heavy**: This method can return massive amounts of data if you set `variables: true` on a contract with lots of state. For performance, only request what you need.
+
+> **Code inspection**: Setting `code: true` lets you see the actual smart contract source code. Great for contract verification and debugging.
+
+</details>
+
+**Parameters**:
+- `scid` (string) - Smart contract ID
+- `code` (boolean, optional) - Include contract code
+- `variables` (boolean, optional) - Include contract variables
+
+**Response**:
+```javascript
+{
+    "code": "Function Initialize() Uint64\n10 RETURN 0\nEnd Function",
+    "balance": 1000000000,
+    "variables": {
+        "var1": "value1",
+        "var2": 12345
+    }
+}
+```
+
+**Usage Example**:
+```javascript
+// Get contract overview (lightweight)
+const contract = await xswd.call('DERO.GetSC', {
+    scid: 'contract_id_here',
+    code: false,
+    variables: false
+});
+
+// Get full contract details (heavy)
+const fullContract = await xswd.call('DERO.GetSC', {
+    scid: 'contract_id_here',
+    code: true,
+    variables: true
+});
+
+// Display contract balance
+const balanceDERO = (contract.balance / 100000).toFixed(5) + ' DERO';
+console.log('Contract balance:', balanceDERO);
+```
+
+#### `DERO.NameToAddress`
+Resolve DERO name to address.
+
+**Parameters**:
+- `name` (string) - DERO name to resolve
+
+**Response**:
+```javascript
+{
+    "address": "dero1...",
+    "status": "OK"
+}
+```
+
+## 💰 Wallet Operations
+
+### Account Information
+
+#### `GetAddress`
+Get wallet address.
+
+**Parameters**: None
+
+**Response**:
+```javascript
+{
+    "address": "dero1abc123..."
+}
+```
+
+#### `GetBalance`
+Get wallet balance.
+
+<details>
+<summary>**Developer Commentary** 👨‍💻</summary>
+
+> **Atomic units**: DERO uses atomic units (100,000 atomic = 1 DERO). Always divide by 100,000 for display. The `unlocked_balance` is what's actually spendable.
+
+</details>
+
+**Parameters**: 
+- `scid` (string, optional) - Get balance for specific asset
+
+**Response**:
+```javascript
+{
+    "balance": 1000000000000,
+    "unlocked_balance": 800000000000
+}
+```
+
+**Usage Example**:
+```javascript
+// Get DERO balance
+const balance = await xswd.call('GetBalance');
+const deroBal = (balance.unlocked_balance / 100000).toFixed(5) + ' DERO';
+
+// Get specific asset balance
+const assetBalance = await xswd.call('GetBalance', {scid: 'asset_id'});
+```
+
+### Transaction Creation
+
+#### `Transfer`
+Create and send a transaction.
+
+<details>
+<summary>**Developer Commentary** 👨‍💻</summary>
+
+> **Ring size matters**: Higher ring sizes (16, 32, 64) provide more privacy but cost more in fees. Ring size 2 is minimum, but 8-16 is recommended for real privacy.
+
+> **Fee calculation**: Fees are automatic but depend on transaction complexity and ring size. Always check your balance before sending!
+
+</details>
+
+**Parameters**:
+- `destinations` (array) - Destination addresses and amounts
+- `scid` (string, optional) - Asset ID (omit for DERO)
+- `ringsize` (number) - Privacy level (2-64)
+
+**Response**:
+```javascript
+{
+    "txid": "abc123...",
+    "fee": 50000
+}
+```
+
+**Usage Example**:
+```javascript
+const transfer = await xswd.call('Transfer', {
+    destinations: [{
+        address: 'dero1...',
+        amount: 1000000000000  // 10,000 DERO in atomic units
+    }],
+    ringsize: 8  // Good privacy/cost balance
+});
+
+console.log('Transaction sent:', transfer.txid);
+console.log('Fee paid:', (transfer.fee / 100000).toFixed(5) + ' DERO');
+```
+
+## Gnomon Indexer API
+
+Gnomon provides enhanced blockchain indexing and querying capabilities beyond standard DERO RPC.
+
+### Basic Queries
+
+#### `Gnomon.GetLastIndexHeight`
+Get current indexed height.
+
+<details>
+<summary>**Developer Commentary** 👨‍💻</summary>
+
+> **Sync check**: Use this to verify Gnomon is caught up with the blockchain. If `lastIndexHeight` is significantly behind `DERO.GetInfo().height`, Gnomon is still syncing.
+
+</details>
+
+**Parameters**: None
+
+**Response**:
+```javascript
+{
+    "lastIndexHeight": 12345
+}
+```
+
+#### `Gnomon.GetTxCount`
+Get transaction count by type.
+
+**Parameters**:
+- `txType` (string) - Transaction type to count
+
+**Response**:
+```javascript
+{
+    "count": 1500
+}
+```
+
+### Smart Contract Queries
+
+#### `Gnomon.GetOwner`
+Get smart contract owner.
+
+**Parameters**:
+- `scid` (string) - Smart contract ID
+
+**Response**:
+```javascript
+{
+    "owner": "dero1abc123..."
+}
+```
+
+#### `Gnomon.GetAllOwnersAndSCIDs`
+Get all contracts and their owners.
+
+<details>
+<summary>**Developer Commentary** 👨‍💻</summary>
+
+> **Heavy data**: This returns ALL smart contracts on the network. Use carefully - it can be a large response. Perfect for building contract directories or analytics dashboards.
+
+</details>
+
+**Parameters**: None
+
+**Response**:
+```javascript
+{
+    "contracts": {
+        "scid1": "owner1",
+        "scid2": "owner2"
+    }
+}
+```
+
+#### `Gnomon.GetAllSCIDVariableDetails`
+Get all variables for a smart contract.
+
+**Parameters**:
+- `scid` (string) - Smart contract ID
+
+**Response**:
+```javascript
+{
+    "variables": [
+        {
+            "key": "var1",
+            "value": "value1", 
+            "height": 12345
+        }
+    ]
+}
+```
+
+### Advanced Queries
+
+#### `Gnomon.GetSCIDKeysByValue`
+Find keys that have a specific value.
+
+**Parameters**:
+- `scid` (string) - Smart contract ID
+- `value` (string) - Value to search for
+- `height` (number) - Block height
+
+#### `Gnomon.GetSCIDValuesByKey`
+Get values for a specific key.
+
+**Parameters**:
+- `scid` (string) - Smart contract ID
+- `key` (string) - Key to search for
+- `height` (number) - Block height
+
+### Live Queries
+
+#### `Gnomon.GetLiveSCIDValuesByKey`
+Get current values for a key (no height required).
+
+<details>
+<summary>**Developer Commentary** 👨‍💻</summary>
+
+> **Live data**: These "Live" methods always return the most current state. Perfect for real-time applications that need the latest contract state without specifying block heights.
+
+</details>
+
+**Parameters**:
+- `scid` (string) - Smart contract ID
+- `key` (string) - Key to search for
+
+#### `Gnomon.GetLiveSCIDKeysByValue`
+Get current keys for a value (no height required).
+
+**Parameters**:
+- `scid` (string) - Smart contract ID
+- `value` (string) - Value to search for
+
+### Transaction History
+
+#### `Gnomon.GetAllNormalTxWithSCIDByAddr`
+Get all transactions for an address involving smart contracts.
+
+**Parameters**:
+- `address` (string) - Address to query
+
+#### `Gnomon.GetAllNormalTxWithSCIDBySCID`
+Get all transactions for a specific smart contract.
+
+**Parameters**:
+- `scid` (string) - Smart contract ID
+
+#### `Gnomon.GetAllSCIDInvokeDetails`
+Get all invocation details for a smart contract.
+
+**Parameters**:
+- `scid` (string) - Smart contract ID
+
+#### `Gnomon.GetAllSCIDInvokeDetailsByEntrypoint`
+Get invocations filtered by entrypoint.
+
+**Parameters**:
+- `scid` (string) - Smart contract ID
+- `entrypoint` (string) - Function name
+
+#### `Gnomon.GetAllSCIDInvokeDetailsBySigner`
+Get invocations filtered by signer.
+
+**Parameters**:
+- `scid` (string) - Smart contract ID
+- `signer` (string) - Signer address
+
+### Miniblock Operations
+
+#### `Gnomon.GetAllMiniblockDetails`
+Get all miniblock information.
+
+<details>
+<summary>**Developer Commentary** 👨‍💻</summary>
+
+> **Mining insights**: Miniblocks show individual mining attempts within each block. Great for mining pool statistics and network health monitoring.
+
+</details>
+
+**Parameters**: None
+
+#### `Gnomon.GetMiniblockDetailsByHash`
+Get miniblock by hash.
+
+**Parameters**:
+- `blid` (string) - Block ID/hash
+
+#### `Gnomon.GetMiniblockCountByAddress`
+Get miniblock count for an address.
+
+**Parameters**:
+- `address` (string) - Address to query
+
+## EPOCH Mining API
+
+EPOCH provides proof-of-work mining capabilities through the wallet.
+
+### Mining Operations
+
+#### `AttemptEPOCH`
+Submit mining hashes to the network.
+
+<details>
+<summary>**Developer Commentary** 👨‍💻</summary>
+
+> **Performance tuning**: I've found 1000-2000 hashes per attempt gives the best hash rate. Too few and you waste time on overhead, too many and you risk timeouts.
+
+> **Duration tracking**: The `epochDuration` tells you how long the mining took. Use this to calculate hash rates: `epochHashes / epochDuration * 1000` for H/s.
+
+</details>
+
+**Parameters**:
+- `hashes` (number) - Number of hashes to attempt
+
+**Response**:
+```javascript
+{
+    "epochHashes": 1000,
+    "epochDuration": 5000,  // Duration in milliseconds
+    "epochSubmitted": 5     // Number of successful submissions
+}
+```
+
+**Usage Example**:
+```javascript
+// Basic mining operation
+const result = await xswd.call('AttemptEPOCH', { hashes: 1000 });
+
+console.log(`⛏️ Mining completed:`);
+console.log(`   Hashes: ${result.epochHashes}`);
+console.log(`   Duration: ${result.epochDuration}ms`);
+console.log(`   Submitted: ${result.epochSubmitted}`);
+
+// Calculate hash rate
+const hashRate = (result.epochHashes / result.epochDuration) * 1000;
+console.log(`   Hash Rate: ${hashRate.toFixed(2)} H/s`);
+```
+
+#### `AttemptEPOCHWithAddr`
+Mine with a specific address for rewards.
+
+**Parameters**:
+- `address` (string) - Mining address for rewards
+- `hashes` (number) - Number of hashes to attempt
+
+**Response**: Same as `AttemptEPOCH`
+
+### Mining Information
+
+#### `GetMaxHashesEPOCH`
+Get the maximum number of hashes allowed per mining attempt.
+
+**Parameters**: None
+
+**Response**:
+```javascript
+{
+    "maxHashes": 10000
+}
+```
+
+#### `GetAddressEPOCH`
+Get the current EPOCH mining address.
+
+**Parameters**: None
+
+**Response**:
+```javascript
+{
+    "epochAddress": "dero1abc123..."
+}
+```
+
+#### `GetSessionEPOCH`
+Get current EPOCH session statistics.
+
+<details>
+<summary>**Developer Commentary** 👨‍💻</summary>
+
+> **Session tracking**: This tracks your total mining session across multiple `AttemptEPOCH` calls. Great for building mining dashboards and tracking efficiency over time.
+
+</details>
+
+**Parameters**: None
+
+**Response**:
+```javascript
+{
+    "sessionHashes": 15000,
+    "sessionMinis": 25
+}
+```
+
+**Usage Example**:
+```javascript
+// Monitor mining session
+const session = await xswd.call('GetSessionEPOCH');
+
+console.log(`📊 Current Mining Session:`);
+console.log(`   Total Hashes: ${session.sessionHashes.toLocaleString()}`);
+console.log(`   Miniblocks Found: ${session.sessionMinis}`);
+
+// Calculate efficiency
+if (session.sessionHashes > 0) {
+    const efficiency = (session.sessionMinis / session.sessionHashes * 100).toFixed(6);
+    console.log(`   Efficiency: ${efficiency}%`);
+}
+```
+
+## TELA-Specific Functions
+
+### Application Integration
+
+#### `HandleTELALinks`
+Handle TELA application links.
+
+**Parameters**:
+- `telaLink` (string) - TELA link to process
+
+**Response**:
+```javascript
+{
+    "telaLinkResult": "opened_successfully"
+}
+```
+
+**Usage Example**:
+```javascript
+// Open a TELA application
+const result = await xswd.call('HandleTELALinks', {
+    telaLink: 'tela://app-name'
+});
+
+if (result.telaLinkResult === 'opened_successfully') {
+    console.log('TELA app opened successfully');
+}
+```
+
+## 🚨 Error Handling & Best Practices
+
+### Common Error Codes
+
+| Code | Description | Solution |
+|------|-------------|----------|
+| `-1` | Invalid method | Check method name spelling |
+| `-2` | Invalid parameters | Verify parameter types and values |
+| `-3` | Wallet locked | Unlock wallet before operation |
+| `-4` | Insufficient balance | Check account balance |
+| `-5` | Network error | Check DERO node connection |
+| `-6` | Smart contract error | Verify contract SCID and state |
+
+### Robust Error Handling
+
+```javascript
+// Error handling wrapper for all API calls
+async function safeCall(method, params = {}, retries = 3) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            return await xswd.call(method, params);
+        } catch (error) {
+            console.warn(`Attempt ${i + 1} failed:`, error.message);
+            
+            if (i === retries - 1) {
+                throw error;
+            }
+            
+            // Wait before retry
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+    }
+}
+
+// Connection monitoring
+function monitorConnection() {
+    if (!xswd || !xswd.isConnected) {
+        console.warn('XSWD connection lost');
+        // Handle disconnection
+        showConnectionError();
+        return false;
+    }
+    return true;
+}
+
+// User-friendly error messages
+function handleUserError(error) {
+    const userMessages = {
+        'Wallet locked': 'Please unlock your DERO wallet to continue.',
+        'Insufficient balance': 'Insufficient funds for this transaction.',
+        'Network error': 'Connection to DERO network failed. Please try again.',
+        'Request timeout': 'Request timed out. Please check your connection.'
+    };
+    
+    const userMessage = userMessages[error.message] || 
+                       'An unexpected error occurred. Please try again.';
+    
+    // Display to user
+    showError(userMessage);
+}
+```
+
+## Performance Tips
+
+### XSWD Connection Management
+
+<details>
+<summary>**Critical Performance Insights** 👨‍💻</summary>
+
+> **Connection limits**: Don't make more than 2-3 XSWD calls per second. I've seen connections drop when apps make 10+ simultaneous calls.
+
+> **Caching strategy**: Cache `GetInfo` results for 15-30 seconds. Multiple modules requesting the same data will kill your connection.
+
+> **Timeout handling**: Different methods have different timeout needs. Smart contract calls need 30s, basic calls need 10s.
+
+</details>
+
+```javascript
+// Rate limiting for XSWD calls
+let lastCallTime = 0;
+const MIN_CALL_INTERVAL = 500; // 500ms between calls
+
+async function rateLimitedCall(method, params) {
+    const now = Date.now();
+    const timeSinceLastCall = now - lastCallTime;
+    
+    if (timeSinceLastCall < MIN_CALL_INTERVAL) {
+        await new Promise(resolve => 
+            setTimeout(resolve, MIN_CALL_INTERVAL - timeSinceLastCall)
+        );
+    }
+    
+    lastCallTime = Date.now();
+    return xswd.call(method, params);
+}
+
+// Data caching system
+const cache = new Map();
+const CACHE_TTL = 15000; // 15 seconds
+
+function getCachedData(key, fetchFunction) {
+    const cached = cache.get(key);
+    
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+        return Promise.resolve(cached.data);
+    }
+    
+    return fetchFunction().then(data => {
+        cache.set(key, {
+            data: data,
+            timestamp: Date.now()
+        });
+        return data;
+    });
+}
+
+// Usage
+const networkInfo = await getCachedData('network-info', () => 
+    xswd.call('DERO.GetInfo')
+);
+```
+
+## 📚 Complete Implementation Example
+
+### Full TELA Application with All APIs
+
+```javascript
+({
+    name: 'tela-complete-example',
+    version: '1.0.0',
+    
+    // Initialize application
+    init: function() {
+        var self = this;
+        console.log('🚀 Initializing TELA application...');
+        
+        // Check XSWD connection
+        if (!window.xswd || !window.xswd.isConnected) {
+            console.error('XSWD not connected');
+            return false;
+        }
+        
+        // Load initial data
+        self.loadDashboardData();
+        
+        // Set up periodic updates
+        setInterval(function() {
+            self.updateLiveData();
+        }, 18000); // Every 18 seconds
+        
+        return true;
+    },
+    
+    // Load dashboard data
+    loadDashboardData: function() {
+        var self = this;
+        
+        // Get network info
+        window.xswd.call('DERO.GetInfo').then(function(info) {
+            self.displayNetworkInfo(info);
+        }).catch(function(error) {
+            console.error('Failed to load network info:', error);
+        });
+        
+        // Get wallet info
+        window.xswd.call('GetAddress').then(function(addr) {
+            return window.xswd.call('GetBalance').then(function(bal) {
+                self.displayWalletInfo(addr.address, bal);
+            });
+        }).catch(function(error) {
+            console.error('Failed to load wallet info:', error);
+        });
+        
+        // Get transaction pool
+        window.xswd.call('DERO.GetTxPool').then(function(pool) {
+            self.displayPoolInfo(pool);
+        }).catch(function(error) {
+            console.error('Failed to load pool info:', error);
+        });
+    },
+    
+    // Display network information
+    displayNetworkInfo: function(info) {
+        var html = '<div class="network-info">';
+        html += '<h3>Network Status</h3>';
+        html += '<p>Height: ' + info.height.toLocaleString() + '</p>';
+        html += '<p>Difficulty: ' + info.difficulty.toLocaleString() + '</p>';
+        html += '<p>Hash Rate: ' + (info.hashrate / 1000000).toFixed(2) + ' MH/s</p>';
+        html += '<p>Peers: ' + info.peer_count + '</p>';
+        html += '</div>';
+        
+        var container = document.getElementById('network-container');
+        if (container) container.innerHTML = html;
+    },
+    
+    // Display wallet information
+    displayWalletInfo: function(address, balance) {
+        var html = '<div class="wallet-info">';
+        html += '<h3>Wallet Status</h3>';
+        html += '<p>Address: ' + address.substring(0, 20) + '...</p>';
+        html += '<p>Balance: ' + (balance.unlocked_balance / 100000).toFixed(5) + ' DERO</p>';
+        html += '</div>';
+        
+        var container = document.getElementById('wallet-container');
+        if (container) container.innerHTML = html;
+    },
+    
+    // Display transaction pool
+    displayPoolInfo: function(pool) {
+        var html = '<div class="pool-info">';
+        html += '<h3>Transaction Pool</h3>';
+        html += '<p>Pending Transactions: ' + (pool.txs ? pool.txs.length : 0) + '</p>';
+        
+        if (pool.txs && pool.txs.length > 0) {
+            html += '<h4>Recent Transactions:</h4>';
+            html += '<ul>';
+            for (var i = 0; i < Math.min(5, pool.txs.length); i++) {
+                var tx = pool.txs[i];
+                var hash = tx.as_hex ? tx.as_hex.substring(0, 8) + '...' : 'Unknown';
+                html += '<li>' + hash + '</li>';
+            }
+            html += '</ul>';
+        }
+        
+        html += '</div>';
+        
+        var container = document.getElementById('pool-container');
+        if (container) container.innerHTML = html;
+    },
+    
+    // Update live data
+    updateLiveData: function() {
+        var self = this;
+        
+        // Update network info only
+        window.xswd.call('DERO.GetInfo').then(function(info) {
+            // Update height display
+            var heightEl = document.getElementById('current-height');
+            if (heightEl) {
+                heightEl.textContent = info.height.toLocaleString();
+            }
+            
+            // Update difficulty
+            var diffEl = document.getElementById('current-difficulty');
+            if (diffEl) {
+                diffEl.textContent = info.difficulty.toLocaleString();
+            }
+        }).catch(function(error) {
+            console.warn('Live update failed:', error);
+        });
+    },
+    
+    // Mine some blocks (example)
+    startMining: function(hashCount) {
+        var self = this;
+        hashCount = hashCount || 1000;
+        
+        console.log('🔨 Starting mining with ' + hashCount + ' hashes...');
+        
+        return window.xswd.call('AttemptEPOCH', { hashes: hashCount })
+            .then(function(result) {
+                console.log('⛏️ Mining completed:');
+                console.log('   Hashes: ' + result.epochHashes);
+                console.log('   Duration: ' + result.epochDuration + 'ms');
+                console.log('   Submitted: ' + result.epochSubmitted);
+                
+                // Calculate and display hash rate
+                var hashRate = (result.epochHashes / result.epochDuration) * 1000;
+                console.log('   Hash Rate: ' + hashRate.toFixed(2) + ' H/s');
+                
+                return result;
+            })
+            .catch(function(error) {
+                console.error('❌ Mining failed:', error);
+                return null;
+            });
+    },
+    
+    // Search for smart contracts
+    searchContracts: function(ownerAddress) {
+        var self = this;
+        
+        return window.xswd.call('Gnomon.GetAllOwnersAndSCIDs')
+            .then(function(allContracts) {
+                var ownedContracts = [];
+                
+                for (var scid in allContracts) {
+                    if (allContracts[scid] === ownerAddress) {
+                        ownedContracts.push(scid);
+                    }
+                }
+                
+                console.log('Found ' + ownedContracts.length + ' contracts for ' + ownerAddress);
+                return ownedContracts;
+            })
+            .catch(function(error) {
+                console.error('Contract search failed:', error);
+                return [];
+            });
+    }
+});
+```
+
+<Callout type="warning" emoji="⚠️">
+  **Performance Warning**: Never make more than 2-3 XSWD calls per second. Use caching and rate limiting to prevent connection drops.
+</Callout>
+
+## Next Steps
+
+- **[XSWD Connection Guide](/xswd/overview)** - Deep dive into wallet integration
+- **[Design System](/design-system)** - UI components and styling
+- **[Compliance Rules](/compliance/deployment-rules)** - Deployment requirements
+- **[TELA Libraries](/libraries/overview)** - Reusable code components
+
+---
+
+*This API guide covers all major DERO and TELA functionality. For the latest updates and additional methods, refer to the [official DERO documentation](https://docs.dero.io/developer/RPC.html) and community resources.*

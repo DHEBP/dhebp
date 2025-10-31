@@ -1,0 +1,1143 @@
+---
+title: "TELA-CLI Search Guide | Advanced Search and Content Discovery Techniques"
+description: "Master TELA-CLI search functionality - discover applications, filter by quality, find libraries, analyze smart contracts, and navigate the TELA ecosystem efficiently."
+keywords: "TELA search, content discovery, search filters, min-likes, search exclusion, TELA-CLI search, find applications, blockchain search, smart contract discovery"
+date: "2024-08-26"
+lastUpdated: "2025-10-22"
+authors: ["DHEBP"]
+image: "/assets/search-guide.png"
+slug: "tela-cli/search-guide"
+canonicalUrl: "https://tela.derod.org/tela-cli/search-guide"
+tags: ["search", "discovery", "filters", "TELA-CLI", "content"]
+---
+
+import { Callout } from 'nextra/components'
+import { Card, Cards } from 'nextra/components'
+
+# TELA-CLI Search Guide
+
+Master the powerful search capabilities of TELA-CLI to discover applications, analyze contracts, and navigate the TELA ecosystem.
+
+<Callout type="info" emoji="🔍">
+**Prerequisites:** Gnomon indexer must be running. See [Gnomon Guide](/tela-cli/gnomon-guide) for setup.
+</Callout>
+
+## Search Command Overview
+
+TELA-CLI provides 15+ search variants for discovering content:
+
+| Search Type | Command | Purpose |
+|-------------|---------|---------|
+| **All Content** | `search all` | Browse everything |
+| **By SCID** | `search scid [scid]` | Specific contract |
+| **By Type** | `search docs [type]` | Filter by file type |
+| **Applications** | `search indexes` | Find TELA apps |
+| **Libraries** | `search libs` | Find reusable code |
+| **By Name** | `search durl [name]` | Search by dURL |
+| **By Variable** | `search key [key]` | Find contracts with key |
+| **By Value** | `search value [val]` | Find contracts with value |
+| **By Author** | `search author [addr]` | Developer's content |
+| **Code Analysis** | `search code [scid]` | View contract code |
+| **Code Search** | `search line [text]` | Find code patterns |
+| **Ratings** | `search ratings [scid]` | View all ratings |
+| **Your Content** | `search my docs/indexes` | Your deployments |
+
+---
+
+## Basic Search
+
+### Search All Content
+
+View everything Gnomon has indexed:
+
+```bash
+» search all
+```
+
+**Output:**
+```
+TELA Content (showing 20/247):
+
+1. ⭐ 89% | myapp.tela
+   Type: INDEX | Author: deto1qy... | Height: 12,345
+   
+2. ⭐ 76% | explorer.tela
+   Type: INDEX | Author: deto1qy... | Height: 11,234
+
+3. ⭐ 92% | utils.tela.lib
+   Type: INDEX | Author: deto1qy... | Height: 10,500
+   
+[Page 1/13] - Use 'page-size 50' to show more results
+```
+
+**Pagination:**
+```bash
+# Change results per page
+» page-size 50
+» search all
+```
+
+---
+
+### Search by SCID
+
+Get detailed information about specific contract:
+
+```bash
+» search scid f2815b442d62a055e4bb8913167e3dbce3208f300d7006aaa3a2f127b06de29d
+```
+
+**Output:**
+```
+TELA-INDEX-1 Contract Details:
+
+SCID: f2815b442d62a055e4bb8913167e3dbce3208f300d7006aaa3a2f127b06de29d
+dURL: dero-explorer.tela
+Name: DERO Block Explorer
+Description: Real-time blockchain explorer
+Icon: https://example.com/icon.png
+Author: deto1qyre7td6x9r88y4cavdgpv6k7lvx6j39lfsx420hpvh3ydpcrtxrxqg8v8e3z
+Height: 12,345
+Rating: 87% (45 ratings)
+
+DOC References:
+  DOC1: abc123... (index.html - TELA-HTML-1)
+  DOC2: def456... (style.css - TELA-CSS-1)
+  DOC3: ghi789... (app.js - TELA-JS-1)
+
+MODs Enabled: vsoo,txdwd
+
+Commits: 3 (updated 3 times)
+Latest Hash: xyz123...
+```
+
+---
+
+### Search Contract Variables
+
+View all variables stored in a contract:
+
+```bash
+» search scid vars f2815b442d62a055e4bb8913167e3dbce3208f300d7006aaa3a2f127b06de29d
+```
+
+**Output:**
+```
+Smart Contract Variables:
+
+var_header_name: "DERO Block Explorer"
+var_header_description: "Real-time blockchain explorer"
+var_header_icon: "https://example.com/icon.png"
+dURL: "dero-explorer.tela"
+mods: "vsoo,txdwd"
+commit: "3"
+0: "abc123..."  (initial deployment TXID)
+1: "def456..."  (first update TXID)
+2: "ghi789..."  (second update TXID)
+3: "jkl012..."  (third update TXID)
+hash: "jkl012..."  (current version)
+DOC1: "111..."
+DOC2: "222..."
+DOC3: "333..."
+
+Custom Variables:
+var_owners_note: "Currently in beta testing"
+var_meta_category: "Utility"
+var_meta_tags: "#TELA #Explorer #DERO"
+```
+
+**Use Case:** Understand app structure, check version history, analyze metadata
+
+---
+
+## Search by Type
+
+### Search DOC Contracts
+
+```bash
+# All DOC contracts
+» search docs
+
+# HTML files only
+» search docs HTML
+
+# JavaScript files only
+» search docs JS
+
+# CSS files only
+» search docs CSS
+
+# Other types
+» search docs JSON
+» search docs MD
+» search docs STATIC
+```
+
+**Example Output:**
+```
+TELA-DOC Contracts (HTML):
+
+1. index.html - homepage.tela (87%)
+   SCID: abc123...
+
+2. about.html - about-page.tela (92%)
+   SCID: def456...
+
+3. dashboard.html - app-dashboard.tela (78%)
+   SCID: ghi789...
+```
+
+**Use Case:** Find examples of specific file types, discover coding patterns
+
+---
+
+### Search INDEX Contracts
+
+```bash
+» search indexes
+```
+
+**Output:**
+```
+TELA Applications:
+
+1. ⭐ 94% | dero-explorer.tela
+   15 DOCs | MODs: vsoo,txdwd | Commits: 5
+
+2. ⭐ 87% | tela-game.tela
+   8 DOCs | MODs: vspubow | Commits: 2
+
+3. ⭐ 91% | portfolio.tela
+   12 DOCs | MODs: vsoo | Commits: 1
+```
+
+**Use Case:** Discover applications, find inspiration, analyze app structures
+
+---
+
+### Search Libraries
+
+```bash
+» search libs
+```
+
+**Output:**
+```
+TELA Libraries:
+
+1. ⭐ 95% | xswd-core.tela.lib
+   Comprehensive XSWD integration library
+
+2. ⭐ 88% | ui-components.tela.lib
+   Reusable UI component library
+
+3. ⭐ 92% | crypto-utils.tela.lib
+   Cryptography utilities
+```
+
+**Use Case:** Find reusable code, speed up development, learn from community
+
+---
+
+## Quality Filtering
+
+### Min-Likes System
+
+Filter search results by rating percentage:
+
+```bash
+# Exceptional content only (90%+)
+» search min-likes 90
+» search indexes
+
+# High quality (70%+)
+» search min-likes 70
+» search all
+
+# Average and above (60%+)
+» search min-likes 60
+» search docs
+
+# All content (no filter)
+» search min-likes 0
+» search all
+```
+
+**Rating Scale:**
+- **90-99%** - Exceptional, best-in-class
+- **70-89%** - Good to very good
+- **60-69%** - Average quality
+- **50-59%** - Needs improvement
+- **0-49%** - Issues present
+
+### Progressive Discovery
+
+```bash
+# Start with exceptional
+» search min-likes 90
+» search indexes
+# Found 5 exceptional apps
+
+# Expand to very good
+» search min-likes 75
+» search indexes
+# Found 23 apps
+
+# Include good content
+» search min-likes 65
+» search indexes
+# Found 87 apps
+```
+
+---
+
+## Advanced Filtering
+
+### Exclusion System
+
+Blacklist specific content from search results:
+
+**View Current Exclusions:**
+```bash
+» search exclude view
+```
+
+**Add Exclusions:**
+```bash
+# Exclude test content
+» search exclude add test
+» search exclude add demo
+» search exclude add example
+» search exclude add beta
+
+# Now search results exclude these
+» search all
+# No results with "test", "demo", "example", or "beta" in dURL
+```
+
+**Remove Exclusions:**
+```bash
+# Remove specific exclusion
+» search exclude remove test
+
+# Remove all exclusions
+» search exclude clear
+```
+
+**Use Cases:**
+- Filter out test deployments
+- Hide work-in-progress apps
+- Focus on production content
+- Reduce noise in search results
+
+### Combined Filtering
+
+```bash
+# High-quality, production content only
+» search min-likes 75
+» search exclude add test
+» search exclude add demo
+» search indexes
+
+# Results: Only 75%+ rated, production apps
+```
+
+---
+
+## Search by Metadata
+
+### Search by dURL
+
+```bash
+# Exact dURL match
+» search durl myapp.tela
+
+# Find all variants
+» search durl myapp
+# Returns: myapp.tela, myapp-v2.tela, myapp.tela.lib
+```
+
+**Use Case:** Find specific app or related apps
+
+---
+
+### Search by Key (Variable Name)
+
+Find all contracts with specific variable:
+
+```bash
+# Find apps with category metadata
+» search key var_meta_category
+
+# Find apps with owner notes
+» search key var_owners_note
+
+# Find apps using specific custom variables
+» search key myCustomVariable
+```
+
+**Output:**
+```
+Contracts with key "var_meta_category":
+
+1. myapp.tela - "Productivity"
+2. game.tela - "Entertainment"
+3. explorer.tela - "Utility"
+```
+
+**Use Cases:**
+- Discover categorized apps
+- Find apps using specific patterns
+- Analyze metadata usage
+
+---
+
+### Search by Value
+
+Find contracts storing specific values:
+
+```bash
+# Find all productivity apps
+» search value Productivity
+
+# Find games
+» search value Game
+
+# Find apps with specific tags
+» search value "#TELA"
+
+# Find deprecated apps
+» search value Deprecated
+```
+
+**Output:**
+```
+Contracts with value "Productivity":
+
+1. taskmanager.tela (var_meta_category: "Productivity")
+2. notes.tela (var_meta_category: "Productivity")
+3. calendar.tela (var_meta_group: "Productivity Tools")
+```
+
+**Use Cases:**
+- Category-based discovery
+- Find apps by tags
+- Status checking (active/deprecated)
+
+---
+
+### Search by Author
+
+Find all content by specific developer:
+
+```bash
+» search author deto1qyre7td6x9r88y4cavdgpv6k7lvx6j39lfsx420hpvh3ydpcrtxrxqg8v8e3z
+```
+
+**Output:**
+```
+Content by deto1qyre7td6x9r88y4cavdgpv6k7lvx6j39lfsx420hpvh3ydpcrtxrxqg8v8e3z:
+
+Deployed 15 TELA Contracts:
+- 8 INDEXs (applications)
+- 7 DOCs (files)
+
+Top Rated:
+1. ⭐ 95% | explorer.tela
+2. ⭐ 89% | portfolio.tela
+3. ⭐ 87% | utils.tela.lib
+```
+
+**Use Cases:**
+- Follow specific developers
+- Discover developer's portfolio
+- Analyze coding style
+- Find trusted content
+
+---
+
+## Code Analysis
+
+### Search Contract Code
+
+View full smart contract code:
+
+```bash
+» search code f2815b442d62a055e4bb8913167e3dbce3208f300d7006aaa3a2f127b06de29d
+```
+
+**Output:**
+```
+Smart Contract Code:
+
+Function InitializePrivate() Uint64
+10 IF EXISTS("nameHdr") THEN GOTO 100
+30 STORE("var_header_name", "My App")
+31 STORE("var_header_description", "Description")
+...
+End Function
+
+Function UpdateCode(mods String, code String) Uint64
+...
+End Function
+
+Function Rate(r Uint64) Uint64
+...
+End Function
+```
+
+**Use Cases:**
+- Verify contract structure
+- Learn DVM syntax
+- Security audit
+- Understand implementation
+
+---
+
+### Search for Code Patterns
+
+Find contracts containing specific code:
+
+```bash
+# Find contracts with specific functions
+» search line "Function SetVar"
+# Shows all contracts with Variable Store MODs
+
+# Find XSWD integrations
+» search line "WebSocket"
+
+# Find specific API usage
+» search line "DERO.GetInfo"
+» search line "GetBalance"
+
+# Find patterns
+» search line "for(var i"
+» search line "addEventListener"
+```
+
+**Output:**
+```
+Contracts containing "WebSocket":
+
+1. xswd-demo.tela (SCID: abc123...)
+   Line 45: socket = new WebSocket("ws://127.0.0.1:44326/xswd")
+
+2. tela-app.tela (SCID: def456...)
+   Line 23: this.socket = new WebSocket(endpoint)
+
+3. realtime-app.tela (SCID: ghi789...)
+   Line 67: var ws = new WebSocket("ws://localhost:44326/xswd")
+```
+
+**Use Cases:**
+- Find implementation examples
+- Discover apps using specific APIs
+- Learn coding patterns
+- Find similar implementations
+
+---
+
+## Ratings Analysis
+
+### View Contract Ratings
+
+```bash
+# View all ratings for a contract
+» search ratings f2815b442d62a055e4bb8913167e3dbce3208f300d7006aaa3a2f127b06de29d
+```
+
+**Output:**
+```
+Ratings for dero-explorer.tela (SCID: f2815b...):
+
+Overall: 87% (45 ratings)
+
+Recent Ratings:
+1. deto1qy...abc → 95 (Exceptional - Benevolent) @ height 15,234
+2. deto1qy...def → 88 (Very good - Unique) @ height 15,100
+3. deto1qy...ghi → 92 (Exceptional - Works well) @ height 14,876
+4. deto1qy...jkl → 77 (Good - Visually appealing) @ height 14,500
+5. deto1qy...mno → 85 (Very good - In depth) @ height 14,200
+
+Rating Distribution:
+90-99: ████████ 35%
+70-89: ████████████ 51%
+50-69: ███ 12%
+0-49:  █ 2%
+```
+
+**Filter by Height:**
+```bash
+# Ratings after specific block
+» search ratings [scid] 14000
+# Only shows ratings from block 14,000 onwards
+```
+
+**Use Cases:**
+- Verify content quality
+- See community consensus
+- Analyze rating trends
+- Make informed decisions
+
+---
+
+## Personal Content Search
+
+### Search Your Deployments
+
+```bash
+# Must have wallet connected
+» wallet ./my-wallet.db
+
+# Your DOC contracts
+» search my docs
+
+# Your INDEX contracts
+» search my indexes
+
+# Your DOCs by type
+» search my docs HTML
+» search my docs JS
+```
+
+**Output:**
+```
+Your Deployed Indexes:
+
+1. myapp.tela (SCID: abc123...)
+   Deployed: Block 12,500 | Rating: 78% | Commits: 2
+
+2. test-app.tela (SCID: def456...)
+   Deployed: Block 13,000 | Rating: 65% | Commits: 1
+
+3. portfolio.tela (SCID: ghi789...)
+   Deployed: Block 14,200 | Rating: 92% | Commits: 5
+```
+
+<Callout type="info">
+**No Filters:** `search my` commands ignore `min-likes` setting - you always see all your content regardless of rating.
+</Callout>
+
+---
+
+## Discovery Workflows
+
+### Find Quality Applications
+
+```bash
+# Step 1: Set high quality filter
+» search min-likes 85
+
+# Step 2: Browse applications
+» search indexes
+
+# Step 3: Analyze top results
+» search scid [top-rated-scid]
+» search scid vars [top-rated-scid]
+» search ratings [top-rated-scid]
+
+# Step 4: Test the application
+» clone [top-rated-scid]
+» serve [top-rated-scid]
+
+# Step 5: Provide your rating
+» rate [top-rated-scid]
+```
+
+---
+
+### Find Reusable Libraries
+
+```bash
+# Step 1: Search libraries
+» search libs
+
+# Step 2: Filter by quality
+» search min-likes 75
+
+# Step 3: Analyze library
+» search scid [library-scid]
+» search code [library-scid]
+
+# Step 4: Clone and test
+» clone [library-scid]
+» serve local [cloned-library-path]
+
+# Step 5: Integrate in your app
+# Add library SCID to your INDEX DOCs
+```
+
+---
+
+### Discover by Category
+
+```bash
+# Step 1: Find categorized apps
+» search key var_meta_category
+
+# Step 2: Filter by specific category
+» search value Productivity
+» search value Game
+» search value Utility
+
+# Step 3: Apply quality filter
+» search min-likes 70
+
+# Step 4: Browse results
+» search indexes
+```
+
+---
+
+### Follow Developer
+
+```bash
+# Step 1: Find developer's address
+# (From app you like)
+» search scid [interesting-app]
+# Note the author address
+
+# Step 2: See all their work
+» search author deto1qy...
+
+# Step 3: Filter their best work
+» search min-likes 80
+
+# Step 4: Explore their portfolio
+# Results now show only this author's 80%+ rated content
+```
+
+---
+
+## Code Discovery
+
+### Find Implementation Examples
+
+**Looking for XSWD integration examples:**
+```bash
+# Find apps using WebSocket
+» search line "WebSocket"
+
+# Narrow to high-quality implementations
+» search min-likes 80
+
+# Analyze specific implementation
+» search code [promising-scid]
+» clone [promising-scid]
+```
+
+**Looking for specific API usage:**
+```bash
+# Find apps using EPOCH mining
+» search line "AttemptEPOCH"
+
+# Find apps using GetBalance
+» search line "GetBalance"
+
+# Find apps using smart contract calls
+» search line "DERO.GetSC"
+```
+
+---
+
+### Pattern Discovery
+
+```bash
+# Find apps with specific patterns
+» search line "addEventListener"
+» search line "Promise.all"
+» search line "setInterval"
+
+# Find specific implementations
+» search line "canvas.getContext"  # Canvas apps
+» search line "localStorage"       # Apps using storage
+» search line "JSON.parse"         # JSON processing
+```
+
+**Use Cases:**
+- Learn coding patterns
+- Find examples for features you want to implement
+- Discover best practices
+- Analyze approaches
+
+---
+
+## Search Result Interpretation
+
+### Understanding Output
+
+**INDEX Search Result:**
+```
+⭐ 87% | myapp.tela
+Type: INDEX | Author: deto1qy...abc | Height: 12,345
+15 DOCs | MODs: vsoo,txdwd | Commits: 3
+```
+
+**Fields Explained:**
+- `⭐ 87%` - Average rating (87% positive)
+- `myapp.tela` - dURL identifier
+- `Type: INDEX` - Contract type
+- `Author: deto1qy...` - Deployer's address (truncated)
+- `Height: 12,345` - Deployment block height
+- `15 DOCs` - Number of files in app
+- `MODs: vsoo,txdwd` - Enabled TELA-MOD-1 modules
+- `Commits: 3` - Number of updates made
+
+---
+
+**DOC Search Result:**
+```
+⭐ 92% | index.html (homepage.tela)
+Type: TELA-HTML-1 | Author: deto1qy...def | Height: 11,000
+Size: 15.2 KB | SubDir: / | Compressed: Yes
+```
+
+**Fields Explained:**
+- `index.html` - File name
+- `homepage.tela` - dURL
+- `TELA-HTML-1` - File type
+- `Size: 15.2 KB` - File size
+- `SubDir: /` - Directory location
+- `Compressed: Yes` - Gzip compression used
+
+---
+
+## Search Optimization
+
+### Reduce Search Noise
+
+```bash
+# Problem: Too many test deployments in results
+
+# Solution: Use exclusions
+» search exclude add test
+» search exclude add demo
+» search exclude add example
+» search exclude add deprecated
+
+# Apply quality filter
+» search min-likes 70
+
+# Search returns only quality, production content
+» search indexes
+```
+
+---
+
+### Targeted Searches
+
+```bash
+# Find production gaming apps
+» search exclude add test
+» search min-likes 75
+» search value Game
+» search indexes
+
+# Find high-quality libraries
+» search min-likes 85
+» search libs
+
+# Find specific developer's best work
+» search min-likes 80
+» search author deto1qy...
+```
+
+---
+
+### Pagination Management
+
+```bash
+# Too many results? Increase page size
+» page-size 50
+» search all
+
+# Want quick overview? Reduce page size
+» page-size 10
+» search indexes
+```
+
+---
+
+## Search Troubleshooting
+
+### No Results Found
+
+**Diagnostic:**
+```bash
+# 1. Check Gnomon is running
+» info
+# Look for [G:▲]
+
+# 2. Verify sync completed
+» search all
+# Should show some results if synced
+```
+
+**Solutions:**
+```bash
+# 1. Start Gnomon if offline
+» gnomon start
+
+# 2. Wait for sync
+# Be patient, especially on mainnet
+
+# 3. Check network
+» endpoint mainnet
+» gnomon start
+
+# 4. Try adding specific known SCID
+» gnomon add [known-scid]
+» search scid [known-scid]
+```
+
+---
+
+### Unexpected Results
+
+**Issue:** Search returns content you didn't expect
+
+**Checks:**
+```bash
+# 1. View current filters
+» search min-likes 0  # Check current threshold
+» search exclude view  # Check exclusions
+
+# 2. Reset filters
+» search min-likes 0   # No rating filter
+» search exclude clear # Clear all exclusions
+
+# 3. Search again
+» search all
+```
+
+---
+
+### Slow Search Performance
+
+**Solutions:**
+```bash
+# 1. Reduce page size
+» page-size 10
+
+# 2. Use specific searches instead of 'all'
+» search indexes  # Instead of search all
+» search docs HTML  # Instead of search docs
+
+# 3. Apply filters
+» search min-likes 70
+# Fewer results = faster display
+```
+
+---
+
+## Practical Search Examples
+
+### Example 1: Find XSWD Integration Examples
+
+```bash
+# Goal: Learn how to integrate XSWD
+
+# Step 1: Find apps using WebSocket
+» search line "WebSocket"
+
+# Step 2: Filter for quality
+» search min-likes 75
+
+# Step 3: Analyze top results
+» search code [promising-scid]
+
+# Step 4: Clone and study
+» clone [best-example-scid]
+
+# Step 5: Compare implementations
+» search line "ws://127.0.0.1:44326/xswd"
+# See all XSWD connection patterns
+```
+
+---
+
+### Example 2: Discover UI Component Libraries
+
+```bash
+# Goal: Find reusable UI components
+
+# Step 1: Search libraries
+» search libs
+
+# Step 2: Look for UI-related
+» search durl component
+» search durl ui
+» search value "UI"
+
+# Step 3: Filter by quality
+» search min-likes 80
+
+# Step 4: Analyze and test
+» search scid [library-scid]
+» clone [library-scid]
+» serve [library-scid]
+
+# Step 5: Check code
+» search code [library-scid]
+```
+
+---
+
+### Example 3: Find Your Deployment After Install
+
+```bash
+# You just deployed an app
+» install-index "My New App"
+# Noted SCID: abc123def456...
+
+# Verify it's indexed
+» search scid abc123def456...
+
+# Or find in your deployments
+» search my indexes
+# Should appear in the list
+
+# Check variables
+» search scid vars abc123def456...
+
+# Monitor ratings over time
+» search ratings abc123def456...
+```
+
+---
+
+### Example 4: Competitive Analysis
+
+```bash
+# Goal: Analyze similar apps in your category
+
+# Step 1: Find category
+» search value "Block Explorer"
+
+# Step 2: Filter for quality
+» search min-likes 70
+
+# Step 3: Analyze each competitor
+» search scid [competitor-1-scid]
+» search scid vars [competitor-1-scid]
+» search ratings [competitor-1-scid]
+
+# Step 4: Study implementations
+» clone [competitor-1-scid]
+» search code [competitor-1-scid]
+
+# Step 5: Identify differentiation opportunities
+» search scid vars [your-scid]
+# Compare features and metadata
+```
+
+---
+
+## Search Cheat Sheet
+
+### Quick Reference
+
+```bash
+# Content Discovery
+search all                    # Browse everything
+search indexes               # Applications only
+search docs [HTML|JS|CSS]    # Files by type
+search libs                  # Libraries
+
+# Quality Filtering
+search min-likes 90          # Exceptional only
+search min-likes 70          # Good and above
+search min-likes 0           # Remove filter
+
+# Specific Search
+search scid [scid]           # Contract details
+search scid vars [scid]      # Contract variables
+search durl [name]           # By dURL
+search author [address]      # By developer
+
+# Metadata Search
+search key [variable]        # Has variable
+search value [content]       # Has value
+search ratings [scid]        # View ratings
+
+# Code Search
+search code [scid]           # View code
+search line [text]           # Find pattern
+
+# Personal
+search my docs               # Your files
+search my indexes            # Your apps
+
+# Filtering
+search exclude add [term]    # Add exclusion
+search exclude view          # Show exclusions
+search exclude clear         # Reset exclusions
+```
+
+---
+
+## Best Practices
+
+<Callout type="tip" emoji="💡">
+**Search Best Practices**
+
+1. **Start broad, narrow down** - Begin with `search all`, then apply filters
+2. **Use quality filters** - `min-likes 70` for good content
+3. **Exclude test content** - Add exclusions for cleaner results
+4. **Verify before use** - Check ratings and variables
+5. **Clone before integrating** - Test libraries locally first
+6. **Respect ratings** - Community ratings indicate quality
+7. **Search your own content** - Verify deployments indexed
+</Callout>
+
+### Efficient Discovery Pattern
+
+```bash
+# 1. Set quality baseline
+» search min-likes 75
+
+# 2. Remove noise
+» search exclude add test
+» search exclude add demo
+
+# 3. Target your interest
+» search indexes     # or search libs, or search value "Category"
+
+# 4. Analyze top results
+# Note promising SCIDs
+
+# 5. Deep dive
+» search scid [promising-scid]
+» search scid vars [promising-scid]
+» search ratings [promising-scid]
+
+# 6. Test
+» clone [chosen-scid]
+» serve [chosen-scid]
+```
+
+---
+
+## Related Documentation
+
+<Cards>
+  <Card title="Gnomon Deep-Dive" href="/tela-cli/gnomon-guide">
+    Complete Gnomon indexer guide
+  </Card>
+  <Card title="Command Reference" href="/tela-cli/command-reference">
+    All search commands detailed
+  </Card>
+  <Card title="Content Rating System" href="/tela/tela-content-rating-system">
+    Understanding ratings
+  </Card>
+  <Card title="Workflows" href="/tela-cli/workflows">
+    Search workflows and patterns
+  </Card>
+</Cards>
+
+---
+
+<Callout type="success" emoji="🎓">
+**Search Mastery Achieved:** You now know how to efficiently discover, filter, and analyze TELA content across the DERO blockchain ecosystem!
+</Callout>
+

@@ -1,0 +1,950 @@
+---
+title: "EPOCH Mining Complete Guide | DERO Proof-of-Work Mining Through TELA"
+description: "Proof-of-work mining capabilities for DERO blockchain through TELA applications. Comprehensive guide to EPOCH mining API, session management, and mining dashboard integration."
+keywords: "EPOCH mining, DERO mining, proof-of-work, XSWD mining, blockchain mining, TELA mining, mining API, hash submission, mining rewards"
+date: "2024-08-26"
+lastUpdated: "2025-10-22"
+authors: ["DHEBP"]
+image: "/assets/epoch-mining.png"
+slug: "epoch-mining"
+canonicalUrl: "https://tela.derod.org/epoch-mining"
+tags: ["EPOCH", "mining", "proof-of-work", "DERO", "TELA"]
+---
+
+import { Callout } from 'nextra/components';
+
+# EPOCH Mining - Complete Guide
+
+*Proof-of-work mining capabilities for DERO blockchain*
+
+## Overview
+
+EPOCH is DERO's proof-of-work mining system that allows users to participate in securing the network while earning rewards. Unlike traditional mining, EPOCH provides a user-friendly interface for mining operations through the XSWD protocol, making it accessible to TELA applications.
+
+---
+
+## What is EPOCH
+
+EPOCH is DERO's mining system that:
+- **Enables proof-of-work mining** through user wallets
+- **Provides hash submission** for network security
+- **Offers mining rewards** for successful submissions
+- **Integrates with TELA** for decentralized mining applications
+- **Supports multiple mining addresses** for flexibility
+
+### Key Features
+- 🔒 **Secure mining** - Through wallet-controlled addresses
+- ⚡ **Real-time submissions** - Immediate hash processing
+- 📊 **Session tracking** - Monitor mining performance
+- 🎯 **Flexible targeting** - Mine to specific addresses
+- 📈 **Statistics** - Track hashes and miniblocks
+
+---
+
+## Mining Operations
+
+### `AttemptEPOCH`
+Submit mining hashes to the network.
+
+**Parameters:**
+- `hashes` (number) - Number of hashes to attempt
+
+**Usage:**
+```javascript
+const result = await TelaAPI.epochAttempt(1000);
+```
+
+**Response:**
+```javascript
+{
+    "epochHashes": 1000,
+    "epochDuration": 5000,  // Duration in milliseconds
+    "epochSubmitted": 5     // Number of successful submissions
+}
+```
+
+**Example:**
+```javascript
+// Basic mining operation
+async function startMining(hashCount = 1000) {
+    try {
+        console.log(`🔨 Starting mining with ${hashCount} hashes...`);
+        
+        const result = await TelaAPI.epochAttempt(hashCount);
+        
+        console.log(`⛏️ Mining completed:`);
+        console.log(`   Hashes: ${result.epochHashes}`);
+        console.log(`   Duration: ${result.epochDuration}ms`);
+        console.log(`   Submitted: ${result.epochSubmitted}`);
+        
+        // Calculate hash rate
+        const hashRate = (result.epochHashes / result.epochDuration) * 1000;
+        console.log(`   Hash Rate: ${hashRate.toFixed(2)} H/s`);
+        
+        return result;
+    } catch (error) {
+        console.error('❌ Mining failed:', error);
+        return null;
+    }
+}
+```
+
+### `AttemptEPOCHWithAddr`
+Mine with a specific address for rewards.
+
+**Parameters:**
+- `address` (string) - Mining address for rewards
+- `hashes` (number) - Number of hashes to attempt
+
+**Usage:**
+```javascript
+const result = await TelaAPI.epochAttemptWithAddr("dero1mining...", 1000);
+```
+
+**Response:**
+```javascript
+{
+    "epochHashes": 1000,
+    "epochDuration": 4500,
+    "epochSubmitted": 7
+}
+```
+
+**Example:**
+```javascript
+// Mine to specific address
+async function mineToAddress(targetAddress, hashCount = 1000) {
+    try {
+        // Validate address format
+        if (!TelaAPI.isValidAddress(targetAddress)) {
+            throw new Error('Invalid DERO address format');
+        }
+        
+        console.log(`🎯 Mining ${hashCount} hashes to: ${targetAddress}`);
+        
+        const result = await TelaAPI.epochAttemptWithAddr(targetAddress, hashCount);
+        
+        console.log(`✅ Mining to address completed:`);
+        console.log(`   Target: ${targetAddress}`);
+        console.log(`   Hashes: ${result.epochHashes}`);
+        console.log(`   Submitted: ${result.epochSubmitted}`);
+        
+        return result;
+    } catch (error) {
+        console.error('❌ Address mining failed:', error);
+        return null;
+    }
+}
+```
+
+---
+
+## Mining Information
+
+### `GetMaxHashesEPOCH`
+Get the maximum number of hashes allowed per mining attempt.
+
+**Usage:**
+```javascript
+const maxHashes = await TelaAPI.epochGetMaxHashes();
+```
+
+**Response:**
+```javascript
+{
+    "maxHashes": 10000
+}
+```
+
+**Example:**
+```javascript
+// Check mining limits
+async function checkMiningLimits() {
+    try {
+        const limits = await TelaAPI.epochGetMaxHashes();
+        
+        console.log(`⚡ Mining Limits:`);
+        console.log(`   Max Hashes per attempt: ${limits.maxHashes.toLocaleString()}`);
+        
+        // Calculate recommended batch sizes
+        const batchSizes = {
+            small: Math.min(1000, limits.maxHashes),
+            medium: Math.min(5000, limits.maxHashes),
+            large: limits.maxHashes
+        };
+        
+        console.log(`📦 Recommended batch sizes:`);
+        console.log(`   Small: ${batchSizes.small}`);
+        console.log(`   Medium: ${batchSizes.medium}`);
+        console.log(`   Large: ${batchSizes.large}`);
+        
+        return limits;
+    } catch (error) {
+        console.error('❌ Failed to get mining limits:', error);
+        return null;
+    }
+}
+```
+
+### `GetAddressEPOCH`
+Get the current EPOCH mining address.
+
+**Usage:**
+```javascript
+const miningAddress = await TelaAPI.epochGetAddress();
+```
+
+**Response:**
+```javascript
+{
+    "epochAddress": "dero1abc123..."
+}
+```
+
+**Example:**
+```javascript
+// Get mining address info
+async function getMiningInfo() {
+    try {
+        const addressInfo = await TelaAPI.epochGetAddress();
+        const walletAddress = await TelaAPI.getAddress();
+        
+        console.log(`🏠 Mining Address Info:`);
+        console.log(`   EPOCH Address: ${addressInfo.epochAddress}`);
+        console.log(`   Wallet Address: ${walletAddress.address}`);
+        console.log(`   Same Address: ${addressInfo.epochAddress === walletAddress.address}`);
+        
+        return addressInfo;
+    } catch (error) {
+        console.error('❌ Failed to get mining address:', error);
+        return null;
+    }
+}
+```
+
+---
+
+## Session Management
+
+### `GetSessionEPOCH`
+Get current EPOCH session statistics.
+
+**Usage:**
+```javascript
+const session = await TelaAPI.epochGetSession();
+```
+
+**Response:**
+```javascript
+{
+    "sessionHashes": 15000,
+    "sessionMinis": 25
+}
+```
+
+**Example:**
+```javascript
+// Monitor mining session
+async function getSessionStats() {
+    try {
+        const session = await TelaAPI.epochGetSession();
+        
+        console.log(`📊 Current Mining Session:`);
+        console.log(`   Total Hashes: ${session.sessionHashes.toLocaleString()}`);
+        console.log(`   Miniblocks Found: ${session.sessionMinis}`);
+        
+        // Calculate efficiency
+        if (session.sessionHashes > 0) {
+            const efficiency = (session.sessionMinis / session.sessionHashes * 100).toFixed(6);
+            console.log(`   Efficiency: ${efficiency}%`);
+        }
+        
+        return session;
+    } catch (error) {
+        console.error('❌ Failed to get session stats:', error);
+        return null;
+    }
+}
+```
+
+---
+
+## TELA Integration
+
+### Mining Dashboard Component
+
+```javascript
+class EPOCHMiningDashboard {
+    constructor() {
+        this.isRunning = false;
+        this.stats = {
+            totalHashes: 0,
+            totalMinis: 0,
+            sessions: []
+        };
+        this.updateInterval = 10000; // 10 seconds
+    }
+    
+    async initialize() {
+        try {
+            await this.loadInitialData();
+            this.startMonitoring();
+            console.log('⛏️ EPOCH Mining Dashboard initialized');
+        } catch (error) {
+            console.error('❌ Dashboard initialization failed:', error);
+        }
+    }
+    
+    async loadInitialData() {
+        try {
+            // Get mining limits and address
+            const [limits, address, session] = await Promise.all([
+                TelaAPI.epochGetMaxHashes(),
+                TelaAPI.epochGetAddress(),
+                TelaAPI.epochGetSession()
+            ]);
+            
+            this.limits = limits;
+            this.miningAddress = address.epochAddress;
+            this.currentSession = session;
+            
+            this.displayInfo();
+        } catch (error) {
+            console.error('Failed to load initial data:', error);
+        }
+    }
+    
+    displayInfo() {
+        console.log('⛏️ EPOCH Mining Dashboard');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log(`Mining Address: ${this.miningAddress}`);
+        console.log(`Max Hashes: ${this.limits.maxHashes.toLocaleString()}`);
+        console.log(`Session Hashes: ${this.currentSession.sessionHashes.toLocaleString()}`);
+        console.log(`Session Miniblocks: ${this.currentSession.sessionMinis}`);
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    }
+    
+    async startContinuousMining(batchSize = 1000, interval = 5000) {
+        if (this.isRunning) {
+            console.log('⚠️ Mining already running');
+            return;
+        }
+        
+        // Validate batch size
+        if (batchSize > this.limits.maxHashes) {
+            console.log(`⚠️ Batch size reduced from ${batchSize} to ${this.limits.maxHashes}`);
+            batchSize = this.limits.maxHashes;
+        }
+        
+        this.isRunning = true;
+        console.log(`🚀 Starting continuous mining: ${batchSize} hashes every ${interval}ms`);
+        
+        this.miningLoop = setInterval(async () => {
+            await this.mineBatch(batchSize);
+        }, interval);
+    }
+    
+    async mineBatch(batchSize) {
+        try {
+            const startTime = Date.now();
+            const result = await TelaAPI.epochAttempt(batchSize);
+            const endTime = Date.now();
+            
+            // Update stats
+            this.stats.totalHashes += result.epochHashes;
+            this.stats.totalMinis += result.epochSubmitted;
+            
+            // Log results
+            const hashRate = (result.epochHashes / result.epochDuration) * 1000;
+            console.log(`⛏️ Batch: ${result.epochHashes} hashes, ${result.epochSubmitted} submitted, ${hashRate.toFixed(0)} H/s`);
+            
+            // Store session data
+            this.stats.sessions.push({
+                timestamp: startTime,
+                hashes: result.epochHashes,
+                submitted: result.epochSubmitted,
+                duration: result.epochDuration,
+                hashRate: hashRate
+            });
+            
+            // Keep only last 100 sessions
+            if (this.stats.sessions.length > 100) {
+                this.stats.sessions = this.stats.sessions.slice(-100);
+            }
+            
+        } catch (error) {
+            console.error('❌ Mining batch failed:', error);
+        }
+    }
+    
+    stopMining() {
+        if (!this.isRunning) {
+            console.log('⚠️ Mining not running');
+            return;
+        }
+        
+        clearInterval(this.miningLoop);
+        this.isRunning = false;
+        console.log('⏹️ Mining stopped');
+        this.displaySummary();
+    }
+    
+    displaySummary() {
+        console.log('\n📊 Mining Session Summary');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log(`Total Hashes: ${this.stats.totalHashes.toLocaleString()}`);
+        console.log(`Total Miniblocks: ${this.stats.totalMinis}`);
+        
+        if (this.stats.sessions.length > 0) {
+            const avgHashRate = this.stats.sessions.reduce((sum, s) => sum + s.hashRate, 0) / this.stats.sessions.length;
+            console.log(`Average Hash Rate: ${avgHashRate.toFixed(0)} H/s`);
+            
+            const efficiency = (this.stats.totalMinis / this.stats.totalHashes * 100);
+            console.log(`Mining Efficiency: ${efficiency.toFixed(6)}%`);
+        }
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+    }
+    
+    startMonitoring() {
+        setInterval(async () => {
+            try {
+                const session = await TelaAPI.epochGetSession();
+                this.currentSession = session;
+                
+                if (this.isRunning) {
+                    console.log(`📈 Session Update: ${session.sessionHashes.toLocaleString()} hashes, ${session.sessionMinis} miniblocks`);
+                }
+            } catch (error) {
+                console.error('Monitoring error:', error);
+            }
+        }, this.updateInterval);
+    }
+    
+    getPerformanceStats() {
+        if (this.stats.sessions.length === 0) {
+            return null;
+        }
+        
+        const sessions = this.stats.sessions;
+        const hashRates = sessions.map(s => s.hashRate);
+        
+        return {
+            totalSessions: sessions.length,
+            totalHashes: this.stats.totalHashes,
+            totalMiniblocks: this.stats.totalMinis,
+            averageHashRate: hashRates.reduce((a, b) => a + b, 0) / hashRates.length,
+            maxHashRate: Math.max(...hashRates),
+            minHashRate: Math.min(...hashRates),
+            efficiency: (this.stats.totalMinis / this.stats.totalHashes * 100)
+        };
+    }
+}
+```
+
+---
+
+## Practical Examples
+
+### Simple Mining Application
+
+```javascript
+class SimpleMiner {
+    constructor() {
+        this.isInitialized = false;
+        this.miningStats = {
+            attempts: 0,
+            totalHashes: 0,
+            totalSubmitted: 0
+        };
+    }
+    
+    async initialize() {
+        try {
+            // Check if EPOCH is available
+            const limits = await TelaAPI.epochGetMaxHashes();
+            const address = await TelaAPI.epochGetAddress();
+            
+            this.maxHashes = limits.maxHashes;
+            this.miningAddress = address.epochAddress;
+            this.isInitialized = true;
+            
+            console.log('⚡ Simple Miner initialized');
+            console.log(`Mining to: ${this.miningAddress}`);
+            console.log(`Max hashes per attempt: ${this.maxHashes}`);
+            
+            return true;
+        } catch (error) {
+            console.error('❌ Miner initialization failed:', error);
+            return false;
+        }
+    }
+    
+    async mineOnce(hashCount = 1000) {
+        if (!this.isInitialized) {
+            throw new Error('Miner not initialized');
+        }
+        
+        // Ensure we don't exceed limits
+        hashCount = Math.min(hashCount, this.maxHashes);
+        
+        try {
+            console.log(`⛏️ Mining ${hashCount} hashes...`);
+            
+            const result = await TelaAPI.epochAttempt(hashCount);
+            
+            // Update stats
+            this.miningStats.attempts++;
+            this.miningStats.totalHashes += result.epochHashes;
+            this.miningStats.totalSubmitted += result.epochSubmitted;
+            
+            // Display results
+            const hashRate = (result.epochHashes / result.epochDuration) * 1000;
+            
+            console.log(`✅ Mining complete:`);
+            console.log(`   Hashes: ${result.epochHashes}`);
+            console.log(`   Submitted: ${result.epochSubmitted}`);
+            console.log(`   Hash Rate: ${hashRate.toFixed(0)} H/s`);
+            console.log(`   Duration: ${result.epochDuration}ms`);
+            
+            return result;
+        } catch (error) {
+            console.error('❌ Mining attempt failed:', error);
+            return null;
+        }
+    }
+    
+    async mineToTarget(targetAddress, hashCount = 1000) {
+        if (!this.isInitialized) {
+            throw new Error('Miner not initialized');
+        }
+        
+        try {
+            console.log(`🎯 Mining ${hashCount} hashes to ${targetAddress}...`);
+            
+            const result = await TelaAPI.epochAttemptWithAddr(targetAddress, hashCount);
+            
+            console.log(`✅ Target mining complete:`);
+            console.log(`   Target: ${targetAddress}`);
+            console.log(`   Hashes: ${result.epochHashes}`);
+            console.log(`   Submitted: ${result.epochSubmitted}`);
+            
+            return result;
+        } catch (error) {
+            console.error('❌ Target mining failed:', error);
+            return null;
+        }
+    }
+    
+    getStats() {
+        return {
+            ...this.miningStats,
+            averageSubmissions: this.miningStats.attempts > 0 
+                ? (this.miningStats.totalSubmitted / this.miningStats.attempts).toFixed(2)
+                : 0,
+            efficiency: this.miningStats.totalHashes > 0
+                ? ((this.miningStats.totalSubmitted / this.miningStats.totalHashes) * 100).toFixed(6)
+                : 0
+        };
+    }
+    
+    displayStats() {
+        const stats = this.getStats();
+        
+        console.log('\n📊 Mining Statistics');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━');
+        console.log(`Mining Attempts: ${stats.attempts}`);
+        console.log(`Total Hashes: ${stats.totalHashes.toLocaleString()}`);
+        console.log(`Total Submitted: ${stats.totalSubmitted}`);
+        console.log(`Average Submissions: ${stats.averageSubmissions}`);
+        console.log(`Efficiency: ${stats.efficiency}%`);
+        console.log('━━━━━━━━━━━━━━━━━━━━━━\n');
+    }
+}
+
+// Usage Examples
+const miner = new SimpleMiner();
+
+// Initialize and mine
+miner.initialize().then(success => {
+    if (success) {
+        // Mine once
+        miner.mineOnce(2000).then(() => {
+            miner.displayStats();
+        });
+        
+        // Mine to specific address
+        // miner.mineToTarget("dero1targetaddress...", 1000);
+    }
+});
+```
+
+### Advanced Mining Pool
+
+```javascript
+class MiningPool {
+    constructor(poolName = "TELA Mining Pool") {
+        this.poolName = poolName;
+        this.miners = new Map();
+        this.totalStats = {
+            hashes: 0,
+            submissions: 0,
+            sessions: 0
+        };
+    }
+    
+    async addMiner(minerId, targetAddress = null) {
+        try {
+            const miner = {
+                id: minerId,
+                targetAddress: targetAddress,
+                stats: {
+                    hashes: 0,
+                    submissions: 0,
+                    sessions: 0,
+                    lastActive: Date.now()
+                },
+                isActive: false
+            };
+            
+            this.miners.set(minerId, miner);
+            console.log(`👤 Miner ${minerId} added to pool`);
+            
+            return true;
+        } catch (error) {
+            console.error(`❌ Failed to add miner ${minerId}:`, error);
+            return false;
+        }
+    }
+    
+    async startMiner(minerId, batchSize = 1000, interval = 10000) {
+        const miner = this.miners.get(minerId);
+        if (!miner) {
+            throw new Error(`Miner ${minerId} not found`);
+        }
+        
+        if (miner.isActive) {
+            console.log(`⚠️ Miner ${minerId} already active`);
+            return;
+        }
+        
+        miner.isActive = true;
+        console.log(`🚀 Starting miner ${minerId}: ${batchSize} hashes every ${interval}ms`);
+        
+        miner.miningLoop = setInterval(async () => {
+            await this.executeMining(minerId, batchSize);
+        }, interval);
+    }
+    
+    async executeMining(minerId, batchSize) {
+        const miner = this.miners.get(minerId);
+        if (!miner || !miner.isActive) return;
+        
+        try {
+            let result;
+            
+            if (miner.targetAddress) {
+                result = await TelaAPI.epochAttemptWithAddr(miner.targetAddress, batchSize);
+            } else {
+                result = await TelaAPI.epochAttempt(batchSize);
+            }
+            
+            // Update miner stats
+            miner.stats.hashes += result.epochHashes;
+            miner.stats.submissions += result.epochSubmitted;
+            miner.stats.sessions++;
+            miner.stats.lastActive = Date.now();
+            
+            // Update pool stats
+            this.totalStats.hashes += result.epochHashes;
+            this.totalStats.submissions += result.epochSubmitted;
+            this.totalStats.sessions++;
+            
+            // Log results
+            const hashRate = (result.epochHashes / result.epochDuration) * 1000;
+            console.log(`⛏️ ${minerId}: ${result.epochHashes} hashes, ${result.epochSubmitted} submitted, ${hashRate.toFixed(0)} H/s`);
+            
+        } catch (error) {
+            console.error(`❌ Mining failed for ${minerId}:`, error);
+        }
+    }
+    
+    stopMiner(minerId) {
+        const miner = this.miners.get(minerId);
+        if (!miner) {
+            console.log(`⚠️ Miner ${minerId} not found`);
+            return;
+        }
+        
+        if (!miner.isActive) {
+            console.log(`⚠️ Miner ${minerId} not active`);
+            return;
+        }
+        
+        clearInterval(miner.miningLoop);
+        miner.isActive = false;
+        console.log(`⏹️ Miner ${minerId} stopped`);
+    }
+    
+    stopAllMiners() {
+        console.log('⏹️ Stopping all miners...');
+        for (const [minerId, miner] of this.miners) {
+            if (miner.isActive) {
+                this.stopMiner(minerId);
+            }
+        }
+    }
+    
+    getPoolStats() {
+        const activeMiners = Array.from(this.miners.values()).filter(m => m.isActive).length;
+        const totalMiners = this.miners.size;
+        
+        return {
+            poolName: this.poolName,
+            totalMiners: totalMiners,
+            activeMiners: activeMiners,
+            totalHashes: this.totalStats.hashes,
+            totalSubmissions: this.totalStats.submissions,
+            totalSessions: this.totalStats.sessions,
+            efficiency: this.totalStats.hashes > 0 
+                ? ((this.totalStats.submissions / this.totalStats.hashes) * 100).toFixed(6)
+                : 0
+        };
+    }
+    
+    displayPoolStatus() {
+        const stats = this.getPoolStats();
+        
+        console.log(`\n⛏️ ${stats.poolName} Status`);
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log(`Miners: ${stats.activeMiners}/${stats.totalMiners} active`);
+        console.log(`Total Hashes: ${stats.totalHashes.toLocaleString()}`);
+        console.log(`Total Submissions: ${stats.totalSubmissions}`);
+        console.log(`Pool Efficiency: ${stats.efficiency}%`);
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        
+        // Individual miner stats
+        console.log('\n👤 Individual Miner Stats:');
+        for (const [minerId, miner] of this.miners) {
+            const status = miner.isActive ? '🟢' : '🔴';
+            const efficiency = miner.stats.hashes > 0 
+                ? ((miner.stats.submissions / miner.stats.hashes) * 100).toFixed(4)
+                : 0;
+            
+            console.log(`${status} ${minerId}: ${miner.stats.hashes.toLocaleString()} hashes, ${miner.stats.submissions} submissions (${efficiency}%)`);
+        }
+        console.log('');
+    }
+}
+
+// Usage Example
+const pool = new MiningPool("My TELA Mining Pool");
+
+// Add miners
+pool.addMiner("miner-1");
+pool.addMiner("miner-2", "dero1targetaddress...");
+pool.addMiner("miner-3");
+
+// Start mining
+pool.startMiner("miner-1", 1500, 8000);  // 1500 hashes every 8 seconds
+pool.startMiner("miner-2", 2000, 12000); // 2000 hashes every 12 seconds
+
+// Monitor pool status
+setInterval(() => {
+    pool.displayPoolStatus();
+}, 30000); // Every 30 seconds
+```
+
+---
+
+## Implementation Notes
+
+### Performance Considerations
+
+1. **Hash Rate Optimization**:
+```javascript
+// Find optimal batch size
+async function findOptimalBatchSize() {
+    const testSizes = [500, 1000, 2000, 5000];
+    const results = [];
+    
+    for (const size of testSizes) {
+        console.log(`Testing batch size: ${size}`);
+        const result = await TelaAPI.epochAttempt(size);
+        const hashRate = (result.epochHashes / result.epochDuration) * 1000;
+        
+        results.push({
+            batchSize: size,
+            hashRate: hashRate,
+            efficiency: (result.epochSubmitted / result.epochHashes) * 100
+        });
+    }
+    
+    // Find best hash rate
+    const optimal = results.reduce((best, current) => 
+        current.hashRate > best.hashRate ? current : best
+    );
+    
+    console.log(`Optimal batch size: ${optimal.batchSize} (${optimal.hashRate.toFixed(0)} H/s)`);
+    return optimal.batchSize;
+}
+```
+
+2. **Resource Management**:
+```javascript
+// Monitor system resources during mining
+class ResourceMonitor {
+    constructor() {
+        this.metrics = [];
+    }
+    
+    startMonitoring(interval = 5000) {
+        this.monitoringInterval = setInterval(() => {
+            const metric = {
+                timestamp: Date.now(),
+                memory: this.getMemoryUsage(),
+                performance: this.getPerformanceMetric()
+            };
+            
+            this.metrics.push(metric);
+            
+            // Keep only last hour of metrics
+            const hourAgo = Date.now() - (60 * 60 * 1000);
+            this.metrics = this.metrics.filter(m => m.timestamp > hourAgo);
+            
+        }, interval);
+    }
+    
+    getMemoryUsage() {
+        // Browser memory API if available
+        if (performance.memory) {
+            return {
+                used: performance.memory.usedJSHeapSize,
+                total: performance.memory.totalJSHeapSize,
+                limit: performance.memory.jsHeapSizeLimit
+            };
+        }
+        return null;
+    }
+    
+    getPerformanceMetric() {
+        return performance.now();
+    }
+    
+    stopMonitoring() {
+        if (this.monitoringInterval) {
+            clearInterval(this.monitoringInterval);
+        }
+    }
+}
+```
+
+### Best Practices
+
+1. **Error Handling**:
+```javascript
+async function robustMining(hashCount, maxRetries = 3) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            return await TelaAPI.epochAttempt(hashCount);
+        } catch (error) {
+            console.warn(`Mining attempt ${attempt} failed: ${error.message}`);
+            
+            if (attempt === maxRetries) {
+                throw new Error(`Mining failed after ${maxRetries} attempts`);
+            }
+            
+            // Wait before retry (exponential backoff)
+            const delay = Math.pow(2, attempt) * 1000;
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
+}
+```
+
+2. **Session Persistence**:
+```javascript
+class PersistentMiningSession {
+    constructor() {
+        this.storageKey = 'tela-mining-session';
+        this.loadSession();
+    }
+    
+    loadSession() {
+        try {
+            const saved = localStorage.getItem(this.storageKey);
+            this.sessionData = saved ? JSON.parse(saved) : this.createNewSession();
+        } catch (error) {
+            this.sessionData = this.createNewSession();
+        }
+    }
+    
+    createNewSession() {
+        return {
+            startTime: Date.now(),
+            totalHashes: 0,
+            totalSubmissions: 0,
+            attempts: 0
+        };
+    }
+    
+    updateSession(result) {
+        this.sessionData.totalHashes += result.epochHashes;
+        this.sessionData.totalSubmissions += result.epochSubmitted;
+        this.sessionData.attempts++;
+        this.saveSession();
+    }
+    
+    saveSession() {
+        try {
+            localStorage.setItem(this.storageKey, JSON.stringify(this.sessionData));
+        } catch (error) {
+            console.warn('Failed to save session data:', error);
+        }
+    }
+    
+    getSessionStats() {
+        const runtime = Date.now() - this.sessionData.startTime;
+        const avgHashRate = this.sessionData.totalHashes / (runtime / 1000);
+        
+        return {
+            ...this.sessionData,
+            runtime: runtime,
+            averageHashRate: avgHashRate
+        };
+    }
+}
+```
+
+### Common Use Cases
+
+- **🏠 Home Mining** - Personal mining from desktop/mobile
+- **⛏️ Mining Pools** - Coordinated group mining efforts  
+- **📱 Mobile Mining** - Lightweight mining on mobile devices
+- **🎮 Gaming Integration** - Mining rewards in games/DApps
+- **🔋 Background Mining** - Passive mining while using other features
+- **📊 Mining Analytics** - Performance tracking and optimization
+
+---
+
+## ⚠️ Requirements
+
+### System Requirements
+- **DERO Wallet**
+- **XSWD Connection** to access EPOCH mining functions
+- **Stable Internet** for continuous mining operations
+- **Adequate Resources** for hash computation
+
+### Network Requirements
+- **Low Latency** connection to DERO network
+- **Stable Connection** to prevent mining interruptions
+- **Sufficient Bandwidth** for hash submissions
+
+### Development Requirements
+- **TELA API Template** or compatible XSWD client
+- **Error Handling** for network failures and timeouts
+- **Resource Monitoring** to prevent system overload
+- **Session Management** for long-running mining operations
+
+---
+
+*This comprehensive EPOCH guide enables developers to integrate powerful proof-of-work mining capabilities into TELA applications, providing both simple and advanced mining functionality for securing the DERO network.*

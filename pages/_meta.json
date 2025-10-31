@@ -1,39 +1,57 @@
 {
   "index": {
     "display": "hidden",
-    "title": "DHEBP",
+    "title": "TELA Documentation",
     "theme": {
       "breadcrumb": false
     }
   },
 
-  "-- Overview": {
+  "-- Getting Started": {
     "type": "separator",
-    "title": "Overview"
+    "title": "Getting Started"
   },
-  "basics": "Basics",
-  "features": "Features",
-  "tools": "Tools",
+  "tela": "Introduction to TELA",
+  "tela-development-guide": "Quick Start Guide",
   "tutorials": "Tutorials",
-  "-- Documentation": {
+  "tela-cli": "TELA-CLI",
+
+  "-- Advanced Topics": {
     "type": "separator",
-    "title": "Dero Docs"
+    "title": "Advanced Topics"
   },
-  "dvm": "Dero Virtual Machine",
-  "rpc-api": "RPC API",
-  "smartContracts": "Smart Contracts",
-  
-  
-  "Dero (Official)": {
-    "title": "Official Website",
+  "advanced-features": "Advanced Features",
+  "xswd": "XSWD Protocol",
+  "epoch-mining": "EPOCH Mining",
+
+  "-- Developer Reference": {
+    "type": "separator",
+    "title": "Developer Reference"
+  },
+  "beginner-guide": "Beginner's Guide",
+  "api-reference": "API Reference",
+  "go-package-reference": "Go Package Reference",
+  "javascript-guidelines": "Working Code",
+  "templates": "Project Templates",
+  "design-reference": "Design Reference",
+
+  "-- Compliance": {
+    "type": "separator",
+    "title": "Compliance"
+  },
+  "size-optimization": "Size Optimization", 
+  "error-troubleshooting": "Error Troubleshooting",
+
+  "DERO Homepage": {
+    "title": "DERO Homepage",
     "type": "page",
     "href": "https://dero.io",
     "newWindow": true
   },
-  "Trade Ogre": {
-    "title": "Exchange",
+  "DERO Quick Start": {
+    "title": "DERO Docs",
     "type": "page",
-    "href": "https://tradeogre.com/markets",
+    "href": "https://derod.org",
     "newWindow": true
   }
 }

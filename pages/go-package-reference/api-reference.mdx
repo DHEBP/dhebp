@@ -1,0 +1,748 @@
+---
+title: "TELA Go Package API Reference | Complete Function Documentation"
+description: "Complete TELA Go package API reference for content serving, smart contracts, and blockchain operations. Comprehensive documentation for github.com/civilware/tela package."
+keywords: "TELA Go API, Go package, DERO blockchain, smart contracts, TELA functions, Go documentation, API reference"
+date: "2024-08-26"
+lastUpdated: "2025-10-22"
+authors: ["DHEBP"]
+image: "/assets/go-api-reference.png"
+slug: "go-package-reference/api-reference"
+canonicalUrl: "https://tela.derod.org/go-package-reference/api-reference"
+tags: ["Go", "API", "reference", "package", "documentation"]
+---
+
+import { Callout } from 'nextra/components'
+
+# TELA Go Package API Reference
+
+Complete reference for the `github.com/civilware/tela` Go package.
+
+<Callout type="info" emoji="📦">
+**Package Installation:** `go get github.com/civilware/tela`
+
+**Import:** `import "github.com/civilware/tela"`
+</Callout>
+
+## Table of Contents
+
+- [Content Serving](#content-serving)
+- [Smart Contract Operations](#smart-contract-operations)
+- [Data Types](#data-types)
+- [File Operations](#file-operations)
+- [Rating System](#rating-system)
+- [TELA Links](#tela-links)
+- [MODs System](#mods-system)
+- [Utilities](#utilities)
+
+---
+
+## Content Serving
+
+### ServeTELA
+
+Clones and serves a TELA-INDEX-1 smart contract locally.
+
+```go
+func ServeTELA(scid, endpoint string) (link string, err error)
+```
+
+**Example:**
+```go
+link, err := tela.ServeTELA("your-scid-here", "127.0.0.1:10102")
+// Returns: http://localhost:8082/index.html
+```
+
+### ServeAtCommit
+
+Serves a specific version of a TELA application by commit (TXID).
+
+```go
+func ServeAtCommit(scid, txid, endpoint string) (link string, err error)
+```
+
+### Clone
+
+Downloads TELA content locally without serving.
+
+```go
+func Clone(scid, endpoint string) (err error)
+```
+
+### Server Management
+
+```go
+GetServerInfo() []ServerInfo           // List all running servers
+HasServer(name string) bool            // Check if server exists
+ShutdownTELA()                         // Stop all servers
+ShutdownServer(name string)            // Stop specific server
+SetPortStart(port int) error           // Set starting port (1200-65515)
+PortStart() int                        // Get current port start
+SetMaxServers(i int)                   // Set max concurrent servers
+MaxServers() int                       // Get max servers limit
+AllowUpdates(b bool)                   // Enable/disable updated content
+UpdatesAllowed() bool                  // Check if updates allowed
+GetPath() string                       // Get storage path
+GetClonePath() string                  // Get clone storage path
+SetShardPath(path string) error        // Set custom storage path
+```
+
+---
+
+## Smart Contract Operations
+
+### Installer
+
+Installs TELA smart contracts (INDEX-1 or DOC-1) on the blockchain.
+
+```go
+func Installer(wallet *walletapi.Wallet_Disk, ringsize uint64, params interface{}) (txid string, err error)
+```
+
+**Example - Installing a DOC:**
+```go
+doc := &tela.DOC{
+    DocType: tela.DOC_HTML,
+    Code:    "<html><body><h1>Hello TELA!</h1></body></html>",
+    DURL:    "hello.tela",
+    Headers: tela.Headers{
+        NameHdr:  "index.html",
+        DescrHdr: "A simple hello world page",
+    },
+}
+
+txid, err := tela.Installer(wallet, 2, doc)
+```
+
+**Example - Installing an INDEX:**
+```go
+index := &tela.INDEX{
+    DURL: "myapp.tela",
+    DOCs: []string{"doc1-scid", "doc2-scid"},
+    Mods: "vsoo,txdwd",
+    Headers: tela.Headers{
+        NameHdr:  "My TELA App",
+        DescrHdr: "A TELA Application",
+    },
+}
+
+txid, err := tela.Installer(wallet, 2, index)
+```
+
+### Updater
+
+Updates an existing TELA-INDEX-1 smart contract (owner only).
+
+```go
+func Updater(wallet *walletapi.Wallet_Disk, params interface{}) (txid string, err error)
+```
+
+**Example:**
+```go
+index := &tela.INDEX{
+    SCID: "existing-index-scid",
+    DURL: "myapp.tela",
+    DOCs: []string{"updated-doc1", "updated-doc2", "new-doc3"},
+    Headers: tela.Headers{
+        NameHdr: "My App v2.0",
+    },
+}
+
+txid, err := tela.Updater(wallet, index)
+```
+
+### Contract Information
+
+```go
+func GetDOCInfo(scid, endpoint string) (doc DOC, err error)
+func GetINDEXInfo(scid, endpoint string) (index INDEX, err error)
+```
+
+**Example:**
+```go
+// Get DOC information
+doc, err := tela.GetDOCInfo("doc-scid", "127.0.0.1:10102")
+content, _ := doc.ExtractDocCode()
+fmt.Printf("File: %s\nContent: %s\n", doc.Headers.NameHdr, content)
+
+// Get INDEX information
+index, err := tela.GetINDEXInfo("index-scid", "127.0.0.1:10102")
+fmt.Printf("App: %s\nDOCs: %v\nMODs: %s\n", 
+    index.Headers.NameHdr, index.DOCs, index.Mods)
+```
+
+### Variable Storage
+
+```go
+func SetVar(wallet *walletapi.Wallet_Disk, scid, key, value string) (txid string, err error)
+func DeleteVar(wallet *walletapi.Wallet_Disk, scid, key string) (txid string, err error)
+func KeyExists(scid, key, endpoint string) (variable string, exists bool, err error)
+func KeyPrefixExists(scid, prefix, endpoint string) (key, variable string, exists bool, err error)
+```
+
+<Callout type="success">
+**MODs vs Updates:** `SetVar`/`DeleteVar` modify data WITHOUT creating new commit versions. Use for dynamic content that shouldn't pollute version history.
+</Callout>
+
+### Transaction Utilities
+
+```go
+func NewInstallArgs(params interface{}) (args rpc.Arguments, err error)
+func NewUpdateArgs(params interface{}) (args rpc.Arguments, err error)
+func Transfer(wallet *walletapi.Wallet_Disk, ringsize uint64, transfers []rpc.Transfer, args rpc.Arguments) (txid string, err error)
+func GetGasEstimate(wallet *walletapi.Wallet_Disk, ringsize uint64, transfers []rpc.Transfer, args rpc.Arguments) (gasFees uint64, err error)
+```
+
+### Validation
+
+```go
+func ValidDOCVersion(code string) (contract dvm.SmartContract, version Version, err error)
+func ValidINDEXVersion(code string, modTag string) (contract dvm.SmartContract, version Version, err error)
+```
+
+---
+
+## Data Types
+
+### DOC
+
+Represents a TELA-DOC-1 smart contract (individual file/component).
+
+```go
+type DOC struct {
+    DocType     string   // Language identifier (e.g., "TELA-HTML-1")
+    Code        string   // Smart contract code
+    SubDir      string   // Subdirectory path
+    SCID        string   // Smart Contract ID (set after deployment)
+    Author      string   // Author address (set after deployment)
+    DURL        string   // TELA decentralized URL
+    Compression string   // Compression format (e.g., ".gz")
+    SCVersion   *Version // Smart contract version
+    Signature            // Embedded signature
+    Headers              // Embedded headers
+}
+
+// Methods
+func (d *DOC) ExtractDocCode() (docCode string, err error)
+func (d *DOC) ExtractAsSVG() (svgCode string, err error)
+func (d *DOC) ExtractMetaTags() (metaTags []MetaTag, err error)
+```
+
+### INDEX
+
+Represents a TELA-INDEX-1 smart contract (application manifest).
+
+```go
+type INDEX struct {
+    SCID      string            // Smart Contract ID
+    Author    string            // Author address
+    DURL      string            // TELA decentralized URL
+    Mods      string            // TELA-MOD tags (comma-separated)
+    DOCs      []string          // SCIDs of embedded DOC contracts
+    SCVersion *Version          // Smart contract version
+    SC        dvm.SmartContract // DVM contract (not serialized)
+    Headers                     // Embedded headers
+}
+```
+
+### Headers
+
+Standard metadata headers for DOC and INDEX contracts.
+
+```go
+type Headers struct {
+    NameHdr  string // Display name (filename for DOCs)
+    DescrHdr string // Description text
+    IconHdr  string // Icon URL or SCID
+}
+```
+
+### Version
+
+Semantic versioning for smart contracts.
+
+```go
+type Version struct {
+    Major int
+    Minor int
+    Patch int
+}
+
+// Methods
+func (v Version) String() string
+func (v *Version) LessThan(ov Version) bool
+func (v *Version) Equal(ov Version) bool
+```
+
+### ServerInfo
+
+Information about running TELA servers.
+
+```go
+type ServerInfo struct {
+    Name       string // Server display name
+    Address    string // Server address (e.g., ":8082")
+    SCID       string // Smart Contract ID being served
+    Entrypoint string // Entry file (e.g., "index.html")
+}
+```
+
+### Rating Types
+
+```go
+type Rating struct {
+    Address string // Rater's DERO address
+    Rating  uint64 // Rating value (0-99)
+    Height  uint64 // Block height when rated
+}
+
+type Rating_Result struct {
+    Ratings  []Rating // Individual ratings
+    Likes    uint64   // Total likes count
+    Dislikes uint64   // Total dislikes count
+    Average  float64  // Average category (0-10)
+}
+
+// Method
+func (res *Rating_Result) ParseAverage() (category string)
+```
+
+---
+
+## File Operations
+
+### Compression
+
+```go
+func Compress(data []byte, compression string) (result string, err error)
+func Decompress(data []byte, compression string) (result []byte, err error)
+func IsCompressedExt(ext string) bool
+func TrimCompressedExt(fileName string) string
+```
+
+**Example:**
+```go
+htmlContent := `<!DOCTYPE html><html>...</html>`
+compressed, err := tela.Compress([]byte(htmlContent), ".gz")
+// Compressed content ready for deployment
+```
+
+### File Sharding
+
+For files exceeding ~18KB limit.
+
+```go
+func CreateShardFiles(filePath, compression string, content []byte) (err error)
+func ConstructFromShards(docShards [][]byte, recreate, basePath, compression string) (err error)
+func GetTotalShards(data []byte) (totalShards int, fileSize int64)
+```
+
+**Example:**
+```go
+// Check if file needs sharding
+content, _ := os.ReadFile("large-file.js")
+shardCount, size := tela.GetTotalShards(content)
+
+if shardCount > 1 {
+    // Create shard files
+    err := tela.CreateShardFiles("./large-file.js", ".gz", nil)
+}
+```
+
+### Parsing
+
+```go
+func ParseDocType(fileName string) (language string)
+func GetCodeSizeInKB(code string) float64
+func IsAcceptedLanguage(language string) bool
+func ParseINDEXForDOCs(code string) (scids []string, err error)
+func ParseHeaders(code string, headerType interface{}) (formatted string, err error)
+func ValidateImageURL(imageURL, endpoint string) (svgCode string, err error)
+func ParseSignature(input []byte) (address, c, s string, err error)
+```
+
+**Example:**
+```go
+fileName := "index.html"
+docType := tela.ParseDocType(fileName)  // "TELA-HTML-1"
+
+code := "<html>...</html>"
+size := tela.GetCodeSizeInKB(code)
+
+if size > 18.0 {
+    fmt.Println("File too large, needs compression")
+}
+```
+
+<Callout type="warning">
+**Size Limits:**
+- DOC code content: ~18KB maximum
+- INDEX contracts: ~11.64KB maximum
+- Shard size: 17,500 bytes each
+</Callout>
+
+---
+
+## Rating System
+
+### Rating Operations
+
+```go
+func Rate(wallet *walletapi.Wallet_Disk, scid string, rating uint64) (txid string, err error)
+func NewRateArgs(scid string, rating uint64) (args rpc.Arguments, err error)
+func GetRating(scid, endpoint string, height uint64) (ratings Rating_Result, err error)
+```
+
+**Example:**
+```go
+// Rate content as "Good, Works well" (77)
+txid, err := tela.Rate(wallet, "content-scid", 77)
+
+// Get ratings
+ratings, err := tela.GetRating("content-scid", "127.0.0.1:10102", 0)
+fmt.Printf("👍 Likes: %d, 👎 Dislikes: %d, ⭐ Average: %.1f\n", 
+    ratings.Likes, ratings.Dislikes, ratings.Average)
+```
+
+### Rating Analysis
+
+The global `Ratings` variable provides interpretation functions:
+
+```go
+// Get category and detail from rating
+category, detail, _ := tela.Ratings.Parse(77)  // "Good", "Works well"
+
+// Get formatted string
+ratingStr, _ := tela.Ratings.ParseString(77)   // "Good (Works well)"
+
+// Get category only
+category := tela.Ratings.Category(7)           // "Good"
+
+// Get detail only
+detail := tela.Ratings.Detail(77, true)        // "Works well" (true = positive)
+
+// Get all categories/details
+categories := tela.Ratings.Categories()
+negativeDetails := tela.Ratings.NegativeDetails()
+positiveDetails := tela.Ratings.PositiveDetails()
+```
+
+### Rating Scale
+
+**Categories (First Digit 0-9):**
+- 0: Do not use
+- 1: Broken
+- 2: Major issues
+- 3: Minor issues
+- 4: Should be improved
+- 5: Could be improved
+- 6: Average
+- 7: Good
+- 8: Very good
+- 9: Exceptional
+
+**Details (Second Digit 0-9):**
+- Negative (0-5): Nothing, Needs review, Needs improvement, Bugs, Errors, Inappropriate, Incomplete, Corrupted, Plagiarized, Malicious
+- Positive (6-9): Nothing, Needs review, Needs improvement, Bugs, Errors, Visually appealing, In depth, Works well, Unique, Benevolent
+
+**Examples:**
+- `77` = "Good (Works well)"
+- `89` = "Very good (Benevolent)"
+- `23` = "Major issues (Bugs)"
+
+---
+
+## TELA Links
+
+### Link Parsing
+
+```go
+func ParseTELALink(telaLink string) (target string, args []string, err error)
+func OpenTELALink(telaLink, endpoint string) (link string, err error)
+```
+
+**Example:**
+```go
+// Parse link
+link := "tela://open/scid-here/docs/api.html"
+target, args, _ := tela.ParseTELALink(link)
+// target: "tela"
+// args: ["open", "scid-here", "docs", "api.html"]
+
+// Open link (serves if needed)
+httpLink, err := tela.OpenTELALink(link, "127.0.0.1:10102")
+// Returns: http://localhost:8082/docs/api.html
+```
+
+### Link Formats
+
+```
+tela://open/<scid>                    # Open application
+tela://open/<scid>/path/to/file       # Deep link to content
+tela://content/<scid>/<doc-number>    # Direct DOC link
+tela://lib/<scid>                     # Library content
+tela://bootstrap/<scid>               # Bootstrap collections
+```
+
+---
+
+## MODs System
+
+TELA-MOD-1 modules extend INDEX contracts with additional functionality.
+
+### MODs Global Access
+
+```go
+// Get all available MODs
+allMods := tela.Mods.GetAllMods()
+
+// Get specific MOD
+mod := tela.Mods.GetMod("vsoo")
+
+// Get MOD functions
+code, funcNames := tela.Mods.Functions("vsoo")
+
+// Get all MOD classes
+classes := tela.Mods.GetAllClasses()
+
+// Get class for a MOD
+class := tela.Mods.GetClass("vsoo")
+
+// Validate MOD combination
+tags, err := tela.Mods.TagsAreValid("vsoo,txdwd")
+
+// Inject MODs into template
+finalTags, finalTemplate, err := tela.Mods.InjectMODs("vsoo,txdwd", tela.TELA_INDEX_1)
+```
+
+### Available MODs
+
+**Variable Store (vs):**
+- `vsoo` - Owner Only: Only contract owner can set/delete
+- `vsooim` - Owner Only Immutable
+- `vspubsu` - Public Single Use
+- `vspubow` - Public Overwrite
+- `vspubim` - Public Immutable
+
+**Transfer (tx):**
+- `txdwa` - Deposit/Withdraw Assets
+- `txdwd` - Deposit/Withdraw DERO
+- `txto` - Transfer Ownership
+
+**Example:**
+```go
+index := &tela.INDEX{
+    DURL: "enhanced-app.tela",
+    Mods: "vsoo,txdwd",  // Variable storage + DERO management
+    DOCs: []string{"doc1-scid", "doc2-scid"},
+    Headers: tela.Headers{
+        NameHdr: "Enhanced App",
+    },
+}
+
+txid, err := tela.Installer(wallet, 2, index)
+```
+
+<Callout type="success" emoji="🔧">
+**Critical Difference:** `SetVar`/`DeleteVar` (MOD operations) do NOT create commit versions. Use for dynamic content. `UpdateCode` creates new versions for code changes.
+</Callout>
+
+---
+
+## Utilities
+
+### Version Management
+
+```go
+func ParseVersion(versionStr string) (version *Version, err error)
+func GetVersion() (version Version)
+func GetContractVersions(isDOC bool) (versions []Version)
+func GetLatestContractVersion(isDOC bool) (version Version)
+```
+
+**Example:**
+```go
+version, _ := tela.ParseVersion("1.2.3")
+fmt.Println(version.String())  // "1.2.3"
+
+pkgVersion := tela.GetVersion()
+fmt.Printf("TELA package version: %s\n", pkgVersion.String())
+```
+
+### Smart Contract Utilities
+
+```go
+func GetSmartContractFuncNames(code string) (names []string)
+func EqualSmartContracts(c, v string) (contract dvm.SmartContract, err error)
+func FormatSmartContract(sc dvm.SmartContract, code string) (formatted string, err error)
+```
+
+### MOD Utilities
+
+```go
+func NewModTag(tags []string) (modTag string)
+```
+
+**Example:**
+```go
+tags := []string{"vsoo", "txdwd", "txto"}
+modTag := tela.NewModTag(tags)  // "vsoo,txdwd,txto"
+```
+
+### Header Methods
+
+```go
+// Header type methods
+func (h Header) Trim() string
+func (h Header) Number(i int) Header
+```
+
+**Example:**
+```go
+docHeader := tela.HEADER_DOCUMENT
+fmt.Println(docHeader.Number(1))  // "DOC1"
+fmt.Println(docHeader.Number(5))  // "DOC5"
+```
+
+---
+
+## Constants
+
+### Document Types
+
+```go
+const (
+    DOC_HTML      = "TELA-HTML-1"
+    DOC_CSS       = "TELA-CSS-1"
+    DOC_JS        = "TELA-JS-1"
+    DOC_JSON      = "TELA-JSON-1"
+    DOC_MD        = "TELA-MD-1"
+    DOC_GO        = "TELA-GO-1"
+    DOC_STATIC    = "TELA-STATIC-1"
+    // ... and more
+)
+```
+
+### Headers
+
+```go
+const (
+    HEADER_NAME         Header = `"nameHdr"`
+    HEADER_DESCRIPTION  Header = `"descrHdr"`
+    HEADER_ICON_URL     Header = `"iconURLHdr"`
+    HEADER_CHECK_C      Header = `"fileCheckC"`
+    HEADER_CHECK_S      Header = `"fileCheckS"`
+    HEADER_MODS         Header = `"mods"`
+    HEADER_DURL         Header = `"dURL"`
+    HEADER_DOCUMENT     Header = `"DOC`  // append with .Number()
+    HEADER_SUBDIR       Header = `"subDir"`
+    HEADER_DOCTYPE      Header = `"docType"`
+)
+```
+
+### Templates
+
+```go
+const (
+    TELA_INDEX_1      // INDEX-1 template
+    TELA_DOC_1        // DOC-1 template
+    // ... and more versions
+)
+```
+
+---
+
+## Quick Examples
+
+### Deploy a Simple App
+
+```go
+// Create HTML DOC
+htmlDoc := &tela.DOC{
+    DocType: tela.DOC_HTML,
+    Code:    "<html><body><h1>Hello!</h1></body></html>",
+    DURL:    "hello.tela",
+    Headers: tela.Headers{NameHdr: "index.html"},
+}
+
+htmlSCID, _ := tela.Installer(wallet, 2, htmlDoc)
+
+// Create INDEX
+index := &tela.INDEX{
+    DURL: "hello-app.tela",
+    DOCs: []string{htmlSCID},
+    Headers: tela.Headers{NameHdr: "Hello App"},
+}
+
+indexSCID, _ := tela.Installer(wallet, 2, index)
+
+// Serve it
+link, _ := tela.ServeTELA(indexSCID, "127.0.0.1:10102")
+fmt.Printf("App running at: %s\n", link)
+```
+
+### Compress Large Files
+
+```go
+content, _ := os.ReadFile("large-file.js")
+size := tela.GetCodeSizeInKB(string(content))
+
+if size > 15.0 {
+    compressed, _ := tela.Compress(content, ".gz")
+    compressedSize := tela.GetCodeSizeInKB(compressed)
+    
+    if compressedSize <= 18.0 {
+        // Deploy compressed version
+        doc := &tela.DOC{
+            DocType:     tela.DOC_JS,
+            Code:        compressed,
+            Compression: ".gz",
+            Headers:     tela.Headers{NameHdr: "large-file.js.gz"},
+        }
+        tela.Installer(wallet, 2, doc)
+    }
+}
+```
+
+### Rate Content
+
+```go
+// Submit rating
+txid, _ := tela.Rate(wallet, "content-scid", 87) // "Very good (Works well)"
+
+// Get ratings
+ratings, _ := tela.GetRating("content-scid", "127.0.0.1:10102", 0)
+fmt.Printf("Likes: %d, Dislikes: %d\n", ratings.Likes, ratings.Dislikes)
+
+for _, r := range ratings.Ratings {
+    str, _ := tela.Ratings.ParseString(r.Rating)
+    fmt.Printf("%s: %s\n", r.Address[:12], str)
+}
+```
+
+---
+
+## Error Handling
+
+All functions follow Go's standard error handling pattern. Common errors:
+
+- **Invalid SCID**: Must be 64-character hex string
+- **Network errors**: Daemon endpoint unreachable
+- **Content not found**: SCID doesn't exist or isn't valid TELA contract
+- **Port unavailable**: No free ports in configured range
+- **Permission errors**: Attempting to update contracts you don't own
+- **Size limits**: Contract too large for deployment
+
+<Callout type="tip">
+Always check error return values and estimate gas fees before deploying contracts, especially for large applications.
+</Callout>
+
+---
+
+## Additional Resources
+
+- [Go Examples](/go-package-reference/examples) - Comprehensive real-world examples
+- [GitHub Repository](https://github.com/civilware/tela) - Source code and issues
+- [pkg.go.dev](https://pkg.go.dev/github.com/civilware/tela) - Full package documentation
+- [TELA README](https://github.com/civilware/tela/blob/main/README.md) - Package overview and usage
+
+

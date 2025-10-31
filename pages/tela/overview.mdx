@@ -1,0 +1,336 @@
+---
+title: "TELA Platform Overview | Decentralized Web Standard for DERO Blockchain"
+description: "Complete overview of TELA - The Enhanced Local Applications platform for building decentralized web applications on DERO blockchain with complete privacy and censorship resistance."
+keywords: "TELA, decentralized web, DERO blockchain, privacy, local-first, smart contracts, web3, private applications, blockchain storage, XSWD protocol"
+date: "2024-08-23"
+lastUpdated: "2025-10-22"
+authors: ["DHEBP"]
+image: "/assets/tela-hero.png"
+slug: "tela/overview"
+canonicalUrl: "https://tela.derod.org/tela/overview"
+tags: ["TELA", "overview", "platform", "decentralized-web", "DERO"]
+---
+
+import { Card, Cards } from 'nextra/components'
+import { Callout } from 'nextra/components'
+
+# TELA Platform Overview
+
+**TELA** (Tiny Encrypted Local Apps) is the Decentralized Web Standard for DERO blockchain. Build privacy-first web applications that run entirely on-chain with zero servers, zero censorship, and complete user control.
+
+<Callout type="success" emoji="🚀">
+**The Future of Web3:** TELA is the ONLY platform enabling fully private, censorship-resistant web applications with encrypted storage and local execution.
+</Callout>
+
+## The TELA Difference
+
+**Traditional Web Architecture:**
+```
+User → Company Server → Database
+       ↓
+    Logs, Tracks, Controls Access
+    Can be hacked, censored, taken offline
+```
+
+**TELA Architecture:**
+```
+User → Engram (Local) → DERO Blockchain
+       ↓
+    Runs on your computer
+    Cannot be hacked, censored, or taken offline
+```
+
+## What Makes TELA Special?
+
+### ✨ **Three Revolutionary Features:**
+
+| Feature | Traditional Web | TELA |
+|---------|----------------|------|
+| **🗄️ Storage** | Centralized servers | DERO blockchain (distributed) |
+| **🔒 Privacy** | Server logs everything | Local execution (zero tracking) |
+| **⚡ Performance** | Server latency + downtime | Instant local execution |
+| **📡 Network** | Always online required | Works offline |
+| **💰 Costs** | Monthly hosting fees | One-time blockchain fee |
+| **🌍 Access** | Geo-restrictions possible | Global, unstoppable |
+| **🛡️ Censorship** | Can be taken down | Impossible to censor |
+
+---
+
+### 🔐 **True Decentralization**
+
+**No servers = No single point of failure**
+
+**Traditional Web:**
+```
+All Users → Single Server → 💥 If server fails, app goes offline
+```
+
+**TELA:**
+```
+Each User → DERO Blockchain (distributed globally)
+           ↓
+        Always available, distributed worldwide
+        No single point of failure
+```
+
+**Result:** TELA applications remain globally available around the clock - no servers to go down, no hosting companies to fail.
+
+---
+
+### 🔒 **Privacy by Design**
+
+**Your data stays on YOUR device**
+
+| What Happens | Traditional Web | TELA |
+|--------------|----------------|------|
+| **Code execution** | Server-side (they see everything) | Local (you control everything) |
+| **User data** | Stored on company servers | Stays on your device |
+| **Activity logs** | Server tracks every action | Zero tracking, zero logs |
+| **Third parties** | Analytics, ads, trackers | None - completely private |
+| **Blockchain** | Public ledger (addresses visible) | DERO privacy (encrypted) |
+
+---
+
+### ⚡ **Local-First Performance**
+
+**Instant loading, works offline**
+
+| Metric | Traditional Web | TELA |
+|--------|-----------------|------|
+| **Initial Load** | Depends on server location | Instant (cached locally) |
+| **Navigation** | HTTP requests per page | Instant (already local) |
+| **Offline** | ❌ Doesn't work | ✅ Full functionality |
+| **Latency** | 50-500ms+ | Under 1ms (local) |
+| **Blockchain Sync** | N/A | Only when updating content |
+
+---
+
+## How TELA Works: Dual-Contract System
+
+**TELA uses two smart contract types:**
+
+**Deployment Flow:**
+```
+Developer
+  ↓
+Deploy: index.html → DOC Contract (SCID: abc...)
+Deploy: app.js    → DOC Contract (SCID: def...)
+Deploy: style.css → DOC Contract (SCID: ghi...)
+  ↓
+Create: INDEX Contract → References all DOC SCIDs
+  ↓
+DERO Blockchain (Permanent Storage)
+```
+
+**User Access Flow:**
+```
+User enters INDEX SCID into Engram
+  ↓
+Engram fetches INDEX from blockchain
+  ↓
+INDEX points to all DOC contracts (abc, def, ghi...)
+  ↓
+Engram fetches all DOCs from blockchain
+  ↓
+Verifies cryptographic hashes
+  ↓
+Executes app locally in Engram
+```
+
+### 📋 **INDEX Contract** (Application Manifest)
+
+| Contains | Purpose |
+|----------|---------|
+| **App Name** | "My TELA App" |
+| **Description** | What the app does |
+| **Icon** | App thumbnail |
+| **DOC References** | SCIDs of all files |
+| **File Paths** | How files are organized |
+| **Version** | App version number |
+
+**Think:** Package.json for on-chain apps
+
+---
+
+### 📦 **DOC Contract** (Application Files)
+
+**Supported File Types:**
+
+| Type | File Extension | Max Size | Use Case |
+|------|----------------|----------|----------|
+| **HTML** | `.html` | 18KB | Page structure |
+| **CSS** | `.css` | 18KB | Styling |
+| **JavaScript** | `.js` | 18KB | Logic & interactivity |
+| **JSON** | `.json` | 18KB | Data & config |
+| **Markdown** | `.md` | 18KB | Documentation |
+| **Static Assets** | Images, fonts | 18KB | Assets |
+
+**Size limit:** 18KB per DOC contract (blockchain constraint)  
+**Solution:** Split large files across multiple DOC contracts
+
+---
+
+## Development Workflow
+
+**From idea to deployed app:**
+
+| Step | Action | Tool | Output |
+|------|--------|------|--------|
+| **A** | Write your app | Any code editor | HTML, CSS, JS files |
+| **B** | Test locally | TELA-CLI serve | Preview in browser |
+| **C** | Deploy files | TELA-CLI install-doc | DOC contracts (SCIDs) |
+| **D** | Create manifest | TELA-CLI install-index | INDEX contract (SCID) |
+| **E** | Share & access | Give users INDEX SCID | App live on blockchain! |
+
+## Complete Architecture
+
+**Full TELA Stack (4 Layers):**
+
+| Layer | Component | Function |
+|-------|-----------|----------|
+| **👤 User Layer** | User in Engram | Browses and interacts with apps |
+| **📱 TELA Protocol** | INDEX + DOC contracts | App manifest + code files |
+| **🔐 Security Layer** | XSWD (port 44326) + Verification | Wallet connection + hash checking |
+| **💾 Storage Layer** | DERO Blockchain + Wallet | Immutable storage + private keys |
+
+**Data Flow:**
+```
+User enters SCID
+  ↓
+Engram fetches INDEX from blockchain
+  ↓
+INDEX points to DOC contracts (files)
+  ↓
+Engram fetches all DOCs from blockchain
+  ↓
+Cryptographic verification (hash matching)
+  ↓
+Execute locally in Engram (sandboxed)
+  ↓
+User interacts (XSWD handles wallet operations)
+```
+
+**Every layer is decentralized, private, and verifiable!**
+
+---
+
+## Technical Foundation
+
+### Smart Contract Architecture
+
+| Contract Type | Mutability | Purpose | Size Limit |
+|---------------|------------|---------|------------|
+| **DOC Contract** | 🔒 Immutable | Store code files | 18KB per file |
+| **INDEX Contract** | ✏️ Updateable | App metadata & references | Variable |
+
+**Why two types?**
+- **DOC immutability** → Code integrity guaranteed
+- **INDEX updateability** → Apps can evolve (point to new DOCs)
+- **User control** → Can verify exact code version running
+
+**Version Control:**
+```
+Version A → DOC Contract (SCID: abc123...)
+Version B → DOC Contract (SCID: def456...)
+            ↑
+INDEX Contract can switch between versions
+All versions remain on blockchain forever
+```
+
+### Supported Languages
+
+<div className="mb-4">
+TELA supports a wide range of file types through its document type system:
+</div>
+
+<Cards>
+  <Card title="HTML Files" href="/api-reference/data-types" />
+  <Card title="CSS Files" href="/api-reference/data-types" />
+  <Card title="JavaScript Files" href="/api-reference/data-types" />
+  <Card title="JSON Files" href="/api-reference/data-types" />
+  <Card title="Markdown Files" href="/api-reference/data-types" />
+  <Card title="Static Assets" href="/api-reference/data-types" />
+</Cards>
+
+## Community Rating System
+
+<div className="mb-4">
+TELA includes an integrated rating system that helps users evaluate content quality and trustworthiness:
+</div>
+
+- **One rating per DERO account** per contract prevents spam
+- **Structured 0-99 scale** with meaningful categories and detail tags
+- **Blockchain transparency** - All ratings are publicly visible
+- **Community moderation** without centralized gatekeepers
+
+### Rating Categories
+| Rating | Category | Meaning |
+|--------|----------|---------|
+| 0-9 | Do not use → Broken | Content has serious issues |
+| 10-49 | Major → Minor issues | Content needs improvement |
+| 50-59 | Could be improved | Decent quality with room for growth |
+| 60-69 | Average | Standard quality, meets expectations |
+| 70-89 | Good → Very good | High quality content |
+| 90-99 | Exceptional | Outstanding, best-in-class content |
+
+<div className="mt-4">
+Learn more about the [Content Rating System](/tela/tela-content-rating-system).
+</div>
+
+## TELA vs Traditional Web
+
+| Traditional Web | TELA Applications |
+|----------------|-------------------|
+| **Hosted on servers** | **Stored on blockchain** |
+| **Centralized** | **Decentralized** |
+| **Privacy concerns** | **Complete privacy** |
+| **Server dependencies** | **No external dependencies** |
+| **Can be censored** | **Censorship resistant** |
+| **Server maintenance costs** | **One-time deployment cost** |
+| **Geographic restrictions** | **Globally accessible** |
+
+## Next Steps
+
+<div className="mb-4">
+Ready to start building with TELA? Choose your path:
+</div>
+
+<Cards>
+  <Card 
+    icon={<div className="text-2xl">🎯</div>} 
+    title="Quick Start" 
+    href="/tela-development-guide"
+  />
+  <Card 
+    icon={<div className="text-2xl">📚</div>} 
+    title="Learn the Concepts" 
+    href="/tela/tela-doc-index-structures"
+  />
+  <Card 
+    icon={<div className="text-2xl">🔧</div>} 
+    title="Dive Deep" 
+    href="/advanced-features/overview"
+  />
+</Cards>
+
+
+
+
+---
+
+## Related Pages
+
+**Understanding TELA:**
+- [TELA Security Model](/tela/tela-security-model) - Privacy and security features
+- [TELA Links](/go-package-reference/tela-links) - Deep linking system
+- [Content Rating System](/tela/tela-content-rating-system) - Content moderation
+
+**Build with TELA:**
+- [Quick Start Tutorial](/tutorials/launch-tela-site) - Your first TELA app
+- [XSWD Overview](/xswd/overview) - Secure deployment protocol
+- [TELA CLI](/tela-cli/overview) - Command-line tools
+
+**Advanced Topics:**
+- [TELA Libraries](/advanced-features/tela-libraries) - Reusable components
+- [DocShards](/advanced-features/docshards) - Multi-file applications
+- [Compression](/advanced-features/compression) - Optimize file sizes

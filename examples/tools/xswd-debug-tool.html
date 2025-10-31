@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSWD API Debug - DERO Explorer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .api-call {
+            margin-bottom: 30px;
+        }
+        .api-title {
+            color: #52c8db;
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #52c8db;
+            padding-bottom: 5px;
+        }
+        .btn {
+            background: #52c8db;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .btn:hover {
+            background: #45a8b8;
+        }
+        .output {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        .status.connected {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+        .status.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="color: #52c8db; text-align: center; margin-bottom: 30px;">🔍 XSWD API Debug Tool</h1>
+        <div style="text-align: center; margin-bottom: 20px; color: #888; font-size: 0.9rem;">
+            🔧 <strong>Developer Tool</strong> - Hidden feature for DERO blockchain API analysis and transaction data debugging<br/>
+            <span style="font-size: 0.8rem; color: #666;">💡 Access via: <code>localhost:8081/debug-xswd.html</code> • Real-time XSWD protocol analysis</span>
+        </div>
+        
+        <div class="card">
+            <div id="connection-status" class="status">Connecting to XSWD...</div>
+        </div>
+
+        <div class="card">
+            <div class="api-call">
+                <div class="api-title">📊 DERO.GetInfo</div>
+                <button class="btn" onclick="testGetInfo()">Test GetInfo</button>
+                <div id="getinfo-output" class="output"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="api-call">
+                <div class="api-title">🏊 DERO.GetTxPool</div>
+                <button class="btn" onclick="testGetTxPool()">Test GetTxPool</button>
+                <button class="btn" onclick="testGetTxPoolWithStats()">Test Enhanced getTxPoolWithStats</button>
+                <div id="txpool-output" class="output"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="api-call">
+                <div class="api-title">🧱 DERO.GetLastBlockHeader</div>
+                <button class="btn" onclick="testGetLastBlockHeader()">Test GetLastBlockHeader</button>
+                <div id="blockheader-output" class="output"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="api-call">
+                <div class="api-title">🔗 Available XSWD Methods</div>
+                <button class="btn" onclick="listXSWDMethods()">List All Methods</button>
+                <div id="methods-output" class="output"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="api-call">
+                <div class="api-title">🔍 Transaction Hash Extraction Test</div>
+                <button class="btn" onclick="testHashExtraction()">Test Hash Extraction Methods</button>
+                <div id="hash-output" class="output"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="api-call">
+                <div class="api-title">🔍 Custom XSWD Call</div>
+                <input type="text" id="custom-method" placeholder="Enter DERO method (e.g. DERO.GetBlock)" 
+                       style="padding: 8px; margin-right: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 4px;">
+                <button class="btn" onclick="testCustomMethod()">Test Custom Method</button>
+                <div id="custom-output" class="output"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="xswd-core.min.js"></script>
+    <script>
+        let xswdCore = null;
+        let xswd = null;
+
+        async function initializeXSWD() {
+            try {
+                updateStatus('Initializing XSWD connection...', 'connected');
+                
+                // Load the XSWD core module using the same method as the main app
+                const xswdResponse = await fetch('./xswd-core.min.js');
+                const xswdCode = await xswdResponse.text();
+                
+                // Execute the XSWD core code to get the object
+                const xswdObject = eval(`(${xswdCode})`);
+                
+                if (xswdObject && typeof xswdObject === 'object') {
+                    xswdCore = xswdObject;
+                    xswd = xswdCore;
+                    
+                    updateStatus('XSWD core loaded, establishing connection...', 'connected');
+                    
+                    // Initialize the connection using the same flow as the main app
+                    const connected = await xswdCore.initialize();
+                    
+                    if (connected) {
+                        updateStatus('✅ Connected to XSWD successfully! Ready for API calls.', 'connected');
+                        
+                        // Set global reference like the main app does
+                        window.xswd = xswdCore;
+                        window.xswdCore = xswdCore;
+                        
+                        console.log('XSWD initialized successfully:', {
+                            connected: xswdCore.isConnected,
+                            endpoint: xswdCore.endpoint || 'ws://127.0.0.1:44326/xswd'
+                        });
+                    } else {
+                        updateStatus('❌ Failed to establish XSWD connection. Make sure Engram wallet is running.', 'error');
+                    }
+                } else {
+                    updateStatus('❌ Failed to load XSWD core module', 'error');
+                }
+            } catch (error) {
+                updateStatus(`❌ XSWD initialization error: ${error.message}`, 'error');
+                console.error('Full XSWD init error:', error);
+            }
+        }
+
+        function updateStatus(message, type) {
+            const statusEl = document.getElementById('connection-status');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+        }
+
+        function displayOutput(elementId, data) {
+            const output = document.getElementById(elementId);
+            output.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function testGetInfo() {
+            try {
+                const info = await xswd.call('DERO.GetInfo');
+                displayOutput('getinfo-output', {
+                    success: true,
+                    data: info,
+                    available_fields: Object.keys(info || {}),
+                    field_count: Object.keys(info || {}).length
+                });
+            } catch (error) {
+                displayOutput('getinfo-output', {
+                    success: false,
+                    error: error.message
+                });
+            }
+        }
+
+        async function testGetTxPool() {
+            try {
+                const pool = await xswd.call('DERO.GetTxPool');
+                
+                // Detailed analysis of RAW transaction structure
+                const rawTxAnalysis = {};
+                if (pool?.txs?.length > 0) {
+                    const sampleTx = pool.txs[0];
+                    rawTxAnalysis.sample_transaction = sampleTx;
+                    rawTxAnalysis.all_tx_fields = Object.keys(sampleTx);
+                    
+                    // Check for different hash field variations in RAW data
+                    rawTxAnalysis.hash_fields = {
+                        txid: sampleTx.txid || null,
+                        hash: sampleTx.hash || null,
+                        id_hash: sampleTx.id_hash || null,
+                        tx_hash: sampleTx.tx_hash || null,
+                        txhash: sampleTx.txhash || null,
+                        as_hex: sampleTx.as_hex || null,
+                        payloads: sampleTx.payloads || null
+                    };
+                    
+                    // Check raw data structure
+                    rawTxAnalysis.data_structure = {
+                        has_hex_data: !!sampleTx.as_hex,
+                        hex_length: sampleTx.as_hex ? sampleTx.as_hex.length : 0,
+                        fee_atomic: sampleTx.fee || 0,
+                        size_bytes: sampleTx.size || 0,
+                        timestamp: sampleTx.timestamp || null
+                    };
+                    
+                    // Analyze first few transactions
+                    rawTxAnalysis.first_3_transactions = pool.txs.slice(0, 3).map((tx, index) => ({
+                        index: index,
+                        has_txid: !!tx.txid,
+                        has_hash: !!tx.hash,
+                        has_as_hex: !!tx.as_hex,
+                        as_hex_preview: tx.as_hex ? tx.as_hex.substring(0, 32) + '...' : null,
+                        size: tx.size || 0,
+                        fee: tx.fee || 0
+                    }));
+                }
+                
+                displayOutput('txpool-output', {
+                    method: 'DERO.GetTxPool (RAW)',
+                    success: true,
+                    data: pool,
+                    transaction_count: pool?.txs?.length || 0,
+                    detailed_analysis: rawTxAnalysis,
+                    note: 'This is the raw DERO blockchain data structure'
+                });
+            } catch (error) {
+                displayOutput('txpool-output', {
+                    method: 'DERO.GetTxPool (RAW)',
+                    success: false,
+                    error: error.message
+                });
+            }
+        }
+
+        async function testGetTxPoolWithStats() {
+            try {
+                const poolWithStats = await xswd.getTxPoolWithStats();
+                
+                // Detailed analysis of transaction structure
+                const txAnalysis = {};
+                if (poolWithStats?.txs?.length > 0) {
+                    const sampleTx = poolWithStats.txs[0];
+                    txAnalysis.sample_transaction = sampleTx;
+                    txAnalysis.all_tx_fields = Object.keys(sampleTx);
+                    
+                    // Check for different hash field variations
+                    txAnalysis.hash_fields = {
+                        txid: sampleTx.txid || null,
+                        hash: sampleTx.hash || null,
+                        id_hash: sampleTx.id_hash || null,
+                        tx_hash: sampleTx.tx_hash || null,
+                        txhash: sampleTx.txhash || null,
+                        as_hex: sampleTx.as_hex || null,
+                        payloads: sampleTx.payloads || null
+                    };
+                    
+                    // Analyze all transactions for pattern
+                    txAnalysis.all_transactions_summary = poolWithStats.txs.map((tx, index) => ({
+                        index: index,
+                        txid: tx.txid || 'undefined',
+                        hash: tx.hash || 'undefined', 
+                        id_hash: tx.id_hash || 'undefined',
+                        tx_hash: tx.tx_hash || 'undefined',
+                        txhash: tx.txhash || 'undefined',
+                        as_hex: tx.as_hex ? `${tx.as_hex.substring(0,16)}...` : 'undefined',
+                        size: tx.size || 'undefined',
+                        fee: tx.fee || 'undefined',
+                        timestamp: tx.timestamp || 'undefined'
+                    }));
+                }
+                
+                displayOutput('txpool-output', {
+                    method: 'getTxPoolWithStats (enhanced)',
+                    success: true,
+                    data: poolWithStats,
+                    transaction_count: poolWithStats?.txs?.length || 0,
+                    stats: poolWithStats?.stats || null,
+                    detailed_analysis: txAnalysis
+                });
+            } catch (error) {
+                displayOutput('txpool-output', {
+                    method: 'getTxPoolWithStats (enhanced)',
+                    success: false,
+                    error: error.message
+                });
+            }
+        }
+
+        async function testGetLastBlockHeader() {
+            try {
+                const header = await xswd.call('DERO.GetLastBlockHeader');
+                displayOutput('blockheader-output', {
+                    success: true,
+                    data: header,
+                    available_fields: Object.keys(header || {})
+                });
+            } catch (error) {
+                displayOutput('blockheader-output', {
+                    success: false,
+                    error: error.message
+                });
+            }
+        }
+
+        function listXSWDMethods() {
+            const methods = [
+                'DERO.GetInfo',
+                'DERO.GetTxPool', 
+                'DERO.GetLastBlockHeader',
+                'DERO.GetBlock',
+                'DERO.GetTransaction',
+                'DERO.GetSC',
+                'DERO.GetBlockCount',
+                'DERO.GetBlockHeaderByHeight',
+                'DERO.GetBlockHeaderByHash'
+            ];
+
+            displayOutput('methods-output', {
+                available_methods: methods,
+                enhanced_methods: [
+                    'getTxPoolWithStats()',
+                    'getNetworkInfo()',
+                    'getBlock(height)',
+                    'getTransaction(hash)',
+                    'getSmartContract(scid)'
+                ],
+                note: 'These are the main DERO XSWD methods available for blockchain data'
+            });
+        }
+
+        async function testHashExtraction() {
+            try {
+                // Test both methods and compare hash extraction
+                const rawPool = await xswd.call('DERO.GetTxPool');
+                const enhancedPool = await xswd.getTxPoolWithStats();
+                
+                const analysis = {
+                    raw_method_results: {},
+                    enhanced_method_results: {},
+                    comparison: {},
+                    hash_extraction_strategies: {}
+                };
+                
+                // Analyze raw pool data
+                if (rawPool?.txs?.length > 0) {
+                    const rawTx = rawPool.txs[0];
+                    analysis.raw_method_results = {
+                        transaction_count: rawPool.txs.length,
+                        sample_transaction_fields: Object.keys(rawTx),
+                        potential_hash_sources: {
+                            as_hex: rawTx.as_hex || null,
+                            as_hex_length: rawTx.as_hex ? rawTx.as_hex.length : 0,
+                            txid: rawTx.txid || null,
+                            hash: rawTx.hash || null,
+                            id_hash: rawTx.id_hash || null
+                        }
+                    };
+                }
+                
+                // Analyze enhanced pool data
+                if (enhancedPool?.txs?.length > 0) {
+                    const enhancedTx = enhancedPool.txs[0];
+                    analysis.enhanced_method_results = {
+                        transaction_count: enhancedPool.txs.length,
+                        sample_transaction_fields: Object.keys(enhancedTx),
+                        potential_hash_sources: {
+                            as_hex: enhancedTx.as_hex || null,
+                            as_hex_length: enhancedTx.as_hex ? enhancedTx.as_hex.length : 0,
+                            txid: enhancedTx.txid || null,
+                            hash: enhancedTx.hash || null,
+                            id_hash: enhancedTx.id_hash || null
+                        }
+                    };
+                }
+                
+                // Hash extraction strategies
+                analysis.hash_extraction_strategies = {
+                    strategy_1_raw_hex: {
+                        description: "Extract from as_hex field (raw transaction data)",
+                        implementation: "const hash = tx.as_hex ? tx.as_hex.substring(0, 64) : null;",
+                        works_with: "Raw DERO.GetTxPool data"
+                    },
+                    strategy_2_txid: {
+                        description: "Use txid field if available", 
+                        implementation: "const hash = tx.txid || null;",
+                        works_with: "Enhanced getTxPoolWithStats data"
+                    },
+                    strategy_3_hash_field: {
+                        description: "Use hash field if available",
+                        implementation: "const hash = tx.hash || null;",
+                        works_with: "Both methods"
+                    },
+                    strategy_4_crypto_hash: {
+                        description: "Calculate hash from transaction hex",
+                        implementation: "// Requires crypto library to hash the transaction",
+                        works_with: "Raw as_hex data with crypto calculation"
+                    }
+                };
+                
+                // Test actual hash extraction
+                if (rawPool?.txs?.length > 0) {
+                    const testTx = rawPool.txs[0];
+                    analysis.live_hash_test = {
+                        raw_hex_available: !!testTx.as_hex,
+                        hex_preview: testTx.as_hex ? testTx.as_hex.substring(0, 32) + '...' : null,
+                        extracted_hash_64char: testTx.as_hex ? testTx.as_hex.substring(0, 64) : null,
+                        extracted_hash_32char: testTx.as_hex ? testTx.as_hex.substring(0, 32) : null,
+                        is_valid_hex: testTx.as_hex ? /^[a-f0-9]+$/i.test(testTx.as_hex.substring(0, 64)) : false
+                    };
+                }
+                
+                displayOutput('hash-output', analysis);
+                
+            } catch (error) {
+                displayOutput('hash-output', {
+                    success: false,
+                    error: error.message
+                });
+            }
+        }
+
+        async function testCustomMethod() {
+            const method = document.getElementById('custom-method').value.trim();
+            if (!method) {
+                displayOutput('custom-output', { error: 'Please enter a method name' });
+                return;
+            }
+
+            try {
+                const result = await xswd.call(method, {});
+                displayOutput('custom-output', {
+                    method: method,
+                    success: true,
+                    data: result,
+                    available_fields: typeof result === 'object' ? Object.keys(result || {}) : []
+                });
+            } catch (error) {
+                displayOutput('custom-output', {
+                    method: method,
+                    success: false,
+                    error: error.message
+                });
+            }
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', initializeXSWD);
+    </script>
+</body>
+</html>

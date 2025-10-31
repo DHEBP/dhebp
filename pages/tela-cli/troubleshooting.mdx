@@ -1,0 +1,845 @@
+---
+title: "TELA-CLI Troubleshooting Guide"
+description: "Common issues, solutions, and debugging techniques for TELA-CLI"
+---
+
+import { Callout } from 'nextra/components'
+
+# TELA-CLI Troubleshooting
+
+Common issues, solutions, and debugging techniques for TELA-CLI problems.
+
+## Installation Issues
+
+### Command Not Found
+
+**Problem:** `tela-cli: command not found`
+
+**Solutions:**
+
+1. **Check Go Installation:**
+```bash
+go version
+# Should show Go 1.19+ 
+```
+
+2. **Verify Go PATH:**
+```bash
+echo $PATH | grep $(go env GOPATH)/bin
+# Should include Go bin directory
+```
+
+3. **Add Go bin to PATH:**
+```bash
+# Linux/macOS (add to ~/.bashrc or ~/.zshrc)
+export PATH=$PATH:$(go env GOPATH)/bin
+
+# Windows (PowerShell)
+$env:PATH += ";$(go env GOPATH)\bin"
+```
+
+4. **Reinstall TELA-CLI:**
+```bash
+go install github.com/civilware/tela/cmd/tela-cli@latest
+```
+
+### Permission Denied
+
+**Problem:** `permission denied: ./tela-cli`
+
+**Solutions:**
+
+```bash
+# Make executable (Linux/macOS)
+chmod +x tela-cli
+
+# Run with explicit path
+./tela-cli
+
+# Or move to system PATH
+sudo mv tela-cli /usr/local/bin/
+```
+
+### Build Failures
+
+**Problem:** Build errors during compilation
+
+**Common Solutions:**
+
+1. **Update Go:**
+```bash
+# Check version
+go version
+
+# Update if needed (download from golang.org)
+```
+
+2. **Clear Module Cache:**
+```bash
+go clean -modcache
+go mod tidy
+go build .
+```
+
+3. **Check Dependencies:**
+```bash
+# In tela/cmd/tela-cli directory
+go mod verify
+go mod download
+```
+
+## Connection Issues
+
+### Daemon Connection Failed
+
+**Problem:** `❌ Error: no daemon connection`
+
+**Diagnostic Steps:**
+
+1. **Check Daemon Status:**
+```bash
+# Test if daemon is running
+curl -X POST http://127.0.0.1:10102/json_rpc \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":"1","method":"DERO.GetInfo"}'
+```
+
+2. **Verify Network Settings:**
+```bash
+# In TELA-CLI
+info
+# Check endpoint and network configuration
+```
+
+3. **Try Different Endpoints:**
+```bash
+# Try different networks
+endpoint simulator    # 127.0.0.1:20000
+endpoint testnet      # 127.0.0.1:40402
+endpoint mainnet      # 127.0.0.1:10102
+endpoint remote       # node.derofoundation.org:11012
+```
+
+**Solutions:**
+
+1. **Start Local Daemon:**
+```bash
+# For simulator (easiest for testing)
+derod --simulator
+
+# For testnet
+derod --testnet
+
+# For mainnet  
+derod
+```
+
+2. **Use Remote Node:**
+```bash
+# In TELA-CLI
+endpoint remote
+# Uses public DERO node
+```
+
+3. **Check Firewall:**
+```bash
+# Ensure ports are not blocked
+# Default ports: 10102 (mainnet), 40402 (testnet), 20000 (simulator)
+```
+
+### Gnomon Connection Issues
+
+**Problem:** Gnomon fails to start or sync
+
+**Diagnostic Steps:**
+
+1. **Check Prerequisites:**
+```bash
+# Daemon must be connected first
+endpoint simulator
+info  # Verify daemon is online (D:▲)
+
+# Then start Gnomon
+gnomon start
+```
+
+2. **Check Gnomon Status:**
+```bash
+info
+# Look for Gnomon status (G:▲ or G:▼)
+```
+
+**Solutions:**
+
+1. **Restart Gnomon:**
+```bash
+gnomon stop
+gnomon start
+```
+
+2. **Full Resync:**
+```bash
+gnomon resync
+# This deletes the local database and starts fresh
+```
+
+3. **Check Database Permissions:**
+```bash
+# Ensure datashards directory is writable
+ls -la ~/.local/share/tela/datashards/
+```
+
+## Wallet Issues
+
+### Wallet Connection Failed
+
+**Problem:** `❌ Error: no wallet connected`
+
+**Solutions:**
+
+1. **Check Wallet File:**
+```bash
+# Verify file exists and is readable
+ls -la ./wallet.db
+```
+
+2. **Interactive Connection:**
+```bash
+# In TELA-CLI
+wallet
+# Follow prompts carefully
+```
+
+3. **Check Password:**
+```bash
+# Ensure correct password
+# Try connecting outside TELA-CLI first with dero-wallet-cli
+```
+
+### Insufficient Balance
+
+**Problem:** `❌ Error: insufficient balance for transaction`
+
+**Solutions:**
+
+1. **Check Balance:**
+```bash
+# In TELA-CLI
+balance
+```
+
+2. **Get Test DERO (Simulator):**
+```bash
+# Simulator provides free DERO
+endpoint simulator
+# Mine some blocks or use faucet
+```
+
+3. **Optimize Gas Usage:**
+```bash
+# Use smaller ring sizes
+# When prompted for ringsize, use 2 instead of higher values
+
+# Compress large files
+file-info large-file.js  # Check size
+# If >15KB, compression is recommended
+```
+
+## Deployment Issues
+
+### File Size Errors
+
+**Problem:** `❌ Error: file too large for deployment`
+
+**Diagnostic:**
+```bash
+file-info problematic-file.js
+# Check actual size vs limits
+```
+
+**Solutions:**
+
+1. **Use Compression:**
+```bash
+# TELA-CLI will prompt for compression during install-doc
+# Choose 'y' when asked "Compress file data (y/n)?"
+```
+
+2. **Use Sharding:**
+```bash
+# For files >18KB even after compression
+file-shard large-file.js
+# Creates multiple shard files
+
+# Deploy each shard with .shard tag
+install-doc large-file-1.js  # dURL: large-file-1.tela.shard
+install-doc large-file-2.js  # dURL: large-file-2.tela.shard
+
+# Create INDEX with .shards tag
+install-index MyApp  # dURL: myapp.tela.shards
+```
+
+3. **Optimize Content:**
+```bash
+# Minify JavaScript/CSS
+# Optimize images
+# Remove unnecessary content
+```
+
+### Smart Contract Validation Errors
+
+**Problem:** `❌ Error: does not parse as TELA-INDEX-1`
+
+**Solutions:**
+
+1. **Check File Type:**
+```bash
+file-info suspicious-file.html
+# Verify it's a supported type
+```
+
+2. **Validate Content:**
+```bash
+# Ensure files contain valid code
+# Check for special characters that might cause issues
+```
+
+3. **Test Locally First:**
+```bash
+serve local ./project-directory
+# Verify everything works locally before deploying
+```
+
+## Search & Discovery Issues
+
+### No Search Results
+
+**Problem:** Search commands return no results
+
+**Diagnostic Steps:**
+
+1. **Check Gnomon Status:**
+```bash
+info
+# Verify Gnomon is running (G:▲)
+```
+
+2. **Check Network:**
+```bash
+# Ensure you're on the right network
+info
+# Try different networks
+endpoint testnet
+gnomon start
+search all
+```
+
+**Solutions:**
+
+1. **Wait for Sync:**
+```bash
+# Gnomon needs time to index
+gnomon start
+# Wait 5-10 minutes for initial sync
+search all
+```
+
+2. **Add Content Manually:**
+```bash
+# Add specific SCIDs you know exist
+gnomon add f2815b442d62a055e4bb8913167e3dbce3208f300d7006aaa3a2f127b06de29d
+search scid f2815b442d62a055e4bb8913167e3dbce3208f300d7006aaa3a2f127b06de29d
+```
+
+3. **Reset Database:**
+```bash
+gnomon resync
+# Complete fresh start
+```
+
+### Search Filters Too Restrictive
+
+**Problem:** Search returns fewer results than expected
+
+**Check Filters:**
+```bash
+# Check current filter settings
+search exclude view
+search min-likes 0  # Reset rating filter
+
+# Clear exclusions if needed
+search exclude clear
+```
+
+## Server Issues
+
+### Port Already in Use
+
+**Problem:** `❌ Error: could not find open port`
+
+**Solutions:**
+
+1. **Change Port Range:**
+```bash
+port-start 9000
+# Try higher port range
+```
+
+2. **Reduce Server Count:**
+```bash
+max-servers 5
+# Limit concurrent servers
+```
+
+3. **Check Running Processes:**
+```bash
+# Find what's using ports
+netstat -tulpn | grep :8082
+# Kill conflicting processes if safe
+```
+
+### Server Won't Start
+
+**Problem:** Servers fail to start or crash immediately
+
+**Diagnostic:**
+```bash
+# Enable debug mode
+tela-cli --debug
+
+# Check system status
+info
+list
+```
+
+**Solutions:**
+
+1. **Check File Permissions:**
+```bash
+# Ensure datashards directory is writable
+ls -la $(tela.GetPath())  # If using Go API
+```
+
+2. **Restart TELA-CLI:**
+```bash
+# Clean shutdown and restart
+shutdown all
+exit
+tela-cli
+```
+
+3. **Clear Temporary Files:**
+```bash
+# Remove any stuck temporary files
+rm -rf ~/.local/share/tela/datashards/tela/*
+```
+
+## Performance Issues
+
+### Slow Operations
+
+**Problem:** Commands take too long to execute
+
+**Solutions:**
+
+1. **Optimize Gnomon:**
+```bash
+# Use fastsync for development
+gnomon stop
+tela-cli --gnomon --fastsync=true
+
+# Reduce parallel blocks for remote nodes
+tela-cli --gnomon --num-parallel-blocks=1
+```
+
+2. **Reduce Search Scope:**
+```bash
+page-size 5              # Smaller result pages
+search min-likes 50      # Filter low-rated content
+```
+
+3. **Local Daemon:**
+```bash
+# Use local daemon instead of remote
+endpoint 127.0.0.1:10102
+# Instead of: endpoint remote
+```
+
+### High Memory Usage
+
+**Problem:** TELA-CLI uses too much memory
+
+**Solutions:**
+
+1. **Limit Servers:**
+```bash
+max-servers 5
+# Reduce concurrent servers
+```
+
+2. **Optimize Gnomon:**
+```bash
+# Use fewer parallel blocks
+tela-cli --num-parallel-blocks=1
+```
+
+3. **Regular Cleanup:**
+```bash
+# Shutdown unused servers
+shutdown tela
+# Keep only necessary servers running
+```
+
+## Debug Mode
+
+### Enable Debug Output
+
+```bash
+# Start with debug mode
+tela-cli --debug
+
+# Or set environment variable
+export DEBUG=true
+tela-cli
+```
+
+### Debug Information
+
+Debug mode provides detailed information about:
+- Network connections and responses
+- Smart contract parsing steps
+- File processing operations
+- Server startup/shutdown events
+- Transaction construction details
+
+**Example Debug Output:**
+```
+DEBUG: Connecting to daemon at 127.0.0.1:20000
+DEBUG: GetSC request for SCID f2815b442d62a055e4bb8913167e3dbce3208f300d7006aaa3a2f127b06de29d
+DEBUG: Parsing smart contract code (1247 bytes)
+DEBUG: Found TELA-INDEX-1 v1.1.0
+DEBUG: Extracting 3 DOC SCIDs
+DEBUG: Creating directory: datashards/tela/myapp.tela
+DEBUG: Starting HTTP server on :8082
+```
+
+## Recovery Procedures
+
+### Complete Reset
+
+If TELA-CLI becomes unresponsive or corrupted:
+
+```bash
+# 1. Force shutdown
+pkill tela-cli  # Linux/macOS
+# Or Ctrl+C / Task Manager on Windows
+
+# 2. Clear temporary data
+rm -rf ~/.local/share/tela/datashards/tela/*
+
+# 3. Reset Gnomon database
+rm -rf ~/.local/share/tela/datashards/gnomon_*
+
+# 4. Restart fresh
+tela-cli --simulator
+```
+
+### Wallet Recovery
+
+If wallet connections fail:
+
+```bash
+# 1. Test wallet outside TELA-CLI
+dero-wallet-cli --wallet-file=./wallet.db
+
+# 2. Verify wallet integrity
+# If wallet opens in dero-wallet-cli, it should work in TELA-CLI
+
+# 3. Check file permissions
+ls -la ./wallet.db
+
+# 4. Try different wallet if available
+wallet ./backup-wallet.db
+```
+
+### Network Recovery
+
+If network operations fail:
+
+```bash
+# 1. Test basic connectivity
+ping 127.0.0.1
+
+# 2. Check daemon status
+curl -X POST http://127.0.0.1:10102/json_rpc \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":"1","method":"DERO.GetInfo"}'
+
+# 3. Restart daemon if needed
+# Stop daemon and restart with appropriate flags
+
+# 4. Try alternative endpoints
+endpoint remote  # Use public node
+```
+
+## Getting Help
+
+### Built-in Help
+
+```bash
+# Show all commands
+help
+
+# Get application info
+info
+
+# Check current status
+list
+```
+
+### Log Analysis
+
+```bash
+# Enable debug mode for detailed logs
+tela-cli --debug
+
+# Look for specific error patterns:
+# - "connection refused" = daemon not running
+# - "invalid SCID" = wrong format or non-existent contract
+# - "insufficient balance" = need more DERO
+# - "file too large" = need compression/sharding
+```
+
+### Community Resources
+
+- **GitHub Issues:** Report bugs and get help
+- **DERO Discord:** Community support and discussions
+- **Documentation:** This guide and API reference
+- **Source Code:** Review implementation details
+
+## Preventive Measures
+
+### Regular Maintenance
+
+```bash
+# Weekly maintenance routine:
+
+# 1. Update TELA-CLI
+go install github.com/civilware/tela/cmd/tela-cli@latest
+
+# 2. Clean up old servers
+shutdown all
+
+# 3. Optimize Gnomon database
+gnomon stop
+gnomon clean simulator  # If you use simulator frequently
+gnomon start
+
+# 4. Check wallet balance
+balance
+
+# 5. Verify configuration
+info
+```
+
+### Backup Procedures
+
+```bash
+# Backup important data:
+
+# 1. Wallet files
+cp ./wallet.db ./wallet-backup-$(date +%Y%m%d).db
+
+# 2. Configuration (if customized)
+cp ~/.local/share/tela/datashards/settings.db ./settings-backup.db
+
+# 3. Cloned content (if important)
+cp -r ~/.local/share/tela/datashards/clone ./clone-backup
+```
+
+<Callout type="warning">
+**Critical Backups**
+- Always backup wallet files before major operations
+- Keep records of deployed SCIDs and TXIDs
+- Backup any custom configuration or scripts
+</Callout>
+
+## Error Reference
+
+### Common Error Messages
+
+| Error Message | Cause | Solution |
+|---------------|-------|----------|
+| `invalid SCID` | Wrong SCID format | Use 64-character hex string |
+| `no daemon connection` | Daemon not running | Start daemon or change endpoint |
+| `no wallet connected` | Wallet not loaded | Use `wallet` command |
+| `insufficient balance` | Not enough DERO | Get more DERO or use simulator |
+| `file too large` | File exceeds limits | Use compression or sharding |
+| `already exists` | Content already cloned | Normal for re-serving content |
+| `not a TELA contract` | Invalid contract type | Verify SCID is TELA content |
+| `permission denied` | File/directory access | Check permissions |
+| `network timeout` | Connection issues | Check network/daemon |
+| `invalid rating` | Rating >99 | Use 0-99 rating scale |
+
+### Debug Command Examples
+
+```bash
+# Test specific functionality:
+
+# 1. Test daemon connection
+endpoint simulator
+info  # Should show D:▲
+
+# 2. Test wallet connection  
+wallet ./test-wallet.db
+balance  # Should show balance
+
+# 3. Test Gnomon
+gnomon start
+search all  # Should return results after sync
+
+# 4. Test file operations
+file-info ./test-file.html
+serve local ./test-directory
+
+# 5. Test deployment (simulator only)
+install-doc ./simple-test.html
+```
+
+## Performance Troubleshooting
+
+### Slow Performance
+
+**Symptoms:**
+- Commands take long time to execute
+- Search results load slowly
+- Gnomon sync is very slow
+
+**Solutions:**
+
+1. **Optimize Gnomon:**
+```bash
+# Reduce parallel blocks for remote connections
+gnomon stop
+tela-cli --gnomon --num-parallel-blocks=1
+
+# Use fastsync for development
+tela-cli --gnomon --fastsync=true
+```
+
+2. **Reduce Search Scope:**
+```bash
+page-size 10             # Smaller result pages
+search min-likes 70      # Filter results
+search exclude add test  # Exclude test content
+```
+
+3. **Use Local Daemon:**
+```bash
+# Local daemon is much faster than remote
+endpoint 127.0.0.1:10102
+# Instead of: endpoint remote
+```
+
+### High Resource Usage
+
+**Solutions:**
+
+1. **Limit Concurrent Operations:**
+```bash
+max-servers 5            # Reduce server limit
+port-start 8090          # Use different port range
+```
+
+2. **Regular Cleanup:**
+```bash
+# Shutdown unused servers
+list
+shutdown <unused-server-name>
+
+# Or shutdown all
+shutdown all
+```
+
+## Advanced Debugging
+
+### Enable Verbose Logging
+
+```bash
+# Start with maximum debugging
+export DEBUG=true
+export TELA_DEBUG=true
+tela-cli --debug
+```
+
+### Network Debugging
+
+```bash
+# Test network connectivity manually
+curl -v http://127.0.0.1:10102/json_rpc
+
+# Check specific DERO RPC methods
+curl -X POST http://127.0.0.1:10102/json_rpc \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":"1","method":"DERO.GetInfo"}'
+```
+
+### File System Debugging
+
+```bash
+# Check datashards directory
+ls -la ~/.local/share/tela/datashards/
+
+# Check permissions
+stat ~/.local/share/tela/datashards/
+
+# Check disk space
+df -h ~/.local/share/tela/
+```
+
+---
+
+## When All Else Fails
+
+### Nuclear Option: Complete Reset
+
+```bash
+# 1. Stop TELA-CLI
+exit
+
+# 2. Remove all TELA data
+rm -rf ~/.local/share/tela/
+
+# 3. Reinstall TELA-CLI
+go install github.com/civilware/tela/cmd/tela-cli@latest
+
+# 4. Start fresh
+tela-cli --simulator
+```
+
+### Getting Support
+
+If you're still experiencing issues:
+
+1. **Gather Information:**
+   - TELA-CLI version (`tela-cli --help`)
+   - Operating system and version
+   - Go version (`go version`)
+   - Error messages and debug output
+   - Steps to reproduce the issue
+
+2. **Check Resources:**
+   - Review this troubleshooting guide
+   - Check the [API Reference](/api-reference) for related functions
+   - Search existing GitHub issues
+
+3. **Report Issues:**
+   - Create detailed GitHub issues
+   - Include debug output and reproduction steps
+   - Mention your environment details
+
+<Callout type="tip">
+Most TELA-CLI issues are related to network connectivity, wallet access, or file permissions. The diagnostic steps above solve 90% of common problems.
+</Callout>
+
+This troubleshooting guide covers the most common issues you'll encounter with TELA-CLI. Keep it handy for quick reference during development!

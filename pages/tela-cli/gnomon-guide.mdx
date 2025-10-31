@@ -1,0 +1,1241 @@
+---
+title: "Gnomon Indexer Deep-Dive Guide | TELA Content Discovery and Indexing"
+description: "Complete guide to Gnomon indexer for TELA-CLI - understand blockchain indexing, database management, performance tuning, and advanced search capabilities for DERO content discovery."
+keywords: "Gnomon indexer, TELA search, blockchain indexing, content discovery, Gnomon database, DERO indexer, smart contract indexing, TELA-CLI indexer"
+date: "2024-08-26"
+lastUpdated: "2025-10-22"
+authors: ["DHEBP"]
+image: "/assets/gnomon-guide.png"
+slug: "tela-cli/gnomon-guide"
+canonicalUrl: "https://tela.derod.org/tela-cli/gnomon-guide"
+tags: ["gnomon", "indexer", "search", "database", "TELA-CLI"]
+---
+
+import { Callout } from 'nextra/components'
+import { Card, Cards } from 'nextra/components'
+
+# Gnomon Indexer Deep-Dive Guide
+
+Complete guide to understanding and using Gnomon - the blockchain indexer that powers TELA content discovery.
+
+<Callout type="info" emoji="🔍">
+**What is Gnomon?** A blockchain indexer that scans the DERO network for TELA smart contracts, indexes their content and variables, and enables fast searching and discovery.
+</Callout>
+
+## What Gnomon Does
+
+### Core Functions
+
+| Function | Description |
+|----------|-------------|
+| **Scans Blockchain** | Reads every block looking for TELA contracts |
+| **Indexes Smart Contracts** | Stores TELA-DOC and TELA-INDEX metadata |
+| **Tracks Variables** | Records all contract variables and values |
+| **Monitors Ratings** | Tracks rating transactions and scores |
+| **Enables Search** | Powers all `search` commands in TELA-CLI |
+| **Maintains History** | Preserves version updates and changes |
+
+### Why Gnomon is Essential
+
+**Without Gnomon:**
+- ❌ Cannot search for TELA content
+- ❌ Cannot discover new applications
+- ❌ Cannot view ratings
+- ❌ Must know exact SCIDs to access content
+- ❌ No content discovery
+
+**With Gnomon:**
+- ✅ Search by name, author, dURL, content
+- ✅ Discover quality applications (min-likes)
+- ✅ Browse libraries and DocShards
+- ✅ View your own deployed content
+- ✅ Analyze smart contract variables
+- ✅ Complete content ecosystem navigation
+
+---
+
+## Starting Gnomon
+
+### Basic Start
+
+```bash
+# Prerequisites: Daemon must be connected first
+» endpoint simulator
+» info  # Verify [D:▲] - daemon online
+
+# Start Gnomon
+» gnomon start
+
+# Watch status change from [G:▼] to [G:▲]
+```
+
+**First-time sync:**
+```
+Starting Gnomon indexer...
+Syncing blocks: 0/15,234...
+Syncing blocks: 5,000/15,234...
+Syncing blocks: 10,000/15,234...
+Syncing blocks: 15,234/15,234... Done!
+Indexed 247 TELA contracts
+Gnomon online: [G:▲]
+```
+
+### Startup Options
+
+**Start with TELA-CLI flags:**
+```bash
+# Auto-start with daemon
+tela-cli --daemon --gnomon
+
+# With fast sync (development)
+tela-cli --daemon --gnomon --fastsync=true
+
+# With parallel blocks (local nodes only)
+tela-cli --daemon --gnomon --num-parallel-blocks=5
+```
+
+---
+
+## Sync Strategies
+
+### Full Sync (Default)
+
+**How it works:**
+```
+Starts at block 0
+  ↓
+Scans every block sequentially
+  ↓
+Indexes all TELA contracts found
+  ↓
+Catches up to current height
+```
+
+**Use When:**
+- First-time setup
+- Need complete history
+- Analyzing historical data
+- Production/mainnet deployments
+
+**Time:**
+- **Simulator:** ~30 seconds (low block count)
+- **Testnet:** ~5-10 minutes
+- **Mainnet:** ~30-60 minutes (depends on network)
+
+### Fast Sync
+
+**How it works:**
+```
+Starts at current chain height
+  ↓
+Only indexes new blocks going forward
+  ↓
+Skips historical data
+```
+
+**Enable:**
+```bash
+tela-cli --daemon --gnomon --fastsync=true
+```
+
+**Use When:**
+- Development and testing
+- Don't need historical data
+- Quick content discovery
+- Temporary instances
+
+**Time:**
+- **All Networks:** ~5 seconds to start
+- Only indexes new blocks as they arrive
+
+<Callout type="warning">
+**Fast Sync Limitation:** You won't see historical TELA contracts. Only new deployments after Gnomon started.
+</Callout>
+
+### Continuing Sync
+
+**How it works:**
+```
+Loads from last indexed height
+  ↓
+Continues from that point
+  ↓
+Catches up to current height
+```
+
+**Automatic:** Happens when you restart Gnomon after previous sync
+
+**Example:**
+```bash
+# First run
+» gnomon start
+# Syncs blocks 0 → 15,234
+» gnomon stop
+
+# Later (chain is now at 20,000)
+» gnomon start
+# Only syncs blocks 15,234 → 20,000 (continuing)
+```
+
+---
+
+## Database Management
+
+### Storage Locations
+
+**macOS/Linux:**
+```
+~/.local/share/tela/datashards/
+├── gnomon_simulator.db    # Simulator network DB
+├── gnomon_testnet.db      # Testnet network DB
+├── gnomon_mainnet.db      # Mainnet network DB
+└── settings.db            # TELA-CLI preferences
+```
+
+**Windows:**
+```
+%APPDATA%\tela\datashards\
+├── gnomon_simulator.db
+├── gnomon_testnet.db
+├── gnomon_mainnet.db
+└── settings.db
+```
+
+### Database Sizes
+
+| Network | Typical Size | Growth Rate |
+|---------|--------------|-------------|
+| **Simulator** | < 10 MB | Minimal (testing only) |
+| **Testnet** | 50-200 MB | Moderate |
+| **Mainnet** | 200-500+ MB | Grows with TELA adoption |
+
+**Monitor Size:**
+```bash
+# macOS/Linux
+ls -lh ~/.local/share/tela/datashards/gnomon_*.db
+
+# Check total size
+du -sh ~/.local/share/tela/datashards/
+```
+
+### Database Types
+
+TELA-CLI supports two database backends:
+
+**GravDB (Default):**
+```bash
+tela-cli --db-type=gravdb
+```
+- ✅ Better performance
+- ✅ Recommended for most users
+- ✅ Default choice
+
+**BoltDB (Alternative):**
+```bash
+tela-cli --db-type=boltdb
+```
+- ✅ More mature
+- ✅ Alternative if GravDB has issues
+
+---
+
+## Gnomon Operations
+
+### `gnomon start`
+
+Start the Gnomon indexer.
+
+```bash
+» gnomon start
+```
+
+**What happens:**
+1. Connects to daemon
+2. Checks last indexed height
+3. Begins scanning blocks
+4. Indexes TELA contracts found
+5. Updates status to [G:▲]
+
+**Output:**
+```
+Starting Gnomon indexer...
+Loading from height: 12,000
+Current chain height: 15,234
+Syncing 3,234 blocks...
+Progress: 25%... 50%... 75%... 100%
+Indexed 47 new TELA contracts
+Gnomon online: [G:▲]
+```
+
+---
+
+### `gnomon stop`
+
+Stop the Gnomon indexer.
+
+```bash
+» gnomon stop
+```
+
+**What happens:**
+1. Saves current indexed height
+2. Closes database connections
+3. Stops block scanning
+4. Updates status to [G:▼]
+
+**Use When:**
+- Switching networks
+- Freeing system resources
+- Shutting down TELA-CLI
+- Performing database maintenance
+
+---
+
+### `gnomon resync`
+
+Complete database reset and resync.
+
+```bash
+» gnomon resync
+```
+
+**What happens:**
+1. Stops Gnomon (if running)
+2. **Deletes entire database** for current network
+3. Restarts Gnomon
+4. Performs full sync from block 0
+
+**Use When:**
+- Database corruption suspected
+- Want fresh index
+- Network had major update
+- Strange search results
+
+<Callout type="error" emoji="⚠️">
+**Data Loss Warning:** `gnomon resync` deletes all indexed data for the current network. You'll need to re-sync from scratch.
+</Callout>
+
+**Example:**
+```bash
+# You're on mainnet with corrupted DB
+» gnomon resync
+
+# Stops Gnomon
+# Deletes gnomon_mainnet.db
+# Restarts and syncs from block 0
+# This will take 30-60 minutes for mainnet!
+```
+
+---
+
+### `gnomon add`
+
+Manually add specific SCIDs to index.
+
+```bash
+# Add single SCID
+» gnomon add abc123def456...
+
+# Add multiple SCIDs
+» gnomon add abc123... def456... ghi789...
+```
+
+**Use Cases:**
+
+**1. Index Specific Known Contracts:**
+```bash
+# You know a specific app SCID
+» gnomon add f2815b442d62a055e4bb8913167e3dbce3208f300d7006aaa3a2f127b06de29d
+# Immediately indexed, no need to wait for full sync
+```
+
+**2. Targeted Development:**
+```bash
+# Index only your development contracts
+» gnomon add [your-test-app-scid]
+» gnomon add [your-library-scid]
+# Skip indexing thousands of other contracts
+```
+
+**3. Quick Testing:**
+```bash
+# Start fresh with fastsync
+tela-cli --simulator --gnomon --fastsync=true
+
+# Add specific contracts you want to work with
+» gnomon add abc123...
+» gnomon add def456...
+
+# Search now works for these specific contracts
+» search scid abc123...
+```
+
+**Benefits:**
+- ⚡ Instant indexing (no waiting for sync)
+- 🎯 Targeted indexing (save resources)
+- 🔧 Development efficiency
+
+---
+
+### `gnomon clean`
+
+Delete Gnomon database for specific network.
+
+```bash
+» gnomon clean simulator
+» gnomon clean testnet
+» gnomon clean mainnet
+```
+
+**What happens:**
+- Deletes database file for specified network
+- Does NOT delete databases for other networks
+- Does NOT restart Gnomon
+- Frees disk space
+
+**Use Cases:**
+
+**1. Disk Space Management:**
+```bash
+# You tested on testnet but now use mainnet
+» gnomon clean testnet
+# Frees 150MB of testnet data
+```
+
+**2. Network Switching Cleanup:**
+```bash
+# Switching from simulator to mainnet
+» endpoint close
+» gnomon stop
+» gnomon clean simulator
+» endpoint mainnet
+» gnomon start
+```
+
+**3. Fresh Start for Specific Network:**
+```bash
+» gnomon stop
+» gnomon clean mainnet
+» gnomon start
+# Fresh sync begins
+```
+
+---
+
+## Performance Tuning
+
+### Parallel Block Processing
+
+**Concept:** Process multiple blocks simultaneously for faster indexing.
+
+**Configure:**
+```bash
+# Default (safe for all nodes)
+tela-cli --gnomon --num-parallel-blocks=3
+
+# Local node (faster)
+tela-cli --gnomon --num-parallel-blocks=10
+
+# Remote node (conservative)
+tela-cli --gnomon --num-parallel-blocks=1
+```
+
+**Guidelines:**
+
+| Node Type | Recommended Setting | Reason |
+|-----------|---------------------|--------|
+| **Local Daemon** | 5-10 | Fast, reliable connection |
+| **Remote Public Node** | 1-2 | Avoid overwhelming remote server |
+| **Slow Connection** | 1 | Prevent timeouts |
+
+<Callout type="warning">
+**Remote Node Warning:** Using high parallel blocks (>5) on remote nodes can cause timeouts, connection failures, or get you rate-limited.
+</Callout>
+
+### Memory Management
+
+**Gnomon memory usage depends on:**
+- Number of indexed contracts
+- Parallel block processing
+- Database size
+- Network activity
+
+**Optimization:**
+```bash
+# Reduce memory usage
+tela-cli --gnomon --num-parallel-blocks=1
+
+# Or use fastsync
+tela-cli --gnomon --fastsync=true
+
+# Close Gnomon when not needed
+» gnomon stop
+```
+
+---
+
+## Indexing Workflows
+
+### Development Workflow (Fast)
+
+```bash
+# Quick setup for testing
+tela-cli --simulator --gnomon --fastsync=true
+
+# Add only your test contracts
+» gnomon add [your-test-scid]
+
+# Search works immediately
+» search scid [your-test-scid]
+» search my indexes
+
+# Deploy and test
+» install-index "Test App"
+# Automatically added to Gnomon
+» search my indexes
+```
+
+**Time:** ~10 seconds total
+
+---
+
+### Production Workflow (Complete)
+
+```bash
+# Full mainnet indexing
+tela-cli --mainnet --gnomon --num-parallel-blocks=3
+
+# Wait for complete sync (30-60 min)
+» info  # Check progress
+
+# Once synced, search entire network
+» search min-likes 70
+» search libs
+» search all
+
+# Continuous updates
+# Gnomon automatically indexes new blocks
+```
+
+**Time:** Initial sync ~30-60 min, then real-time updates
+
+---
+
+### Content Discovery Workflow
+
+```bash
+# Start with indexed network
+tela-cli --mainnet --gnomon
+» gnomon start  # If not auto-started
+
+# Wait for sync...
+
+# Discover quality content
+» search min-likes 80
+» search indexes
+
+# Find libraries
+» search libs
+
+# Analyze interesting apps
+» search scid [interesting-scid]
+» search scid vars [interesting-scid]
+» search ratings [interesting-scid]
+
+# Clone and explore
+» clone [interesting-scid]
+» serve [interesting-scid]
+```
+
+---
+
+### Selective Indexing Workflow
+
+```bash
+# Skip full sync, index only what you need
+tela-cli --simulator --gnomon --fastsync=true
+
+# Add specific SCIDs
+» gnomon add abc123...  # App you want to study
+» gnomon add def456...  # Library you use
+» gnomon add ghi789...  # Friend's deployment
+
+# Search works for added contracts
+» search all  # Shows only your added contracts
+» search scid abc123...
+```
+
+**Benefits:**
+- ⚡ Instant start (no waiting)
+- 💾 Minimal disk usage
+- 🎯 Focused indexing
+
+---
+
+## Database Maintenance
+
+### When to Clean Databases
+
+**Scenario 1: Network Switching**
+```bash
+# You used simulator for testing, now going to mainnet
+» endpoint close
+» gnomon stop
+» gnomon clean simulator  # Free up space
+» endpoint mainnet
+» gnomon start
+```
+
+**Scenario 2: Disk Space Issues**
+```bash
+# Check database sizes
+ls -lh ~/.local/share/tela/datashards/gnomon_*.db
+
+# Clean unused networks
+» gnomon clean testnet
+» gnomon clean simulator
+# Keep only mainnet
+```
+
+**Scenario 3: Multiple Network Testing**
+```bash
+# After extensive testing on all networks
+» gnomon clean simulator  # 10 MB freed
+» gnomon clean testnet    # 150 MB freed
+# Keep mainnet for production
+```
+
+### When to Resync
+
+**Indicators you need resync:**
+- Strange search results
+- Missing known contracts
+- Database errors in logs
+- After network hard fork
+- Corrupted database file
+
+**Process:**
+```bash
+» gnomon resync
+# Confirm you want to delete data
+# Wait for complete resync
+# Fresh, clean database
+```
+
+---
+
+## Advanced Search with Gnomon
+
+### Search by Variable Keys
+
+Find contracts with specific stored variables:
+
+```bash
+# Find all contracts with owner notes
+» search key var_owners_note
+
+# Find contracts with category metadata
+» search key var_meta_category
+
+# Find contracts with custom variables
+» search key myCustomVar
+```
+
+**Use Case:** Discover apps using specific features or patterns
+
+---
+
+### Search by Variable Values
+
+Find contracts storing specific values:
+
+```bash
+# Find all "Productivity" apps
+» search value Productivity
+
+# Find apps with specific tags
+» search value "#TELA #Game"
+
+# Find deprecated apps
+» search value "Deprecated"
+```
+
+**Use Case:** Category-based discovery, status checking
+
+---
+
+### Search Code Analysis
+
+**Search for specific code patterns:**
+```bash
+# Find contracts using specific functions
+» search line "Function SetVar"
+
+# Find contracts with XSWD integration
+» search line "WebSocket"
+
+# Find contracts using specific APIs
+» search line "DERO.GetInfo"
+```
+
+**Use Case:** Learn from existing implementations, find similar apps
+
+---
+
+### Combined Search Strategies
+
+**Quality-filtered discovery:**
+```bash
+# High-quality indexes only
+» search min-likes 80
+» search indexes
+
+# High-quality libraries
+» search min-likes 70
+» search libs
+```
+
+**Author-focused discovery:**
+```bash
+# Find all content by specific developer
+» search author deto1qy...
+
+# Then analyze their best work
+» search min-likes 75
+# Now shows only their 75+ rated content
+```
+
+**Exclusion-based filtering:**
+```bash
+# Exclude test content
+» search exclude add test
+» search exclude add demo
+» search exclude add example
+
+# Now search shows only production content
+» search all
+```
+
+---
+
+## Gnomon Performance Optimization
+
+### Local vs Remote Nodes
+
+**Local Node (Best Performance):**
+```bash
+# High parallel blocks OK
+tela-cli --daemon=127.0.0.1:10102 --gnomon --num-parallel-blocks=10
+
+# Fast sync times
+# No network latency
+# No rate limiting
+```
+
+**Remote Node (Conservative):**
+```bash
+# Low parallel blocks required
+tela-cli --daemon=node.derofoundation.org:11012 --gnomon --num-parallel-blocks=1
+
+# Slower sync times
+# Network latency
+# Respectful of public resources
+```
+
+### Sync Speed Comparison
+
+| Configuration | Mainnet Sync Time |
+|---------------|-------------------|
+| Local node, 10 parallel | ~20 minutes |
+| Local node, 3 parallel | ~35 minutes |
+| Local node, 1 parallel | ~60 minutes |
+| Remote node, 1 parallel | ~90+ minutes |
+| Fast sync | ~5 seconds (no history) |
+
+### Memory Optimization
+
+**High memory usage (>500MB)?**
+
+**Solutions:**
+```bash
+# 1. Reduce parallel blocks
+» gnomon stop
+tela-cli --gnomon --num-parallel-blocks=1
+
+# 2. Use fastsync if history not needed
+tela-cli --gnomon --fastsync=true
+
+# 3. Stop when not searching
+» gnomon stop  # When not using search
+» gnomon start # When needed again
+```
+
+---
+
+## Network-Specific Strategies
+
+### Simulator Network
+
+**Characteristics:**
+- Very few blocks
+- Mostly test contracts
+- Fast sync (<30 seconds)
+- Clean frequently
+
+**Recommended Setup:**
+```bash
+tela-cli --simulator --gnomon
+
+# Full sync is fine (quick)
+» gnomon start
+
+# Clean regularly
+» gnomon clean simulator
+```
+
+---
+
+### Testnet Network
+
+**Characteristics:**
+- Moderate block count
+- Mix of test and real apps
+- Medium sync time (5-10 min)
+- Good for staging
+
+**Recommended Setup:**
+```bash
+tela-cli --testnet --gnomon --num-parallel-blocks=3
+
+# Full sync recommended
+» gnomon start
+
+# Clean when switching to mainnet
+» gnomon clean testnet
+```
+
+---
+
+### Mainnet Network
+
+**Characteristics:**
+- Large block count
+- Production applications
+- Long sync time (30-60 min)
+- Keep database persistent
+
+**Recommended Setup:**
+```bash
+# Local node
+tela-cli --mainnet --daemon=127.0.0.1:10102 --gnomon --num-parallel-blocks=5
+
+# Remote node
+tela-cli --mainnet --daemon=remote --gnomon --num-parallel-blocks=1
+
+# Let it sync once, then reuse database
+» gnomon start
+# Wait for complete sync
+# Database persists for future sessions
+```
+
+---
+
+## Troubleshooting Gnomon
+
+### Issue: Gnomon won't start
+
+**Diagnostic:**
+```bash
+» info
+# Check [D:▲] - daemon must be online first
+```
+
+**Solution:**
+```bash
+# 1. Ensure daemon is connected
+» endpoint simulator  # or testnet/mainnet
+
+# 2. Verify connection
+» info  # Should show [D:▲]
+
+# 3. Start Gnomon
+» gnomon start
+```
+
+---
+
+### Issue: Sync is very slow
+
+**Causes:**
+- Remote node + high parallel blocks
+- Network latency
+- Large blockchain (mainnet)
+
+**Solutions:**
+```bash
+# 1. Reduce parallel blocks
+» gnomon stop
+tela-cli --gnomon --num-parallel-blocks=1
+» gnomon start
+
+# 2. Use local node
+» endpoint 127.0.0.1:10102
+» gnomon start
+
+# 3. Use fastsync if history not needed
+tela-cli --gnomon --fastsync=true
+```
+
+---
+
+### Issue: No search results
+
+**Diagnostic:**
+```bash
+» info
+# Check [G:▲] - Gnomon must be online
+
+# Check if sync completed
+» search all
+```
+
+**Solutions:**
+```bash
+# 1. Wait for sync to complete
+» gnomon start
+# Wait for "Syncing complete" message
+
+# 2. Check you're on right network
+» endpoint mainnet  # Switch if needed
+» gnomon start
+
+# 3. Try adding specific SCID
+» gnomon add [known-scid]
+» search scid [known-scid]
+```
+
+---
+
+### Issue: Database corruption
+
+**Symptoms:**
+- Gnomon crashes on start
+- Error messages in logs
+- Strange search results
+- Database file errors
+
+**Solution:**
+```bash
+# Nuclear option: resync
+» gnomon resync
+
+# Or manual deletion
+» gnomon stop
+# Manually delete: ~/.local/share/tela/datashards/gnomon_[network].db
+» gnomon start
+```
+
+---
+
+### Issue: High memory usage
+
+**Solution:**
+```bash
+# Reduce parallel blocks
+» gnomon stop
+tela-cli --gnomon --num-parallel-blocks=1
+
+# Or stop when not needed
+» gnomon stop
+# Use search? Start again:
+» gnomon start
+```
+
+---
+
+## Advanced Use Cases
+
+### Blockchain Analysis
+
+```bash
+# Index mainnet
+» endpoint mainnet
+» gnomon start
+# Wait for full sync
+
+# Analyze TELA ecosystem
+» search all                    # Total contracts
+» search docs                   # All files
+» search indexes                # All applications
+» search libs                   # All libraries
+
+# Analyze by type
+» search docs HTML              # All HTML files
+» search docs JS                # All JavaScript
+» search docs CSS               # All stylesheets
+
+# Find patterns
+» search line "XSWD"            # Apps using XSWD
+» search key "var_meta_category" # Apps with categories
+```
+
+---
+
+### Developer Discovery
+
+```bash
+# Find productive developers
+» search author deto1qy...
+
+# Analyze their work
+» search my indexes  # If connected as that dev
+# Or browse their public contracts
+
+# Find popular developers
+» search min-likes 90
+# Note the author addresses
+» search author [top-rated-author]
+```
+
+---
+
+### Library Discovery
+
+```bash
+# Find all libraries
+» search libs
+
+# Find specific library types
+» search durl utils.tela.lib
+» search durl components.tela.lib
+
+# Analyze library code
+» search scid [library-scid]
+» search code [library-scid]
+» clone [library-scid]
+```
+
+---
+
+### Quality Assurance
+
+```bash
+# Find exceptional content
+» search min-likes 90
+» search indexes
+
+# Find problematic content  
+» search min-likes 0  # Remove filter
+» search indexes
+# Look for low ratings
+
+# Analyze ratings
+» search ratings [scid]
+# See all individual ratings and comments
+```
+
+---
+
+## Gnomon + Search Workflows
+
+### Content Curator Workflow
+
+```bash
+# 1. Index the network
+» endpoint mainnet
+» gnomon start
+# Wait for sync
+
+# 2. Find quality content
+» search min-likes 85
+» search indexes
+
+# 3. Categorize content
+» search key var_meta_category
+# View all categorized apps
+
+# 4. Rate and organize
+» rate [good-app-scid]
+» clone [excellent-app-scid]
+```
+
+---
+
+### Developer Learning Workflow
+
+```bash
+# 1. Find advanced implementations
+» search min-likes 75
+» search docs JS
+
+# 2. Analyze code
+» search line "WebSocket"
+» search line "XSWD"
+
+# 3. Study specific apps
+» clone [advanced-app-scid]
+» search code [advanced-app-scid]
+
+# 4. Learn patterns
+» search scid vars [app-scid]
+# See how they use variables and MODs
+```
+
+---
+
+### Library User Workflow
+
+```bash
+# 1. Discover libraries
+» search libs
+» search durl .tela.lib
+
+# 2. Filter by quality
+» search min-likes 70
+
+# 3. Test libraries
+» clone [library-scid]
+» serve [library-scid]
+
+# 4. Integrate in your app
+# Add library SCID to your INDEX DOCs
+```
+
+---
+
+## Best Practices
+
+<Callout type="tip">
+**Gnomon Best Practices**
+
+1. **Start Gnomon with daemon flag** - Ensures proper initialization
+2. **Use local nodes for development** - Much faster syncing
+3. **Keep mainnet DB persistent** - Sync once, reuse forever
+4. **Clean unused networks** - Free up disk space
+5. **Use fastsync for testing** - When history doesn't matter
+6. **Add specific SCIDs for quick testing** - Skip full sync
+7. **Monitor database size** - Clean periodically
+</Callout>
+
+### Recommended Setups
+
+**Development Setup:**
+```bash
+tela-cli --simulator --gnomon --fastsync=true
+# Fast start, minimal resources
+```
+
+**Testing Setup:**
+```bash
+tela-cli --testnet --gnomon --num-parallel-blocks=3
+# Moderate sync, realistic environment
+```
+
+**Production Setup:**
+```bash
+tela-cli --mainnet --daemon=127.0.0.1:10102 --gnomon --num-parallel-blocks=5
+# Full sync, optimal performance
+```
+
+**Low-Resource Setup:**
+```bash
+tela-cli --mainnet --gnomon --num-parallel-blocks=1
+# Slower but minimal memory/CPU
+```
+
+---
+
+## Monitoring Gnomon
+
+### Check Sync Status
+
+```bash
+» info
+
+# Output shows:
+# Gnomon: Online
+# Indexed Blocks: 15,234/15,234
+# TELA Contracts: 247
+# Last Update: 2s ago
+```
+
+### Watch Sync Progress
+
+**During sync, status updates appear:**
+```
+Syncing blocks: 5,000/15,234 (33%)
+Indexed 52 TELA contracts so far...
+
+Syncing blocks: 10,000/15,234 (66%)
+Indexed 147 TELA contracts so far...
+
+Syncing blocks: 15,234/15,234 (100%)
+Indexed 247 TELA contracts
+Sync complete!
+```
+
+### Verify Indexing
+
+```bash
+# After deployment, verify it's indexed
+» install-index "My App"
+# Note the SCID from output
+
+# Search for it
+» search my indexes
+# Should appear in results
+
+# Or search by SCID
+» search scid [your-new-scid]
+```
+
+---
+
+## Gnomon Data Structure
+
+### What Gets Indexed
+
+**For each TELA contract found:**
+- ✅ SCID
+- ✅ Contract type (DOC or INDEX)
+- ✅ All STORE variables
+- ✅ Author address
+- ✅ Deployment height
+- ✅ All rating transactions
+- ✅ Update history (for INDEX)
+
+**Searchable Fields:**
+- SCID
+- dURL
+- var_header_name
+- var_header_description
+- All var_* variables
+- Author address
+- docType (for DOCs)
+- Contract code
+
+---
+
+## Related Documentation
+
+<Cards>
+  <Card title="Search Guide" href="/tela-cli/search-guide">
+    Advanced search techniques
+  </Card>
+  <Card title="Command Reference" href="/tela-cli/command-reference">
+    All Gnomon commands
+  </Card>
+  <Card title="Workflows" href="/tela-cli/workflows">
+    Development workflows
+  </Card>
+  <Card title="Troubleshooting" href="/tela-cli/troubleshooting">
+    Common issues and solutions
+  </Card>
+</Cards>
+
+---
+
+<Callout type="success" emoji="🎯">
+**Gnomon Mastery Achieved:** You now understand how to efficiently index, search, and discover TELA content across the DERO blockchain!
+</Callout>
+

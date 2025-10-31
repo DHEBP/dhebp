@@ -1,0 +1,972 @@
+---
+title: "TELA Error Troubleshooting Guide | Debug and Fix Common TELA Development Issues"
+description: "Comprehensive guide to diagnosing and fixing common TELA development and deployment errors. Solutions for XSWD connection issues, deployment failures, file size errors, and network problems."
+keywords: "TELA errors, troubleshooting, debugging, XSWD errors, DERO errors, deployment issues, TELA debugging, error solutions, fix deployment, blockchain errors"
+date: "2025-01-12"
+lastUpdated: "2025-10-22"
+authors: ["DHEBP"]
+image: "/assets/troubleshooting.png"
+slug: "error-troubleshooting"
+canonicalUrl: "https://tela.derod.org/error-troubleshooting"
+tags: ["troubleshooting", "debugging", "errors", "TELA", "development"]
+---
+
+import { Callout } from 'nextra/components';
+import { Card, Cards } from 'nextra/components';
+
+# Error Troubleshooting Guide
+
+Comprehensive guide to diagnosing and fixing common errors in TELA development and deployment.
+
+<Callout emoji="🔧">
+  **Quick Debug**: Most issues fall into 5 categories: XSWD connection, file size, deployment errors, runtime errors, and network issues.
+</Callout>
+
+## Table of Contents
+
+- [XSWD Connection Errors](#xswd-connection-errors)
+- [Deployment Errors](#deployment-errors)
+- [File Size Errors](#file-size-errors)
+- [Runtime Errors](#runtime-errors)
+- [Network & Blockchain Errors](#network--blockchain-errors)
+- [Performance Issues](#performance-issues)
+- [Development Environment Issues](#development-environment-issues)
+
+---
+
+## XSWD Connection Errors
+
+### Error: "WebSocket connection failed"
+
+**Symptoms:**
+```
+WebSocket connection to 'ws://127.0.0.1:44326/xswd' failed
+```
+
+**Common Causes:**
+1. Wallet not running
+2. XSWD not enabled in wallet
+3. Wrong port
+4. Firewall blocking connection
+
+**Diagnosis:**
+```javascript
+// Test XSWD connectivity
+function testXSWDPorts() {
+    const ports = [44326, 10103, 40403];
+    
+    ports.forEach(port => {
+        const ws = new WebSocket(`ws://127.0.0.1:${port}/xswd`);
+        
+        ws.onopen = () => {
+            console.log(`✅ Port ${port} is accessible`);
+            ws.close();
+        };
+        
+        ws.onerror = () => {
+            console.error(`❌ Port ${port} failed`);
+        };
+    });
+}
+
+testXSWDPorts();
+```
+
+**Solutions:**
+
+1. **Check Wallet is Running**
+   ```bash
+   # Check if Engram is running
+   ps aux | grep -i engram
+   
+   # Or check DERO wallet
+   ps aux | grep -i dero-wallet
+   ```
+
+2. **Enable XSWD in Engram**
+   - Open Engram wallet
+   - Go to Settings → XSWD
+   - Ensure "Enable XSWD" is checked
+   - Check port (default: 44326)
+
+3. **Try Alternative Ports**
+   ```javascript
+   const XSWD_ENDPOINTS = [
+       'ws://127.0.0.1:44326/xswd',  // Engram default
+       'ws://127.0.0.1:10103/xswd',  // Wallet RPC (mainnet)
+       'ws://127.0.0.1:40403/xswd'   // Wallet RPC (testnet)
+   ];
+   
+   async function connectWithFallback() {
+       for (const endpoint of XSWD_ENDPOINTS) {
+           try {
+               const socket = new WebSocket(endpoint);
+               await new Promise((resolve, reject) => {
+                   socket.onopen = resolve;
+                   socket.onerror = reject;
+                   setTimeout(reject, 5000);  // 5s timeout
+               });
+               return socket;  // Success!
+           } catch (e) {
+               console.log(`Failed to connect to ${endpoint}`);
+           }
+       }
+       throw new Error('All XSWD endpoints failed');
+   }
+   ```
+
+4. **Check Firewall**
+   ```bash
+   # macOS: Check if port is blocked
+   sudo lsof -i :44326
+   
+   # Linux: Check firewall
+   sudo ufw status
+   sudo ufw allow 44326
+   
+   # Windows: Check Windows Defender Firewall
+   # Allow inbound on port 44326
+   ```
+
+### Error: "XSWD connection closed unexpectedly"
+
+**Symptoms:**
+```
+XSWD connection closed (code: 1006)
+```
+
+**Causes:**
+1. Wallet crashed
+2. Network interruption
+3. Too many requests
+4. Timeout
+
+**Solution:**
+```javascript
+// Implement auto-reconnection
+class XSWDConnection {
+    constructor() {
+        this.socket = null;
+        this.reconnectAttempts = 0;
+        this.maxReconnectAttempts = 10;
+        this.reconnectDelay = 1000;
+    }
+    
+    connect(url) {
+        this.socket = new WebSocket(url);
+        
+        this.socket.onopen = () => {
+            console.log('✅ XSWD connected');
+            this.reconnectAttempts = 0;
+            this.onConnected();
+        };
+        
+        this.socket.onclose = (event) => {
+            console.log('🔌 XSWD disconnected:', event.code);
+            this.reconnect(url);
+        };
+        
+        this.socket.onerror = (error) => {
+            console.error('❌ XSWD error:', error);
+        };
+    }
+    
+    reconnect(url) {
+        if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+            console.error('Max reconnection attempts reached');
+            this.onMaxAttemptsReached();
+            return;
+        }
+        
+        this.reconnectAttempts++;
+        const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
+        
+        console.log(`Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})`);
+        
+        setTimeout(() => {
+            this.connect(url);
+        }, delay);
+    }
+    
+    onConnected() {
+        // Override this
+    }
+    
+    onMaxAttemptsReached() {
+        // Override this
+        alert('Unable to connect to DERO wallet. Please ensure your wallet is running and XSWD is enabled.');
+    }
+}
+```
+
+### Error: "Method not found"
+
+**Symptoms:**
+```json
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32601,
+    "message": "Method not found"
+  }
+}
+```
+
+**Causes:**
+1. Typo in method name
+2. Method not available in DERO version
+3. Wrong RPC endpoint
+
+**Solution:**
+```javascript
+// Validate method before calling
+const AVAILABLE_METHODS = [
+    'DERO.GetInfo',
+    'DERO.GetBlock',
+    'DERO.GetHeight',
+    'DERO.GetSC',
+    'GetAddress',
+    'GetBalance',
+    'Transfer',
+    // ... add more
+];
+
+async function safeCall(method, params = {}) {
+    // Check if method is known
+    if (!AVAILABLE_METHODS.includes(method)) {
+        console.warn(`Method ${method} might not be available`);
+    }
+    
+    try {
+        return await xswd.call(method, params);
+    } catch (error) {
+        if (error.code === -32601) {
+            console.error(`Method ${method} not found. Check DERO version.`);
+            // Try alternative method if available
+            const alternative = getAlternativeMethod(method);
+            if (alternative) {
+                console.log(`Trying alternative: ${alternative}`);
+                return await xswd.call(alternative, params);
+            }
+        }
+        throw error;
+    }
+}
+```
+
+---
+
+## Deployment Errors
+
+### Error: "File too large"
+
+**Symptoms:**
+```
+Error: DOC file exceeds maximum size of 18KB
+```
+
+**Diagnosis:**
+```bash
+# Check file size
+ls -lh your-file.html
+
+# Check actual code size (without whitespace)
+# Minified size is what matters
+cat your-file.html | tr -d ' \n\t' | wc -c
+```
+
+**Solutions:**
+
+1. **Minify Code**
+   ```bash
+   # HTML minification
+   # Remove comments, whitespace
+   sed -e 's/<!--.*-->//g' -e 's/  */ /g' input.html > output.html
+   
+   # CSS minification
+   npx cssnano input.css output.min.css
+   
+   # JavaScript minification
+   npx terser input.js -o output.min.js -c -m
+   ```
+
+2. **Enable Compression**
+   ```bash
+   » install-doc
+   # ...
+   Compress file data (y/n) » y  # Always say yes!
+   ```
+
+3. **Split into Multiple DOCs**
+   ```javascript
+   // Main DOC (index.html) - UI only
+   // DOC 2 (utils.js) - Utilities
+   // DOC 3 (charts.js) - Charts library
+   
+   // Load additional DOCs dynamically
+   async function loadModule(scid) {
+       const content = await fetchTELADoc(scid);
+       eval(content);  // Load the module
+   }
+   ```
+
+4. **Remove Unused Code**
+   ```javascript
+   // ❌ Including entire library
+   <script src="lodash.min.js"></script>  // 70KB!
+   
+   // ✅ Include only what you need
+   function debounce(fn, wait) { /* ... */ }  // 200 bytes
+   ```
+
+### Error: "Invalid SCID format"
+
+**Symptoms:**
+```
+Error: SCID must be 64 hexadecimal characters
+```
+
+**Causes:**
+1. Typo in SCID
+2. Copied with extra characters
+3. Wrong SCID type (TXID instead of SCID)
+
+**Solution:**
+```javascript
+// Validate SCID format
+function validateSCID(scid) {
+    // Remove any whitespace
+    scid = scid.trim();
+    
+    // Check length
+    if (scid.length !== 64) {
+        throw new Error(`Invalid SCID length: ${scid.length} (expected 64)`);
+    }
+    
+    // Check if hexadecimal
+    if (!/^[a-f0-9]{64}$/i.test(scid)) {
+        throw new Error('SCID must contain only hexadecimal characters');
+    }
+    
+    return scid.toLowerCase();
+}
+
+// Usage
+try {
+    const cleanSCID = validateSCID(userInput);
+    await deployIndex(cleanSCID);
+} catch (error) {
+    alert(error.message);
+}
+```
+
+### Error: "Insufficient funds"
+
+**Symptoms:**
+```
+Error: Insufficient balance for transaction
+Required: 5.5 DERO
+Available: 2.0 DERO
+```
+
+**Solution:**
+1. **Check Balance**
+   ```bash
+   # In TELA-CLI
+   » wallet
+   # Check balance displayed
+   
+   # Or via XSWD
+   const balance = await xswd.call('GetBalance');
+   console.log('Balance:', balance.balance / 100000, 'DERO');
+   ```
+
+2. **Get More DERO**
+   - **Testnet**: Use faucet at https://testnet.dero.io/faucet
+   - **Mainnet**: Purchase DERO from exchange
+
+3. **Reduce Transaction Cost**
+```bash
+   # Optimize file size to reduce storage cost
+   # Every 1KB saved ≈ 0.3 DERO saved
+   ```
+
+### Error: "Transaction rejected"
+
+**Symptoms:**
+```
+Error: Transaction validation failed
+```
+
+**Causes:**
+1. Invalid parameters
+2. Smart contract error
+3. Network congestion
+4. Ringsize too small
+
+**Solution:**
+```bash
+# Check transaction parameters
+» install-doc
+# Verify:
+# - File path is correct
+# - File is readable
+# - Ringsize >= 2
+# - Valid compression setting
+
+# Try again with ringsize 2 (minimum)
+Enter DOC install ringsize » 2
+```
+
+---
+
+## File Size Errors
+
+### Error: "Code size exceeds 18KB after processing"
+
+**Diagnosis:**
+```javascript
+// Calculate actual code size
+function calculateCodeSize(html) {
+    // Remove whitespace and comments
+    let code = html
+        .replace(/<!--[\s\S]*?-->/g, '')  // Remove HTML comments
+        .replace(/\/\*[\s\S]*?\*\//g, '')  // Remove CSS comments
+        .replace(/\/\/.*/g, '')            // Remove JS comments
+        .replace(/\s+/g, ' ')              // Normalize whitespace
+        .trim();
+    
+    const bytes = new Blob([code]).size;
+    const kb = (bytes / 1024).toFixed(2);
+    
+    console.log(`Code size: ${kb} KB (${bytes} bytes)`);
+    return bytes;
+}
+```
+
+**Solutions:**
+
+1. **Aggressive Minification**
+   ```javascript
+   // Use variable name shortening
+   // Before:
+   function calculateTotalPrice(items) {
+       let totalPrice = 0;
+       for (const item of items) {
+           totalPrice += item.price;
+       }
+       return totalPrice;
+   }
+   
+   // After:
+   const c=(i)=>i.reduce((t,x)=>t+x.p,0);
+   ```
+
+2. **Use DocShards**
+```bash
+   # For files > 18KB, use DocShards system
+   » install-shards
+   Enter file path » large-file.js
+   # Automatically splits into multiple DOCs
+   ```
+
+3. **External Resources via TELA Links**
+   ```javascript
+   // Store large resources in separate DOCs
+   // Reference via TELA links
+   const CHART_LIB_SCID = 'abc123...';
+   
+   async function loadChartLibrary() {
+       const lib = await fetchTELADoc(CHART_LIB_SCID);
+       eval(lib);
+   }
+   ```
+
+---
+
+## Runtime Errors
+
+### Error: "Cannot read property of undefined"
+
+**Symptoms:**
+```javascript
+Uncaught TypeError: Cannot read property 'height' of undefined
+```
+
+**Causes:**
+1. API call failed silently
+2. Network timing issue
+3. Missing null check
+
+**Solution:**
+```javascript
+// ❌ BAD: No error handling
+async function getBlockHeight() {
+    const info = await xswd.call('DERO.GetInfo');
+    return info.height;  // What if info is undefined?
+}
+
+// ✅ GOOD: Defensive programming
+async function getBlockHeight() {
+    try {
+        const info = await xswd.call('DERO.GetInfo');
+        
+        // Check if response is valid
+        if (!info || typeof info !== 'object') {
+            throw new Error('Invalid response from GetInfo');
+        }
+        
+        // Use optional chaining and nullish coalescing
+        return info?.height ?? 0;
+        
+    } catch (error) {
+        console.error('Failed to get block height:', error);
+        return 0;  // Safe default
+    }
+}
+```
+
+### Error: "Promise rejection unhandled"
+
+**Symptoms:**
+```
+Unhandled Promise Rejection: Error: Network error
+```
+
+**Solution:**
+```javascript
+// ❌ BAD: No catch handler
+xswd.call('DERO.GetInfo').then(info => {
+    updateUI(info);
+});
+
+// ✅ GOOD: Always handle rejections
+xswd.call('DERO.GetInfo')
+    .then(info => {
+        updateUI(info);
+    })
+    .catch(error => {
+        console.error('GetInfo failed:', error);
+        showError('Unable to fetch network information');
+    });
+
+// ✅ BETTER: Use async/await with try/catch
+async function fetchNetworkInfo() {
+    try {
+        const info = await xswd.call('DERO.GetInfo');
+        updateUI(info);
+    } catch (error) {
+        console.error('GetInfo failed:', error);
+        showError('Unable to fetch network information');
+    }
+}
+
+// ✅ BEST: Global unhandled rejection handler
+window.addEventListener('unhandledrejection', event => {
+    console.error('Unhandled promise rejection:', event.reason);
+    event.preventDefault();  // Prevent default console error
+});
+```
+
+### Error: "Memory leak detected"
+
+**Symptoms:**
+- Browser tab memory usage increases over time
+- Page becomes slow after being open for hours
+- Eventually browser crashes
+
+**Diagnosis:**
+```javascript
+// Monitor memory usage
+setInterval(() => {
+    if (performance.memory) {
+        const mb = (performance.memory.usedJSHeapSize / 1048576).toFixed(2);
+        console.log(`Memory: ${mb} MB`);
+        
+        if (mb > 100) {
+            console.warn('⚠️ High memory usage!');
+            // Trigger cleanup if possible
+        }
+    }
+}, 30000);  // Check every 30 seconds
+```
+
+**Solution:**
+```javascript
+// Common memory leak causes and fixes
+
+// 1. ❌ BAD: Not clearing intervals
+setInterval(() => {
+    updateData();
+}, 1000);
+
+// ✅ GOOD: Track and clear intervals
+const intervals = [];
+
+function startUpdates() {
+    const id = setInterval(() => updateData(), 1000);
+    intervals.push(id);
+}
+
+function cleanup() {
+    intervals.forEach(id => clearInterval(id));
+    intervals.length = 0;
+}
+
+window.addEventListener('beforeunload', cleanup);
+
+// 2. ❌ BAD: Not removing event listeners
+element.addEventListener('click', handler);
+
+// ✅ GOOD: Remove when done
+element.addEventListener('click', handler);
+// Later:
+element.removeEventListener('click', handler);
+
+// 3. ❌ BAD: Storing references indefinitely
+const cache = new Map();
+function cacheData(key, value) {
+    cache.set(key, value);  // Never cleared!
+}
+
+// ✅ GOOD: Clear old cache entries
+const cache = new Map();
+const CACHE_MAX_SIZE = 100;
+
+function cacheData(key, value) {
+    cache.set(key, value);
+    
+    // Evict oldest entries if cache too large
+    if (cache.size > CACHE_MAX_SIZE) {
+        const firstKey = cache.keys().next().value;
+        cache.delete(firstKey);
+    }
+}
+```
+
+---
+
+## Network & Blockchain Errors
+
+### Error: "Block not found"
+
+**Symptoms:**
+```json
+{
+  "error": {
+    "code": -32000,
+    "message": "Block not found"
+  }
+}
+```
+
+**Causes:**
+1. Block height doesn't exist yet
+2. Blockchain not synced
+3. Invalid block hash
+
+**Solution:**
+```javascript
+async function getBlockSafely(height) {
+    try {
+        // First check current height
+        const info = await xswd.call('DERO.GetHeight');
+        
+        if (height > info.height) {
+            throw new Error(`Block ${height} doesn't exist yet. Current height: ${info.height}`);
+        }
+        
+        const block = await xswd.call('DERO.GetBlock', { height });
+        return block;
+        
+    } catch (error) {
+        console.error(`Failed to get block ${height}:`, error);
+        
+        // Provide helpful error message
+        if (error.message.includes('not found')) {
+            showError(`Block ${height} not found. The blockchain might still be syncing.`);
+        } else {
+            showError('Unable to fetch block data');
+        }
+        
+        return null;
+    }
+}
+```
+
+### Error: "Node not synced"
+
+**Symptoms:**
+```
+Warning: Node is not fully synced
+Current: 10000 / Target: 25000
+```
+
+**Solution:**
+```javascript
+// Check sync status before critical operations
+async function waitForSync(maxWaitMs = 60000) {
+    const startTime = Date.now();
+    
+    while (Date.now() - startTime < maxWaitMs) {
+        const info = await xswd.call('DERO.GetInfo');
+        
+        // Check if synced (height matches topoheight)
+        if (Math.abs(info.height - info.topoheight) <= 1) {
+            console.log('✅ Node is synced');
+            return true;
+        }
+        
+        console.log(`Syncing: ${info.height} / ${info.topoheight}`);
+        await new Promise(resolve => setTimeout(resolve, 5000));
+    }
+    
+    console.warn('⚠️ Sync timeout - proceeding anyway');
+    return false;
+}
+
+// Usage
+await waitForSync();
+// Now safe to query blockchain
+```
+
+### Error: "Network timeout"
+
+**Symptoms:**
+```
+Error: Request timeout after 30000ms
+```
+
+**Solution:**
+```javascript
+// Implement request timeout with retry
+async function callWithRetry(method, params, maxRetries = 3) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            // Set timeout
+            const timeoutMs = 30000;  // 30 seconds
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error('Timeout')), timeoutMs);
+            });
+            
+            // Race between call and timeout
+            const result = await Promise.race([
+                xswd.call(method, params),
+                timeoutPromise
+            ]);
+            
+            return result;
+            
+        } catch (error) {
+            console.warn(`Attempt ${attempt} failed:`, error.message);
+            
+            if (attempt === maxRetries) {
+                throw new Error(`Failed after ${maxRetries} attempts`);
+            }
+            
+            // Exponential backoff
+            const delay = Math.min(1000 * Math.pow(2, attempt), 10000);
+            console.log(`Retrying in ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
+}
+```
+
+---
+
+## Performance Issues
+
+### Issue: "Slow page load (> 5 seconds)"
+
+**Diagnosis:**
+```javascript
+// Measure load time
+const observer = new PerformanceObserver((list) => {
+    for (const entry of list.getEntries()) {
+        if (entry.entryType === 'navigation') {
+            console.log('Load breakdown:');
+            console.log('DNS:', entry.domainLookupDuration, 'ms');
+            console.log('TCP:', entry.connectDuration, 'ms');
+            console.log('Request:', entry.requestDuration, 'ms');
+            console.log('Response:', entry.responseDuration, 'ms');
+            console.log('DOM Processing:', entry.domComplete - entry.domInteractive, 'ms');
+            console.log('Total:', entry.duration, 'ms');
+        }
+    }
+});
+
+observer.observe({ entryTypes: ['navigation'] });
+```
+
+**Solutions:**
+1. **Defer Non-Critical JS**
+   ```html
+   <script src="critical.js"></script>
+   <script src="charts.js" defer></script>
+   <script src="analytics.js" defer></script>
+   ```
+
+2. **Lazy Load Images**
+   ```html
+   <img src="placeholder.png" data-src="actual-image.png" loading="lazy">
+   ```
+
+3. **Minimize Rendering Blocking**
+   ```html
+   <!-- ❌ Blocks rendering -->
+   <link rel="stylesheet" href="styles.css">
+   
+   <!-- ✅ Non-blocking -->
+   <link rel="stylesheet" href="styles.css" media="print" onload="this.media='all'">
+   ```
+
+---
+
+## Development Environment Issues
+
+### Error: "TELA-CLI not found"
+
+**Solution:**
+```bash
+# Check if TELA-CLI is in PATH
+which tela-cli
+
+# If not found, add to PATH
+export PATH=$PATH:/path/to/tela-dev/cmd/tela-cli
+
+# Or create alias
+alias tela-cli='/path/to/tela-dev/cmd/tela-cli/tela-cli'
+
+# Or run directly
+cd /path/to/tela-dev/cmd/tela-cli
+./tela-cli
+```
+
+### Error: "Go build failed"
+
+**Symptoms:**
+```
+Error: cannot find package "github.com/deroproject/derohe"
+```
+
+**Solution:**
+```bash
+# Update Go modules
+cd tela-dev
+go mod tidy
+go mod download
+
+# Rebuild
+cd cmd/tela-cli
+go build
+
+# If still failing, check Go version
+go version  # Should be 1.17 or higher
+
+# Update Go if needed
+# https://golang.org/doc/install
+```
+
+---
+
+## Diagnostic Tools
+
+### Quick Diagnostic Script
+
+```javascript
+// Add to your application for debugging
+async function runDiagnostics() {
+    console.log('🔍 Running TELA diagnostics...\n');
+    
+    const results = {
+        browser: {},
+        xswd: {},
+        blockchain: {},
+        performance: {}
+    };
+    
+    // Browser checks
+    results.browser.userAgent = navigator.userAgent;
+    results.browser.webSocketSupport = typeof WebSocket !== 'undefined';
+    results.browser.localStorageSupport = typeof localStorage !== 'undefined';
+    
+    // XSWD checks
+    try {
+        const testSocket = new WebSocket('ws://127.0.0.1:44326/xswd');
+        await new Promise((resolve, reject) => {
+            testSocket.onopen = resolve;
+            testSocket.onerror = reject;
+            setTimeout(reject, 5000);
+        });
+        results.xswd.connected = true;
+        testSocket.close();
+    } catch (e) {
+        results.xswd.connected = false;
+        results.xswd.error = e.message;
+    }
+    
+    // Blockchain checks
+    if (results.xswd.connected) {
+        try {
+            const info = await xswd.call('DERO.GetInfo');
+            results.blockchain.height = info.height;
+            results.blockchain.synced = Math.abs(info.height - info.topoheight) <= 1;
+            results.blockchain.version = info.version;
+        } catch (e) {
+            results.blockchain.error = e.message;
+        }
+    }
+    
+    // Performance checks
+    if (performance.memory) {
+        results.performance.memoryMB = (performance.memory.usedJSHeapSize / 1048576).toFixed(2);
+    }
+    results.performance.connectionType = navigator.connection?.effectiveType;
+    
+    console.log('Diagnostics Results:');
+    console.log(JSON.stringify(results, null, 2));
+    
+    return results;
+}
+```
+
+---
+
+## Getting Help
+
+When reporting issues, include:
+
+1. **Error Message** (complete error text)
+2. **Environment** (browser, OS, DERO version)
+3. **Steps to Reproduce**
+4. **Diagnostic Results** (from script above)
+5. **Expected vs Actual Behavior**
+
+**Support Channels:**
+- **Discord**: [#support](https://discord.gg/H95TJDp)
+- **Forum**: [forum.dero.io](https://forum.dero.io)
+- **GitHub**: [Issue Tracker](https://github.com/civilware/tela/issues)
+
+<Callout type="info" emoji="💡">
+  **Pro Tip**: Before reporting an issue, run the diagnostic script and include the results. It helps maintainers debug issues faster!
+</Callout>
+
+---
+
+## Additional Resources
+
+<Cards>
+  <Card title="Deployment Guide" href="/deployment-guide">
+    Production deployment best practices
+  </Card>
+  <Card title="XSWD Protocol" href="/xswd/overview">
+    XSWD connection details
+  </Card>
+  <Card title="Development Guide" href="/tela-development-guide">
+    Development best practices
+  </Card>
+  <Card title="API Reference" href="/api-reference/complete-api-guide">
+    Complete API documentation
+  </Card>
+</Cards>

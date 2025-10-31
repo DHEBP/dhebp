@@ -1,0 +1,968 @@
+---
+title: "Compression & Optimization in TELA | Advanced File Compression Techniques"
+description: "Advanced compression techniques and optimization strategies for TELA applications. Learn Gzip compression, file optimization, and deployment efficiency for blockchain storage."
+keywords: "TELA compression, Gzip, file optimization, storage optimization, blockchain compression, deployment efficiency"
+date: "2024-08-26"
+lastUpdated: "2025-10-22"
+authors: ["DHEBP"]
+image: "/assets/advanced/compression.png"
+slug: "advanced-features/compression"
+canonicalUrl: "https://tela.derod.org/advanced-features/compression"
+tags: ["compression", "optimization", "advanced", "storage", "TELA"]
+---
+
+import { Callout } from 'nextra/components'
+
+# Compression & Optimization
+
+Advanced compression techniques and optimization strategies for building efficient TELA applications.
+
+## TELA Compression System
+
+TELA includes built-in compression support to reduce storage costs and improve deployment efficiency.
+
+### Supported Compression Formats
+
+Currently supported:
+- **Gzip (.gz)** - Standard compression with excellent ratios for text content
+
+```go
+// TELA compression constants
+const COMPRESSION_GZIP = ".gz"
+
+// Compression formats array
+var compressionFormats = []string{
+    COMPRESSION_GZIP,
+}
+```
+
+### When to Use Compression
+
+<Callout type="info">
+**Compression Decision Matrix**
+- **< 10KB**: Optional (minimal benefit)
+- **10-15KB**: Recommended (good reduction)
+- **15-18KB**: Highly recommended (may prevent sharding)
+- **18KB+**: Required (combine with sharding)
+</Callout>
+
+## Compression API
+
+### Basic Compression
+
+```go
+// Compress content
+content := []byte("Your file content here...")
+compressed, err := tela.Compress(content, ".gz")
+if err != nil {
+    log.Fatal(err)
+}
+
+// Decompress content
+decompressed, err := tela.Decompress([]byte(compressed), ".gz")
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Original: %d bytes\n", len(content))
+fmt.Printf("Compressed: %d bytes\n", len(compressed))
+fmt.Printf("Ratio: %.1f%%\n", float64(len(compressed))/float64(len(content))*100)
+```
+
+### Compression Utilities
+
+```go
+// Check if file extension indicates compression
+isCompressed := tela.IsCompressedExt(".gz")    // true
+isCompressed = tela.IsCompressedExt(".html")   // false
+
+// Remove compression extensions
+cleanName := tela.TrimCompressedExt("index.html.gz")  // "index.html"
+cleanName = tela.TrimCompressedExt("style.css")       // "style.css"
+```
+
+## Optimization Strategies
+
+### Content Type Optimization
+
+Different content types compress differently:
+
+```go
+func analyzeCompressionEfficiency(filePath string) {
+    content, err := os.ReadFile(filePath)
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    originalSize := float64(len(content))
+    docType := tela.ParseDocType(filePath)
+    
+    compressed, err := tela.Compress(content, ".gz")
+    if err != nil {
+        fmt.Printf("❌ Compression failed: %v\n", err)
+        return
+    }
+    
+    compressedSize := float64(len(compressed))
+    ratio := compressedSize / originalSize
+    reduction := (1 - ratio) * 100
+    
+    fmt.Printf("📊 Compression Analysis: %s\n", filepath.Base(filePath))
+    fmt.Printf("   Type: %s\n", docType)
+    fmt.Printf("   Original: %.2fKB\n", originalSize/1024)
+    fmt.Printf("   Compressed: %.2fKB\n", compressedSize/1024)
+    fmt.Printf("   Reduction: %.1f%%\n", reduction)
+    
+    // Effectiveness rating
+    switch {
+    case reduction > 70:
+        fmt.Printf("   ✅ Excellent compression (%.1f%% reduction)\n", reduction)
+    case reduction > 50:
+        fmt.Printf("   ✅ Good compression (%.1f%% reduction)\n", reduction)
+    case reduction > 30:
+        fmt.Printf("   ⚠️ Moderate compression (%.1f%% reduction)\n", reduction)
+    default:
+        fmt.Printf("   ❌ Poor compression (%.1f%% reduction)\n", reduction)
+    }
+}
+```
+
+### Content Type Performance
+
+| Content Type | Typical Compression | Best Practices |
+|--------------|-------------------|----------------|
+| **HTML** | 60-80% reduction | Remove whitespace, minimize inline styles |
+| **CSS** | 50-70% reduction | Remove comments, minimize selectors |
+| **JavaScript** | 40-60% reduction | Minify first, remove console.log |
+| **JSON** | 70-90% reduction | Excellent compression candidate |
+| **Markdown** | 50-70% reduction | Good for documentation |
+| **SVG** | 60-80% reduction | Remove metadata, optimize paths |
+
+### Pre-Compression Optimization
+
+```go
+// Optimize content before compression
+func optimizeBeforeCompression(content []byte, contentType string) []byte {
+    switch contentType {
+    case "TELA-HTML-1":
+        return optimizeHTML(content)
+    case "TELA-CSS-1":
+        return optimizeCSS(content)
+    case "TELA-JS-1":
+        return optimizeJavaScript(content)
+    case "TELA-JSON-1":
+        return optimizeJSON(content)
+    default:
+        return content
+    }
+}
+
+func optimizeHTML(content []byte) []byte {
+    html := string(content)
+    
+    // Remove excessive whitespace
+    html = regexp.MustCompile(`\s+`).ReplaceAllString(html, " ")
+    
+    // Remove comments (be careful with conditional comments)
+    html = regexp.MustCompile(`<!--.*?-->`).ReplaceAllString(html, "")
+    
+    // Minimize inline styles
+    html = regexp.MustCompile(`\s*([{}:;,])\s*`).ReplaceAllString(html, "$1")
+    
+    return []byte(html)
+}
+
+func optimizeCSS(content []byte) []byte {
+    css := string(content)
+    
+    // Remove comments
+    css = regexp.MustCompile(`/\*.*?\*/`).ReplaceAllString(css, "")
+    
+    // Remove excessive whitespace
+    css = regexp.MustCompile(`\s+`).ReplaceAllString(css, " ")
+    
+    // Minimize CSS syntax
+    css = regexp.MustCompile(`\s*([{}:;,])\s*`).ReplaceAllString(css, "$1")
+    
+    return []byte(css)
+}
+
+func optimizeJavaScript(content []byte) []byte {
+    js := string(content)
+    
+    // Remove console.log statements (basic)
+    js = regexp.MustCompile(`console\.log\([^)]*\);\s*`).ReplaceAllString(js, "")
+    
+    // Remove single-line comments
+    js = regexp.MustCompile(`//.*$`).ReplaceAllString(js, "")
+    
+    // Remove multi-line comments (be careful with regex)
+    js = regexp.MustCompile(`/\*.*?\*/`).ReplaceAllString(js, "")
+    
+    // Basic whitespace optimization
+    js = regexp.MustCompile(`\s+`).ReplaceAllString(js, " ")
+    
+    return []byte(js)
+}
+```
+
+## Advanced Optimization Techniques
+
+### Intelligent File Processing
+
+```go
+// Comprehensive file optimization pipeline
+type OptimizationPipeline struct {
+    enableMinification bool
+    enableCompression  bool
+    compressionLevel   int
+}
+
+func (op *OptimizationPipeline) ProcessFile(filePath string) (*tela.DOC, error) {
+    content, err := os.ReadFile(filePath)
+    if err != nil {
+        return nil, err
+    }
+    
+    fileName := filepath.Base(filePath)
+    docType := tela.ParseDocType(fileName)
+    originalSize := tela.GetCodeSizeInKB(string(content))
+    
+    fmt.Printf("🔄 Processing: %s (%.2fKB, %s)\n", fileName, originalSize, docType)
+    
+    // Stage 1: Pre-compression optimization
+    optimized := content
+    if op.enableMinification {
+        optimized = optimizeBeforeCompression(content, docType)
+        optimizedSize := tela.GetCodeSizeInKB(string(optimized))
+        fmt.Printf("   Minified: %.2fKB (%.1f%% reduction)\n", 
+            optimizedSize, (1-optimizedSize/originalSize)*100)
+    }
+    
+    // Stage 2: Compression
+    var finalContent []byte
+    var compression string
+    
+    if op.enableCompression && tela.GetCodeSizeInKB(string(optimized)) > 10.0 {
+        compressed, err := tela.Compress(optimized, ".gz")
+        if err == nil {
+            compressedBytes := []byte(compressed)
+            compressedSize := tela.GetCodeSizeInKB(compressed)
+            
+            // Use compression if it provides meaningful reduction
+            if compressedSize < originalSize*0.8 {
+                finalContent = compressedBytes
+                compression = ".gz"
+                fileName += ".gz"
+                fmt.Printf("   Compressed: %.2fKB (%.1f%% total reduction)\n",
+                    compressedSize, (1-compressedSize/originalSize)*100)
+            } else {
+                finalContent = optimized
+                fmt.Printf("   Compression not beneficial, using optimized version\n")
+            }
+        } else {
+            finalContent = optimized
+            fmt.Printf("   Compression failed: %v\n", err)
+        }
+    } else {
+        finalContent = optimized
+    }
+    
+    // Stage 3: Validate final size
+    finalSize := tela.GetCodeSizeInKB(string(finalContent))
+    if finalSize > 18.0 {
+        return nil, fmt.Errorf("file still too large after optimization (%.2fKB), needs sharding", finalSize)
+    }
+    
+    // Create optimized DOC
+    doc := &tela.DOC{
+        DocType:     docType,
+        Code:        string(finalContent),
+        DURL:        fmt.Sprintf("%s.tela", strings.TrimSuffix(fileName, filepath.Ext(fileName))),
+        Compression: compression,
+        Headers: tela.Headers{
+            NameHdr:  fileName,
+            DescrHdr: fmt.Sprintf("Optimized from %s", filePath),
+        },
+    }
+    
+    fmt.Printf("   ✅ Ready: %.2fKB (%.1f%% final reduction)\n", 
+        finalSize, (1-finalSize/originalSize)*100)
+    
+    return doc, nil
+}
+```
+
+### Batch Optimization
+
+```go
+// Optimize entire projects efficiently
+func optimizeProject(projectDir string) error {
+    pipeline := &OptimizationPipeline{
+        enableMinification: true,
+        enableCompression:  true,
+        compressionLevel:   9, // Maximum compression
+    }
+    
+    var optimizedDOCs []*tela.DOC
+    var shardedFiles []string
+    var totalOriginalSize, totalOptimizedSize float64
+    
+    err := filepath.WalkDir(projectDir, func(path string, d fs.DirEntry, err error) error {
+        if err != nil || d.IsDir() {
+            return err
+        }
+        
+        // Skip non-TELA files
+        docType := tela.ParseDocType(d.Name())
+        if !tela.IsAcceptedLanguage(docType) {
+            return nil
+        }
+        
+        // Get original size
+        content, err := os.ReadFile(path)
+        if err != nil {
+            return err
+        }
+        originalSize := tela.GetCodeSizeInKB(string(content))
+        totalOriginalSize += originalSize
+        
+        // Process file
+        doc, err := pipeline.ProcessFile(path)
+        if err != nil {
+            if strings.Contains(err.Error(), "needs sharding") {
+                fmt.Printf("📦 Marking for sharding: %s\n", d.Name())
+                shardedFiles = append(shardedFiles, path)
+                return nil
+            }
+            return err
+        }
+        
+        optimizedDOCs = append(optimizedDOCs, doc)
+        optimizedSize := tela.GetCodeSizeInKB(doc.Code)
+        totalOptimizedSize += optimizedSize
+        
+        return nil
+    })
+    
+    if err != nil {
+        return err
+    }
+    
+    // Summary
+    fmt.Printf("\n📊 Optimization Summary:\n")
+    fmt.Printf("   Optimized files: %d\n", len(optimizedDOCs))
+    fmt.Printf("   Files needing shards: %d\n", len(shardedFiles))
+    fmt.Printf("   Size reduction: %.2fKB -> %.2fKB (%.1f%%)\n",
+        totalOriginalSize, totalOptimizedSize,
+        (1-totalOptimizedSize/totalOriginalSize)*100)
+    
+    // Handle sharded files
+    for _, shardFile := range shardedFiles {
+        fmt.Printf("🧩 Creating shards for: %s\n", filepath.Base(shardFile))
+        err = tela.CreateShardFiles(shardFile, ".gz", nil)
+        if err != nil {
+            fmt.Printf("❌ Sharding failed for %s: %v\n", shardFile, err)
+        }
+    }
+    
+    return nil
+}
+```
+
+## Real-World Optimization Examples
+
+### React Application Optimization
+
+```go
+// Optimize a React application for TELA
+func optimizeReactApp(projectDir string) error {
+    // 1. Identify React build artifacts
+    buildDir := filepath.Join(projectDir, "build")
+    
+    // 2. Find main bundle (usually largest file)
+    var mainBundle string
+    var maxSize float64
+    
+    filepath.WalkDir(buildDir, func(path string, d fs.DirEntry, err error) error {
+        if err != nil || d.IsDir() {
+            return err
+        }
+        
+        if strings.Contains(d.Name(), "main.") && strings.HasSuffix(d.Name(), ".js") {
+            content, err := os.ReadFile(path)
+            if err == nil {
+                size := tela.GetCodeSizeInKB(string(content))
+                if size > maxSize {
+                    maxSize = size
+                    mainBundle = path
+                }
+            }
+        }
+        
+        return nil
+    })
+    
+    if mainBundle == "" {
+        return fmt.Errorf("no main bundle found")
+    }
+    
+    fmt.Printf("📦 Main bundle: %s (%.2fKB)\n", filepath.Base(mainBundle), maxSize)
+    
+    // 3. Apply React-specific optimizations
+    content, err := os.ReadFile(mainBundle)
+    if err != nil {
+        return err
+    }
+    
+    // Remove React development code
+    jsCode := string(content)
+    jsCode = removeReactDevCode(jsCode)
+    
+    // Apply general JS optimizations
+    optimized := optimizeJavaScript([]byte(jsCode))
+    
+    // Compress
+    compressed, err := tela.Compress(optimized, ".gz")
+    if err != nil {
+        return err
+    }
+    
+    finalSize := tela.GetCodeSizeInKB(compressed)
+    fmt.Printf("✅ Optimized: %.2fKB -> %.2fKB (%.1f%% reduction)\n",
+        maxSize, finalSize, (1-finalSize/maxSize)*100)
+    
+    if finalSize > 18.0 {
+        fmt.Printf("🧩 Still needs sharding: %d shards required\n",
+            int((finalSize*1024+17499)/17500))
+    }
+    
+    return nil
+}
+
+func removeReactDevCode(jsCode string) string {
+    // Remove React development warnings and checks
+    patterns := []string{
+        `console\.warn\([^)]*\);?`,
+        `console\.error\([^)]*\);?`,
+        `if\s*\(\s*process\.env\.NODE_ENV\s*!==\s*['"]\s*production\s*['"][^}]*\}`,
+        `__DEV__\s*&&[^;]*;`,
+    }
+    
+    for _, pattern := range patterns {
+        re := regexp.MustCompile(pattern)
+        jsCode = re.ReplaceAllString(jsCode, "")
+    }
+    
+    return jsCode
+}
+```
+
+### CSS Framework Optimization
+
+```go
+// Optimize CSS frameworks (Bootstrap, Tailwind, etc.)
+func optimizeCSSFramework(cssPath string) (*tela.DOC, error) {
+    content, err := os.ReadFile(cssPath)
+    if err != nil {
+        return nil, err
+    }
+    
+    css := string(content)
+    originalSize := tela.GetCodeSizeInKB(css)
+    
+    fmt.Printf("🎨 Optimizing CSS: %.2fKB\n", originalSize)
+    
+    // 1. Remove unused CSS (basic approach)
+    css = removeUnusedCSS(css)
+    
+    // 2. Minify CSS
+    css = minifyCSS(css)
+    
+    // 3. Optimize for compression
+    css = optimizeCSSForCompression(css)
+    
+    optimizedSize := tela.GetCodeSizeInKB(css)
+    fmt.Printf("   Minified: %.2fKB (%.1f%% reduction)\n",
+        optimizedSize, (1-optimizedSize/originalSize)*100)
+    
+    // 4. Compress
+    compressed, err := tela.Compress([]byte(css), ".gz")
+    if err != nil {
+        return nil, err
+    }
+    
+    finalSize := tela.GetCodeSizeInKB(compressed)
+    fmt.Printf("   Compressed: %.2fKB (%.1f%% total reduction)\n",
+        finalSize, (1-finalSize/originalSize)*100)
+    
+    doc := &tela.DOC{
+        DocType:     tela.DOC_CSS,
+        Code:        compressed,
+        DURL:        "framework.tela",
+        Compression: ".gz",
+        Headers: tela.Headers{
+            NameHdr:  filepath.Base(cssPath) + ".gz",
+            DescrHdr: "Optimized CSS framework",
+        },
+    }
+    
+    return doc, nil
+}
+
+func removeUnusedCSS(css string) string {
+    // Basic unused CSS removal
+    // In practice, you'd use tools like PurgeCSS
+    
+    // Remove common unused framework components
+    unusedPatterns := []string{
+        `\.d-print-[^{]*\{[^}]*\}`,  // Print utilities
+        `\.sr-only[^{]*\{[^}]*\}`,   // Screen reader only
+        `@media print[^{]*\{[^}]*\}`, // Print media queries
+    }
+    
+    for _, pattern := range unusedPatterns {
+        re := regexp.MustCompile(pattern)
+        css = re.ReplaceAllString(css, "")
+    }
+    
+    return css
+}
+```
+
+## Deployment Optimization
+
+### Smart Deployment Order
+
+```go
+// Deploy in optimal order for better user experience
+func deployOptimally(wallet *walletapi.Wallet_Disk, docs []*tela.DOC) error {
+    // 1. Sort by importance and size
+    sort.Slice(docs, func(i, j int) bool {
+        // Critical files first (HTML, then CSS, then JS)
+        iWeight := getFileWeight(docs[i].DocType)
+        jWeight := getFileWeight(docs[j].DocType)
+        
+        if iWeight != jWeight {
+            return iWeight < jWeight
+        }
+        
+        // Within same type, smaller files first (faster deployment)
+        iSize := tela.GetCodeSizeInKB(docs[i].Code)
+        jSize := tela.GetCodeSizeInKB(docs[j].Code)
+        return iSize < jSize
+    })
+    
+    // 2. Deploy with progress tracking
+    fmt.Printf("🚀 Deploying %d files in optimal order...\n", len(docs))
+    
+    var deployedSCIDs []string
+    for i, doc := range docs {
+        fmt.Printf("Deploying %d/%d: %s\n", i+1, len(docs), doc.Headers.NameHdr)
+        
+        txid, err := tela.Installer(wallet, 2, doc)
+        if err != nil {
+            return fmt.Errorf("deployment failed at file %d: %v", i+1, err)
+        }
+        
+        deployedSCIDs = append(deployedSCIDs, txid)
+        
+        // Brief pause to avoid overwhelming the network
+        time.Sleep(time.Millisecond * 500)
+    }
+    
+    fmt.Printf("✅ All files deployed successfully\n")
+    return nil
+}
+
+func getFileWeight(docType string) int {
+    switch docType {
+    case tela.DOC_HTML:
+        return 1 // Highest priority
+    case tela.DOC_CSS:
+        return 2 // Second priority
+    case tela.DOC_JS:
+        return 3 // Third priority
+    default:
+        return 4 // Lowest priority
+    }
+}
+```
+
+### Gas Fee Optimization
+
+```go
+// Optimize transaction costs
+func deployWithOptimalFees(wallet *walletapi.Wallet_Disk, docs []*tela.DOC) error {
+    // 1. Estimate all fees first
+    var totalFees uint64
+    
+    for _, doc := range docs {
+        args, err := tela.NewInstallArgs(doc)
+        if err != nil {
+            return err
+        }
+        
+        fees, err := tela.GetGasEstimate(wallet, 2, nil, args)
+        if err != nil {
+            return err
+        }
+        
+        totalFees += fees
+    }
+    
+    fmt.Printf("💰 Total estimated fees: %.5f DERO\n", float64(totalFees)/100000)
+    
+    // 2. Check wallet balance
+    balance := wallet.Get_Balance()
+    if balance < totalFees*2 { // 2x buffer
+        return fmt.Errorf("insufficient balance: need %.5f DERO, have %.5f DERO",
+            float64(totalFees*2)/100000, float64(balance)/100000)
+    }
+    
+    // 3. Deploy with optimal ring sizes
+    for _, doc := range docs {
+        // Use ring size 2 for cost efficiency
+        txid, err := tela.Installer(wallet, 2, doc)
+        if err != nil {
+            return err
+        }
+        
+        fmt.Printf("✅ Deployed: %s\n", txid)
+    }
+    
+    return nil
+}
+```
+
+## Performance Monitoring
+
+### Compression Analytics
+
+```go
+// Track compression performance across projects
+type CompressionAnalytics struct {
+    TotalFiles      int
+    CompressedFiles int
+    TotalOriginal   float64
+    TotalCompressed float64
+    BestRatio       float64
+    WorstRatio      float64
+    TypeStats       map[string]CompressionStats
+}
+
+type CompressionStats struct {
+    Count       int
+    AvgRatio    float64
+    BestRatio   float64
+    TotalSaved  float64
+}
+
+func analyzeProjectCompression(projectDir string) *CompressionAnalytics {
+    analytics := &CompressionAnalytics{
+        TypeStats: make(map[string]CompressionStats),
+        BestRatio: 1.0,
+    }
+    
+    filepath.WalkDir(projectDir, func(path string, d fs.DirEntry, err error) error {
+        if err != nil || d.IsDir() {
+            return err
+        }
+        
+        content, err := os.ReadFile(path)
+        if err != nil {
+            return err
+        }
+        
+        docType := tela.ParseDocType(d.Name())
+        if !tela.IsAcceptedLanguage(docType) {
+            return nil
+        }
+        
+        originalSize := tela.GetCodeSizeInKB(string(content))
+        analytics.TotalFiles++
+        analytics.TotalOriginal += originalSize
+        
+        // Try compression
+        compressed, err := tela.Compress(content, ".gz")
+        if err == nil {
+            compressedSize := tela.GetCodeSizeInKB(compressed)
+            ratio := compressedSize / originalSize
+            
+            analytics.CompressedFiles++
+            analytics.TotalCompressed += compressedSize
+            
+            if ratio < analytics.BestRatio {
+                analytics.BestRatio = ratio
+            }
+            if ratio > analytics.WorstRatio {
+                analytics.WorstRatio = ratio
+            }
+            
+            // Update type stats
+            stats := analytics.TypeStats[docType]
+            stats.Count++
+            stats.TotalSaved += originalSize - compressedSize
+            if stats.Count == 1 {
+                stats.AvgRatio = ratio
+                stats.BestRatio = ratio
+            } else {
+                stats.AvgRatio = (stats.AvgRatio*float64(stats.Count-1) + ratio) / float64(stats.Count)
+                if ratio < stats.BestRatio {
+                    stats.BestRatio = ratio
+                }
+            }
+            analytics.TypeStats[docType] = stats
+        }
+        
+        return nil
+    })
+    
+    return analytics
+}
+
+func printCompressionReport(analytics *CompressionAnalytics) {
+    fmt.Printf("📊 Compression Analytics Report\n")
+    fmt.Printf("================================\n")
+    fmt.Printf("Files analyzed: %d\n", analytics.TotalFiles)
+    fmt.Printf("Files compressed: %d\n", analytics.CompressedFiles)
+    fmt.Printf("Total size reduction: %.2fKB -> %.2fKB (%.1f%%)\n",
+        analytics.TotalOriginal, analytics.TotalCompressed,
+        (1-analytics.TotalCompressed/analytics.TotalOriginal)*100)
+    fmt.Printf("Best compression ratio: %.1f%%\n", analytics.BestRatio*100)
+    fmt.Printf("Worst compression ratio: %.1f%%\n", analytics.WorstRatio*100)
+    
+    fmt.Printf("\nBy Content Type:\n")
+    for docType, stats := range analytics.TypeStats {
+        fmt.Printf("  %s: %d files, %.1f%% avg ratio, %.2fKB saved\n",
+            docType, stats.Count, stats.AvgRatio*100, stats.TotalSaved)
+    }
+}
+```
+
+## Advanced Compression Techniques
+
+### Content-Aware Compression
+
+```go
+// Optimize compression based on content analysis
+func smartCompress(content []byte, fileName string) ([]byte, string, error) {
+    docType := tela.ParseDocType(fileName)
+    
+    // Pre-process based on content type
+    var preprocessed []byte
+    
+    switch docType {
+    case tela.DOC_JSON:
+        // JSON compresses extremely well
+        preprocessed = optimizeJSON(content)
+    case tela.DOC_HTML:
+        // HTML benefits from whitespace removal
+        preprocessed = optimizeHTML(content)
+    case tela.DOC_CSS:
+        // CSS can be heavily minified
+        preprocessed = optimizeCSS(content)
+    case tela.DOC_JS:
+        // JavaScript needs careful optimization
+        preprocessed = optimizeJavaScript(content)
+    default:
+        preprocessed = content
+    }
+    
+    // Compress optimized content
+    compressed, err := tela.Compress(preprocessed, ".gz")
+    if err != nil {
+        return content, "", err
+    }
+    
+    // Check if compression is beneficial
+    originalSize := len(content)
+    compressedSize := len(compressed)
+    
+    if compressedSize < originalSize*0.85 { // At least 15% reduction
+        return []byte(compressed), ".gz", nil
+    }
+    
+    // Compression not beneficial
+    return preprocessed, "", nil
+}
+```
+
+### Progressive Loading Optimization
+
+```javascript
+// Client-side: Handle compressed content efficiently
+class OptimizedTELALoader {
+    constructor() {
+        this.decompressionWorker = null;
+        this.loadingQueue = [];
+    }
+    
+    async loadOptimizedContent(scid) {
+        // Check if content is compressed
+        const contentInfo = await this.getContentInfo(scid);
+        
+        if (contentInfo.compression) {
+            return await this.loadCompressedContent(scid, contentInfo.compression);
+        } else {
+            return await this.loadRegularContent(scid);
+        }
+    }
+    
+    async loadCompressedContent(scid, compression) {
+        console.log(`📦 Loading compressed content (${compression})...`);
+        
+        // Fetch compressed data
+        const compressedData = await fetch(`/content/${scid}`).then(r => r.arrayBuffer());
+        
+        // Decompress in web worker to avoid blocking UI
+        if (!this.decompressionWorker) {
+            this.decompressionWorker = new Worker('/decompression-worker.js');
+        }
+        
+        return new Promise((resolve, reject) => {
+            this.decompressionWorker.postMessage({
+                data: compressedData,
+                compression: compression,
+                scid: scid
+            });
+            
+            this.decompressionWorker.onmessage = (event) => {
+                if (event.data.scid === scid) {
+                    if (event.data.error) {
+                        reject(new Error(event.data.error));
+                    } else {
+                        resolve(event.data.decompressed);
+                    }
+                }
+            };
+        });
+    }
+}
+```
+
+**decompression-worker.js:**
+```javascript
+// Web Worker for decompression
+importScripts('/pako.min.js'); // Gzip library
+
+self.onmessage = function(event) {
+    const { data, compression, scid } = event.data;
+    
+    try {
+        let decompressed;
+        
+        switch (compression) {
+            case '.gz':
+                decompressed = pako.inflate(new Uint8Array(data), { to: 'string' });
+                break;
+            default:
+                throw new Error(`Unsupported compression: ${compression}`);
+        }
+        
+        self.postMessage({
+            scid: scid,
+            decompressed: decompressed
+        });
+    } catch (error) {
+        self.postMessage({
+            scid: scid,
+            error: error.message
+        });
+    }
+};
+```
+
+## Optimization Best Practices
+
+### Development Workflow
+
+<Callout type="tip">
+**Optimization Workflow**
+1. **Develop normally** - Don't optimize prematurely
+2. **Measure first** - Use `file-info` to check sizes
+3. **Optimize systematically** - Minify, then compress, then shard if needed
+4. **Test thoroughly** - Ensure optimizations don't break functionality
+5. **Monitor performance** - Track load times and user experience
+</Callout>
+
+```bash
+# Recommended optimization workflow
+# 1. Development phase
+serve local ./my-project  # Test functionality
+
+# 2. Analysis phase
+file-info index.html
+file-info style.css
+file-info app.js
+
+# 3. Optimization phase
+# Apply minification to source files
+# Test with: serve local ./my-project
+
+# 4. Deployment phase
+install-doc index.html      # Will prompt for compression
+install-doc style.css       # Choose 'y' for compression if >10KB
+install-doc app.js          # Use sharding if >18KB after compression
+
+# 5. Verification phase
+serve [deployed-scid]       # Test deployed version
+```
+
+### Production Optimization Checklist
+
+```markdown
+TELA Production Optimization Checklist:
+
+Pre-Deployment:
+□ Remove development code (console.log, debug statements)
+□ Minify HTML, CSS, JavaScript
+□ Optimize images (convert to SVG when possible)
+□ Remove unused dependencies and code
+□ Test all functionality still works
+
+Compression:
+□ Enable compression for files >10KB
+□ Verify compression ratios are beneficial (>15% reduction)
+□ Test decompression works correctly
+□ Consider content-specific optimization
+
+Sharding:
+□ Identify files that need sharding (>18KB after compression)
+□ Create shards with appropriate naming
+□ Test shard reconstruction locally
+□ Deploy shards with correct .shard/.shards tags
+
+Post-Deployment:
+□ Monitor application load times
+□ Check user feedback and ratings
+□ Optimize based on usage patterns
+□ Update content when improvements are available
+```
+
+---
+
+## Compression Performance Data
+
+Based on real-world testing:
+
+| Framework/Library | Original Size | Compressed Size | Reduction | Shards Needed |
+|-------------------|---------------|-----------------|-----------|---------------|
+| **React 18** | ~42KB | ~12KB | 71% | No |
+| **Vue 3** | ~38KB | ~11KB | 71% | No |
+| **Bootstrap CSS** | ~25KB | ~6KB | 76% | No |
+| **Tailwind CSS** | ~35KB | ~8KB | 77% | No |
+| **Large Dataset** | ~150KB | ~25KB | 83% | 2 shards |
+| **Image Bundle** | ~80KB | ~78KB | 3% | 5 shards |
+
+### Key Insights
+
+1. **Text content compresses excellently** (60-80% reduction typical)
+2. **Frameworks benefit greatly** from compression
+3. **JSON data** has exceptional compression ratios
+4. **Binary content** (images) compresses poorly
+5. **Combination strategies** (minify + compress) are most effective
+
+This compression and optimization guide provides the tools and techniques needed to build efficient TELA applications that minimize storage costs while maximizing performance.
+
+Next: **[Performance Optimization](/advanced-features/performance)** - Advanced techniques for building high-performance TELA applications.

@@ -1,9 +1,9 @@
-# Welcome to DERO
-[Twitter](https://twitter.com/DeroProject) [Discord](https://discord.gg/H95TJDp) [GitHub](https://github.com/deroproject/derohe) [Explorer](https://testnetexplorer.dero.io) [Wiki](https://wiki.dero.io) [Web Wallet](https://wallet.dero.io/)
+# Welcome to TELA
+[TELA Platform](https://tela.dero.io) [Discord](https://discord.gg/H95TJDp) [GitHub](https://github.com/TELA/tela-main) [DERO Explorer](https://explorer.dero.io) [DERO Website](https://dero.io)
 
-DERO is a blockchain with Smart Contracts preserving your privacy through multiple features while staying fast, secure, and accessible to all people easily.
+TELA is a private web3 platform built on DERO blockchain, enabling truly private and decentralized web applications. With TELA, you can build, host, and access web content with complete privacy, censorship resistance, and decentralized infrastructure.
 
-DERO is running since December 2017 and was previously running on a unique implementation of CryptoNote protocol with blockDAG and as migrated to this unique version for Smart Contracts, Services, better performance, better privacy and more security.
+TELA leverages DERO's homomorphic encryption and privacy features to create the world's first truly private internet platform, where users can browse, create, and interact with web content without compromising their privacy.
 
 ## DERO Homomorphic Encryption
 
