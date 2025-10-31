@@ -1,0 +1,88 @@
+---
+title: "Graviton: ZFS for Key-Value Stores"
+description: "Explore Graviton, an open-source, simple, fast, versioned, authenticated, and embeddable key-value store database written in Golang, characterized as “ZFS for key-value stores”."
+tags: ["Graviton", "Key-Value Store", "Database", "Golang", "ZFS"]
+---
+
+# Graviton: ZFS for Key-Value Stores
+*Standalone Alpha Release*
+
+Graviton is an open-source, simple, fast, versioned, authenticated, and embeddable key-value store database written in Golang.
+
+In essence, Graviton can be characterized as “ZFS for key-value stores,” where every write is tracked, versioned, and authenticated with cryptographic proofs. Moreover, it enables snapshots of the database at any time, allowing straightforward copy and rsync commands for database backup, even during live updates, with zero possibilities of database corruption. The concept was born from a necessity for unique features not available in any other database.
+
+## Features
+
+Graviton integrates features that were lacking in Stargate RC1, preventing deployment on the mainnet. These features are pivotal for the success of the next release and offer benefits across various domains:
+
+- Authenticated data store (backed by blake 256-bit checksums for all keys and values).
+- Append-only data store.
+- Support of 2^64 trees within a single data store. Trees can be named and utilized as buckets.
+- Tracking of value versions with the ability to revisit changes at any time.
+- Snapshots (multi-tree commits causing multi-bucket sync, each snapshot revisitable, appendable, modifiable, allowing operations like key deletion, value modification, storage of new keys and values).
+- Ability to iterate through all key-value pairs in a tree.
+- Ability to find differences between two trees in linear time, reporting insertions, deletions, and modifications.
+- Minimal and simplified API.
+- Theoretical support for exabyte data stores; multi-terabyte tested internally.
+- Decoupled storage layer, enabling use of object stores such as Ceph, AWS, etc.
+- Ability to generate cryptographic proofs validating key existence or non-existence (around 1 KB in size).
+- Extremely rapid proof generation time of approximately 1000 proofs per second, per core.
+- Support for disk-based filesystem-based persistent stores.
+- Support for memory-based non-persistent stores.
+- 100% code coverage.
+
+## Benefits
+
+Graviton is open-source and can substitute BoltDB, LMDB, LevelDB, and more. While not every feature may be necessary for all use cases, they offer unique advancements such as the capability to traverse any commit and diff between two trees in linear time. The outcome is a robust, feature-rich database that guarantees data integrity between backups and commits. Additionally, the database code is highly readable and friendly to new Golang developers.
+
+### Examples of Usage
+
+#### Save/Edit a Key
+
+```go
+tree, _ := ss.GetTree("root")
+
+// Insert a value
+tree.Put([]byte("answer"), []byte("44"))
+
+// Make the tree persistent by storing it in the backend disk        
+graviton.Commit(tree)
+```
+
+#### Get a Value from a Tree
+
+```go
+tree, _ := ss.GetTree("root")
+
+// Every key has a byte slice value
+v, _ := tree.Get([]byte("answer"))
+
+fmt.Printf("The answer is: %s\n", v)
+```
+
+#### Iterating Over a Tree
+
+```go
+// Assume "root" tree exists and has keys
+tree, _ := store.GetTree("root")
+
+// See cursor functions below
+c := tree.Cursor()
+
+for k, v, err := c.First(); err == nil; k, v, err = c.Next() { 
+    fmt.Printf("key=%s, value=%s\n", k, v)
+}
+```
+
+### Cursor Functions Available
+
+- `First()`: Move to the first key.
+- `Last()`: Move to the last key.
+- `Next()`: Move to the next key.
+- `Prev()`: Move to the previous key.
+
+## Learn More
+
+To view the code, explore more examples, or delve into the internals of Graviton, visit the [GitHub repository](https://github.com/deroproject/graviton).
+
+More about Graviton here: [Explaining GravitonDB](/features/graviton)

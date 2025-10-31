@@ -3,20 +3,17 @@ import type { Metadata } from 'next'
 const defineMetadata = <T extends Metadata>(metadata: T) => metadata
 
 const seoConfig = defineMetadata({
-  metadataBase: new URL('https://tela.derod.org'),
+  metadataBase: new URL('https://dero.is'),
   title: {
-    template: '%s | TELA',
-    default: 'TELA - Private Web3 Platform Documentation'
+    template: '%s - DERO',
+    default:
+      'DERO is a privacy-focused decentralized application platform.'
   },
-  description: 'TELA is a private web3 platform built on DERO blockchain, enabling secure, private and untraceable decentralized web applications.',
+  description: 'DERO is a privacy-focused decentralized application platform.',
   themeColor: '#061636',
   openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    images: '/assets/og-tela.png',
-    url: 'https://tela.derod.org',
-    siteName: 'TELA Documentation',
-    description: 'TELA is a private web3 platform built on DERO blockchain, enabling secure, private and untraceable decentralized web applications.'
+    images: '/assets/og-image.png',
+    url: 'https://dero.is'
   },
   manifest: '/assets/site.webmanifest',
   icons: [
@@ -26,12 +23,9 @@ const seoConfig = defineMetadata({
     { rel: 'image/x-icon', url: '/assets/favicon.ico' }
   ],
   twitter: {
-    card: 'summary_large_image',
-    title: 'TELA Platform Documentation',
-    description: 'TELA is a private web3 platform built on DERO blockchain, enabling secure, private and untraceable decentralized web applications.',
-    images: '/assets/og-tela.png'
-  },
-  keywords: 'TELA, private web3, DERO, blockchain, privacy, decentralized applications, web3, smart contracts, private internet'
+    site: '@DERO_Foundation',
+    creator: '@DeroProject'
+  }
 })
 
 export default seoConfig

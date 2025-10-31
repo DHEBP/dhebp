@@ -1,0 +1,68 @@
+---
+title: "Dero Name Service (DeroNS)"
+description: "A decentralized naming system built on the Dero blockchain, providing censorship-resistant and private domain name management through smart contracts."
+tags: ["DERO","blockchain", "domain name system", "decentralized DNS", "privacy", "smart contracts"]
+---
+
+# Dero Name Service (DeroNS)
+
+![DeroNS Architecture](/assets/deroNS.jpg)  
+
+## Overview
+
+Dero Name Service (DeroNS) is a blockchain-based naming system designed to integrate domain name resolution seamlessly with the Dero blockchain while maintaining compatibility with the traditional DNS system used across the internet. DeroNS is poised to revolutionize the future of domain name usage by offering a decentralized, secure, and censorship-resistant alternative to conventional DNS systems.
+
+DeroNS introduces new Top-Level Domains (TLDs) such as `.dero`, `.freedom`, and `.web3`, enabling the registration of private, unstoppable domain names. It supports common DNS resource record types, including `a`, `aaaa`, `txt`, `cname`, `mx`, and `srv`, ensuring compatibility with existing DNS infrastructure. The system also implements decentralized governance for TLD reservation, registration, and management, and incentivizes community members to run public resolvers, promoting decentralization and reliability in domain resolution services.
+
+## Advantages
+
+DeroNS leverages the decentralized Dero blockchain, offering trustless and permissionless domain registration and management. Its smart contract acts as a robust public store on-chain, facilitating efficient storage and retrieval of domain data, expanding its utility beyond DNS. Additionally, DeroNS operates autonomously, managing TLD reservation, registration, and maintenance in a decentralized and permissionless fashion.
+
+## Core Features
+
+- **Top-Level Domains (TLDs)**: DeroNS introduces new TLDs like `.dero`, `.freedom`, or `.web3`, allowing for the registration of private, unstoppable domain names.
+- **DNS Records**: DeroNS supports common DNS resource record types such as `a`, `aaaa`, `txt`, `cname`, `mx`, and `srv`; compatible with existing DNS infrastructure.
+- **Decentralized Governance**: DeroNS implements autonomous procedures for TLD reservation, registration, and management.
+- **Incentivized Public Resolvers**: DeroNS incentivizes community members to run public resolvers, promoting decentralization and reliability in domain resolution services.
+
+## How DeroNS Works
+
+### Smart Contract
+
+The backbone of DeroNS, this smart contract manages domain registration on the Dero blockchain, ensuring trustless, permissionless, and efficient storage of domain data.
+
+### User Interface
+
+Users interact with the DeroNS system through a command-line interface (CLI) and a user-friendly application. These tools enable domain registration, management, trading, and other functionalities.
+
+### Resolver
+
+DeroNS Resolver, an open-source BIND9 service, acts as the bridge between DeroNS domains and traditional DNS queries. It resolves DeroNS domains alongside standard domains, providing seamless integration.
+
+## Key Benefits
+
+- **Non-custodial ownership**: Domain ownership is managed through cryptographic key pairs, ensuring users have full control.
+- **Immutable record storage**: DNS records are stored on the blockchain, providing tamper-proof and censorship-resistant storage.
+- **Enhanced privacy**: Utilizes DERO's encrypted transaction model and zero-knowledge proofs (ZKPs) for secure and private transactions.
+
+## Domain Management
+
+### Roles
+
+- **Captain**: Manages top-level domains (TLDs) and sets royalties for Commanders.
+- **Commander**: Oversees specific TLDs, sets domain pricing, and imposes royalties on trades.
+- **P-Admin**: Manages public key/value stores for TLDs (default role is the Commander).
+- **Lt. Commander (Domain Owner)**: Manages domain content and can trade the domain.
+
+### Important Notes
+
+- **Block Time**: TESTNET processes blocks every 60 seconds. Wait at least a minute for on-chain updates.
+- **Domain Rules**:
+  - Names must comply with [RFC 1035](https://www.rfc-editor.org/rfc/rfc1035).
+  - No capitalized letters allowed.
+  - Length: 1 to 63 characters (excluding `.dero`).
+- **DNS Traffic**: Ensure your ISP or VPN allows unfiltered DNS traffic for proper resolution.
+
+## Conclusion
+
+DeroNS offers a robust and decentralized solution for domain name management, providing enhanced privacy and security through its blockchain-based architecture. By following this guide, users can effectively register and manage their `.dero` domains on the TESTNET network, ensuring a transparent and trustworthy system.

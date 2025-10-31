@@ -1,7 +1,4 @@
-import path from 'path'
 import nextra from 'nextra'
-import withPWA from 'next-pwa'
-import withBundleAnalyzer from '@next/bundle-analyzer'
 
 const withNextra = nextra({
   theme: 'nextra-theme-docs',
@@ -11,22 +8,10 @@ const withNextra = nextra({
   flexsearch: {
     codeblocks: false
   },
-  defaultShowCopyCode: true,
-  remarkPlugins: [path.resolve('./plugins/frontmatterEnhancer.js')]
+  defaultShowCopyCode: true
 })
 
-// Enable bundle analyzer when ANALYZE env var is set
-const withAnalyze = withBundleAnalyzer({
-  enabled: process.env.ANALYZE === 'true'
-})
-
-// Enable PWA in production only
-const withPwaPlugin = withPWA({
-  dest: 'public',
-  disable: process.env.NODE_ENV === 'development'
-})
-
-export default withAnalyze(withPwaPlugin(withNextra({
+export default withNextra({
   reactStrictMode: true,
   eslint: {
     // Eslint behaves weirdly in this monorepo.
@@ -39,4 +24,4 @@ export default withAnalyze(withPwaPlugin(withNextra({
       permanent: true
     }
   ]
-})))
+})

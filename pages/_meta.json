@@ -1,57 +1,39 @@
 {
   "index": {
     "display": "hidden",
-    "title": "TELA Documentation",
+    "title": "DHEBP",
     "theme": {
       "breadcrumb": false
     }
   },
 
-  "-- Getting Started": {
+  "-- Overview": {
     "type": "separator",
-    "title": "Getting Started"
+    "title": "Overview"
   },
-  "tela": "Introduction to TELA",
-  "tela-development-guide": "Quick Start Guide",
+  "basics": "Basics",
+  "features": "Features",
+  "tools": "Tools",
   "tutorials": "Tutorials",
-  "tela-cli": "TELA-CLI",
-
-  "-- Advanced Topics": {
+  "-- Documentation": {
     "type": "separator",
-    "title": "Advanced Topics"
+    "title": "Dero Docs"
   },
-  "advanced-features": "Advanced Features",
-  "xswd": "XSWD Protocol",
-  "epoch-mining": "EPOCH Mining",
-
-  "-- Developer Reference": {
-    "type": "separator",
-    "title": "Developer Reference"
-  },
-  "beginner-guide": "Beginner's Guide",
-  "api-reference": "API Reference",
-  "go-package-reference": "Go Package Reference",
-  "javascript-guidelines": "Working Code",
-  "templates": "Project Templates",
-  "design-reference": "Design Reference",
-
-  "-- Compliance": {
-    "type": "separator",
-    "title": "Compliance"
-  },
-  "size-optimization": "Size Optimization", 
-  "error-troubleshooting": "Error Troubleshooting",
-
-  "DERO Homepage": {
-    "title": "DERO Homepage",
+  "dvm": "Dero Virtual Machine",
+  "rpc-api": "RPC API",
+  "smartContracts": "Smart Contracts",
+  
+  
+  "Dero (Official)": {
+    "title": "Official Website",
     "type": "page",
     "href": "https://dero.io",
     "newWindow": true
   },
-  "DERO Quick Start": {
-    "title": "DERO Docs",
+  "Trade Ogre": {
+    "title": "Exchange",
     "type": "page",
-    "href": "https://derod.org",
+    "href": "https://tradeogre.com/markets",
     "newWindow": true
   }
 }
