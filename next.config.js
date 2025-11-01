@@ -22,6 +22,11 @@ export default withNextra({
       source: '/docs/docs-theme/built-ins/callout',
       destination: '/docs/guide/built-ins/callout',
       permanent: true
+    },
+    {
+      source: '/:path*',
+      destination: 'https://derod.org/:path*',
+      permanent: true
     }
   ]
 })
