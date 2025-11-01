@@ -25,7 +25,7 @@ export default withNextra({
     },
     {
       source: '/:path*',
-      destination: 'https://derod.org/:path*',
+      destination: 'https://www.derod.org/:path*',
       permanent: true
     }
   ]
